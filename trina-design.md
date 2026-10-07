@@ -516,66 +516,69 @@ Reserva ..> EstadoReserva
 
 ### 3.3 Diagramas de estado
 
-Las tablas de transiciones con actores y condiciones están en el SRS §5.1.
+Las tablas de transiciones con actores y condiciones están en el SRS §5.1. Los diagramas se dibujan como diagramas de flujo (cada recuadro es un estado y cada flecha una transición) para que se visualicen sin problemas en GitHub, GitLab y VS Code, incluso con ciclos de reenvío.
+
+**Negocio**
 
 ```mermaid
-stateDiagram-v2
-  [*] --> BORRADOR : comerciante crea
-  BORRADOR --> PENDIENTE : envía a revisión
-  PENDIENTE --> APROBADO : administrador aprueba
-  PENDIENTE --> RECHAZADO : administrador rechaza con motivo
-  PENDIENTE --> CORRECCION_SOLICITADA : administrador pide ajustes
-  RECHAZADO --> PENDIENTE : comerciante corrige y reenvía
-  CORRECCION_SOLICITADA --> PENDIENTE : comerciante corrige y reenvía
-  APROBADO --> SUSPENDIDO : administrador suspende
-  SUSPENDIDO --> APROBADO : administrador reactiva
+flowchart TD
+  INI(("●")) -->|"comerciante crea"| BORRADOR(["BORRADOR"])
+  BORRADOR -->|"envía a revisión"| PENDIENTE(["PENDIENTE"])
+  PENDIENTE -->|"administrador aprueba"| APROBADO(["APROBADO"])
+  PENDIENTE -->|"administrador rechaza con motivo"| RECHAZADO(["RECHAZADO"])
+  PENDIENTE -->|"administrador pide ajustes"| CORRECCION(["CORRECCION_SOLICITADA"])
+  RECHAZADO -->|"comerciante corrige y reenvía"| PENDIENTE
+  CORRECCION -->|"comerciante corrige y reenvía"| PENDIENTE
+  APROBADO -->|"administrador suspende"| SUSPENDIDO(["SUSPENDIDO"])
+  SUSPENDIDO -->|"administrador reactiva"| APROBADO
 ```
 
-```mermaid
-stateDiagram-v2
-  [*] --> PENDIENTE_PAGO : pago en línea
-  [*] --> PENDIENTE : pago en el local
-  PENDIENTE_PAGO --> PENDIENTE : pago aprobado
-  PENDIENTE_PAGO --> CANCELADO : cliente cancela o pasan 30 minutos
-  PENDIENTE --> EN_PREPARACION : comerciante acepta
-  PENDIENTE --> RECHAZADO : comerciante rechaza
-  PENDIENTE --> CANCELADO : cliente cancela
-  EN_PREPARACION --> LISTO : comerciante marca listo
-  EN_PREPARACION --> CANCELADO : comerciante cancela
-  LISTO --> COMPLETADO : entrega
-  COMPLETADO --> [*]
-  RECHAZADO --> [*]
-  CANCELADO --> [*]
-```
+**Pedido**
 
 ```mermaid
-stateDiagram-v2
-  [*] --> PENDIENTE_CONFIRMACION : cliente solicita con cupo
-  PENDIENTE_CONFIRMACION --> CONFIRMADA : comerciante confirma
-  PENDIENTE_CONFIRMACION --> RECHAZADA : comerciante rechaza
-  PENDIENTE_CONFIRMACION --> CANCELADA : cliente cancela o pasan 24 horas
-  CONFIRMADA --> CANCELADA : cliente o comerciante cancela
-  CONFIRMADA --> COMPLETADA : comerciante completa
-  RECHAZADA --> [*]
-  CANCELADA --> [*]
-  COMPLETADA --> [*]
+flowchart TD
+  INI(("●")) -->|"pago en línea"| PPAGO(["PENDIENTE_PAGO"])
+  INI -->|"pago en el local"| PEND(["PENDIENTE"])
+  PPAGO -->|"pago aprobado"| PEND
+  PPAGO -->|"cliente cancela o pasan 30 minutos"| CANC(["CANCELADO"])
+  PEND -->|"comerciante acepta"| PREP(["EN_PREPARACION"])
+  PEND -->|"comerciante rechaza"| RECH(["RECHAZADO"])
+  PEND -->|"cliente cancela"| CANC
+  PREP -->|"comerciante marca listo"| LISTO(["LISTO"])
+  PREP -->|"comerciante cancela"| CANC
+  LISTO -->|"entrega"| COMP(["COMPLETADO"])
 ```
 
+**Reserva**
+
 ```mermaid
-stateDiagram-v2
-  direction LR
-  state Pago {
-    [*] --> INICIADO
-    INICIADO --> APROBADO : pasarela aprueba
-    INICIADO --> RECHAZADO : pasarela rechaza
-    APROBADO --> REEMBOLSADO : rechazo o cancelación posterior
-  }
-  state Suscripcion {
-    [*] --> PENDIENTE_PAGO
-    PENDIENTE_PAGO --> ACTIVA : pago aprobado
-    ACTIVA --> VENCIDA : llega la fecha de fin
-    VENCIDA --> ACTIVA : renovación pagada
-  }
+flowchart TD
+  INI(("●")) -->|"cliente solicita y hay cupo"| PC(["PENDIENTE_CONFIRMACION"])
+  PC -->|"comerciante confirma"| CONF(["CONFIRMADA"])
+  PC -->|"comerciante rechaza"| RECH(["RECHAZADA"])
+  PC -->|"cliente cancela o pasan 24 horas"| CANC(["CANCELADA"])
+  CONF -->|"cliente o comerciante cancela"| CANC
+  CONF -->|"comerciante completa"| COMP(["COMPLETADA"])
+```
+
+**Pago**
+
+```mermaid
+flowchart LR
+  INI(("●")) --> INIC(["INICIADO"])
+  INIC -->|"pasarela aprueba"| APR(["APROBADO"])
+  INIC -->|"pasarela rechaza"| REC(["RECHAZADO"])
+  APR -->|"rechazo o cancelación posterior del pedido"| REEM(["REEMBOLSADO"])
+```
+
+**Suscripción de membresía**
+
+```mermaid
+flowchart LR
+  INI(("●")) --> PP(["PENDIENTE_PAGO"])
+  PP -->|"pago aprobado"| ACT(["ACTIVA"])
+  ACT -->|"llega la fecha de fin"| VEN(["VENCIDA"])
+  VEN -->|"renovación pagada"| ACT
 ```
 
 ### 3.4 Diagramas de secuencia
