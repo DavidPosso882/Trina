@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* S1 — paleta "letrero de plaza": seis colores con nombre. */
+  --color-blanco-mercado: #ffffff;
+  --color-tinta-cafe: #2b2118;
+  --color-bosque: #1b6b47;
+  --color-bosque-profundo: #0e3b28;
+  --color-terracota: #b3472a;
+  --color-oro-cosecha: #e9a13b;
+}
+
+/* Base teléfono-primero 360px, texto 16px mínimo (trina-ui-design §5.2) */
+html {
+  font-size: 16px;
+}
+body {
+  background: var(--color-blanco-mercado);
+  color: var(--color-tinta-cafe);
+  line-height: 1.5;
+}
+
+/* S2 — Archivo con tracking apretado solo en headlines; el cuerpo queda en Inter. */
+h1,
+h2,
+h3 {
+  font-family: Archivo, Inter, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Foco visible siempre (RNF-07) */
+:focus-visible {
+  outline: 3px solid var(--color-bosque);
+  outline-offset: 2px;
+}
+
+/* Respeta movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .btn-principal {
+    @apply w-full sm:w-auto min-h-boton rounded-tarjeta bg-primario px-6 font-bold text-white disabled:opacity-60;
+    min-height: 48px;
+  }
+  .btn-secundario {
+    @apply rounded-tarjeta border-2 border-primario px-6 text-primario;
+    min-height: 48px;
+  }
+  .btn-peligro {
+    @apply w-full sm:w-auto min-h-boton rounded-tarjeta bg-error px-6 font-bold text-white disabled:opacity-60;
+    min-height: 48px;
+  }
+  .campo {
+    @apply w-full rounded-campo border-2 bg-superficie px-4 py-3;
+    border-color: #8a8f98;
+    min-height: 48px;
+  }
+  .tarjeta-negocio {
+    @apply rounded-tarjeta bg-superficie p-4 shadow;
+  }
+}

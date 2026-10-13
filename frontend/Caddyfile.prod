@@ -1,0 +1,15 @@
+# Caddy prod (requiere dominio P-03 para HTTPS automático).
+{$DOMAIN:?poné DOMAIN en .env}
+
+root * /srv
+file_server
+
+handle /api/* {
+  uri strip_prefix /api
+  reverse_proxy api:8080
+}
+
+handle /media/* {
+  uri strip_prefix /media
+  reverse_proxy minio:9000
+}
