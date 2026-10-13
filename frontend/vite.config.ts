@@ -5,9 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    // En compose el proxy apunta al servicio `api`; en host, al localhost.
     proxy: {
-      '/api': 'http://localhost:8080',
-      '/media': 'http://localhost:9000'
+      '/api': process.env.VITE_API_PROXY ?? 'http://localhost:8080',
+      '/media': process.env.VITE_MEDIA_PROXY ?? 'http://localhost:9000'
     }
   },
   build: {

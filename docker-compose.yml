@@ -1,0 +1,116 @@
+# Entorno local canónico TRINA. Secretos SOLO por .env (nunca al repo).
+name: trina
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-trina}
+      POSTGRES_USER: ${POSTGRES_USER:-trina}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?ponelo en .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [trina]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-trina}']
+      interval: 10s
+      retries: 5
+
+  # MinIO es opt-in (perfil `minio`): las imágenes oficiales dejaron Docker Hub y la
+  # edición AIStor exige licencia hasta para crear buckets. En dev se usa `local`.
+  minio:
+    image: quay.io/minio/aistor/minio:RELEASE.2026-09-19T17-05-25Z
+    profiles: [minio]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-trina-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?ponelo en .env}
+    volumes:
+      - miniodata:/data
+    networks: [trina]
+
+  # Crea el bucket trina-media con reintentos hasta que minio responde (la imagen
+  # AIStor es mínima y no trae healthcheck utilizable).
+  minio-init:
+    image: quay.io/minio/aistor/mc:latest
+    profiles: [minio]
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      i=0; while [ $$i -lt 60 ]; do mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-trina-minio} $${MINIO_ROOT_PASSWORD:?ponelo en .env} && break; i=$$((i+1)); sleep 2; done &&
+      mc mb -p local/$${MINIO_BUCKET:-trina-media} || true &&
+      mc anonymous set download local/$${MINIO_BUCKET:-trina-media}/negocios/ || true"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-trina-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?ponelo en .env}
+      MINIO_BUCKET: ${MINIO_BUCKET:-trina-media}
+    networks: [trina]
+
+  api:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+        required: false
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-trina}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-trina}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?ponelo en .env}
+      JWT_SECRET: ${JWT_SECRET:?ponelo en .env}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_BUCKET: ${MINIO_BUCKET:-trina-media}
+      APP_STORAGE: ${APP_STORAGE:-local}
+      APP_SEED_DEMO: ${APP_SEED_DEMO:-false}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:8081
+      MAIL_HOST: maildev
+      MAIL_PORT: 1025
+      SWAGGER_ENABLED: 'true'
+    ports:
+      - '8080:8080'
+    networks: [trina]
+    restart: unless-stopped
+
+  # Frontend en dev (Vite). En demo se usa el perfil prod con Caddy.
+  web-dev:
+    image: node:22-alpine
+    working_dir: /web
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_PROXY: http://api:8080
+    volumes:
+      - ./frontend:/web
+      - /web/node_modules
+    ports:
+      - '5173:5173'
+    networks: [trina]
+    profiles: ['dev']
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on: [api]
+    ports:
+      - '8081:80'
+    volumes:
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - ./frontend/dist:/srv:ro
+    networks: [trina]
+    profiles: ['demo']
+
+  maildev:
+    image: mailhog/mailhog:latest
+    ports:
+      - '8025:8025' # UI correo local
+    networks: [trina]
+    profiles: ['dev']
+
+volumes:
+  pgdata:
+  miniodata:
+
+networks:
+  trina:
