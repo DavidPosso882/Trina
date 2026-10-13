@@ -1,0 +1,8 @@
+# .env nunca al repo. node_modules/target/dist tampoco.
+.env
+backend/target/
+frontend/node_modules/
+frontend/dist/
+*.log
+.DS_Store
+.codegraph/
