@@ -4,24 +4,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        // S1 — paleta "letrero de plaza": seis colores con nombre.
-        'blanco-mercado': '#FFFFFF', // fondo de página; jubila el crema #FFFBF4
-        'tinta-cafe': '#2B2118', // texto; reemplaza el slate
-        bosque: '#1B6B47', // superficie protagonista
+        // Paleta SVG Explorador (escritorio/móvil): oliva + lima + crema.
+        // Se conservan los nombres viejos como alias para no romper pantallas pre-T2.
+        'blanco-mercado': '#FFFFFF',
+        'tinta-cafe': '#2B2118',
+        bosque: '#1B6B47',
         'bosque-profundo': '#0E3B28',
-        terracota: '#B3472A', // solo precio, CTA y destacado
-        'oro-cosecha': '#E9A13B', // dosis mínimas: estrellas e insignias
-        // Alias semánticos que ya usan las pantallas (T2/T3 conservan esta API).
-        primario: '#1B6B47',
-        'primario-claro': '#E8F3EC',
-        acento: '#B3472A',
-        fondo: '#FFFFFF',
+        terracota: '#B3472A',
+        'oro-cosecha': '#E9A13B',
+        oliva: '#1B2117',
+        lima: '#94B839',
+        'lima-oscura': '#5A8A0A',
+        crema: '#F8FCE1',
+        dorado: '#D4C04D',
+        marron: '#3D1A11',
+        // Alias semánticos: apuntan a la paleta SVG desde T1.
+        primario: '#1B2117',
+        'primario-claro': '#E8F2D8',
+        acento: '#94B839',
+        fondo: '#F8FCE1',
         superficie: '#FFFFFF',
-        texto: '#2B2118',
-        'texto-suave': '#6B645D',
-        exito: '#166534',
+        texto: '#1B2117',
+        'texto-suave': '#6A6259',
+        exito: '#5A8A0A',
         advertencia: '#92400E',
-        error: '#B42318',
+        error: '#E05252',
         info: '#1D4ED8'
       },
       fontFamily: {
@@ -38,8 +45,9 @@ export default {
         'cifra-menor': ['28px', { lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: '800' }]
       },
       borderRadius: {
-        tarjeta: '12px',
-        campo: '8px'
+        tarjeta: '16px',
+        campo: '8px',
+        pastilla: '9999px'
       },
       minHeight: {
         boton: '48px'

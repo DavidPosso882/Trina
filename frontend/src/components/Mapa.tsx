@@ -18,7 +18,7 @@ const svgRayos = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fi
 
 // Leaflet arma los pines con imágenes por ruta; usamos divIcon para no depender de esos assets.
 function iconoPin(destacado: boolean) {
-  const color = destacado ? '#B3472A' : '#1B6B47';
+  const color = destacado ? '#94B839' : '#1B2117';
   return L.divIcon({
     className: '',
     html: svgPin(color),
@@ -31,7 +31,7 @@ function iconoPin(destacado: boolean) {
 function iconoGrupo(cantidad: number) {
   return L.divIcon({
     className: '',
-    html: `<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:9999px;background:#1B6B47;color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4)">${cantidad}</span>`,
+    html: `<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:9999px;background:#1B2117;color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4)">${cantidad}</span>`,
     iconSize: [42, 42],
     iconAnchor: [21, 21]
   });
@@ -225,7 +225,7 @@ export function MapaExplorar({
         zoom={12}
         aria-label="Mapa de negocios"
         className={`${altoClase} w-full rounded-tarjeta border-2`}
-        style={{ borderColor: '#8a8f98' }}
+        style={{ borderColor: '#1B2117' }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

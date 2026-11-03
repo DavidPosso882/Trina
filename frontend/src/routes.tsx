@@ -11,6 +11,7 @@ import { useSesion } from './lib/auth';
 
 // El mapa y las pantallas pesadas se cargan solo cuando se usan (code-splitting §8 UI)
 const Explorar = lazy(() => import('./pages/Explorar'));
+const Favoritos = lazy(() => import('./pages/Favoritos'));
 const PerfilNegocio = lazy(() => import('./pages/PerfilNegocio'));
 const Panel = lazy(() => import('./pages/Panel'));
 const Admin = lazy(() => import('./pages/Admin'));
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Inicio /> }, // PU-01
       { path: 'explorar', element: conCarga(<Explorar />) }, // PU-02
+      { path: 'favoritos', element: conCarga(<Favoritos />) }, // T1 placeholder, T3 real (S4)
       { path: 'negocios/:id', element: conCarga(<PerfilNegocio />) }, // PU-03
       { path: 'ingresar', element: <Ingresar /> }, // PU-04
       { path: 'registro', element: <Registro /> }, // PU-05 (RF-01)

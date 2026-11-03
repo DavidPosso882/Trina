@@ -7,6 +7,7 @@ import {
   CakeIcon,
   ExclamationTriangleIcon,
   FireIcon,
+  HeartIcon,
   HomeModernIcon,
   MagnifyingGlassIcon,
   MapIcon,
@@ -25,6 +26,7 @@ import {
   mensajeDeApi,
   type FichaNegocio
 } from '../lib/api';
+import { useFavoritos } from '../lib/favoritos';
 import { Icono, type IconoSvg } from '../components/Icono';
 
 // El mapa pesa: se carga solo cuando la portada ya tiene pines que mostrar (code-splitting, §8 UI).
@@ -44,7 +46,7 @@ const ICONOS_CATEGORIA: Record<string, IconoSvg> = {
 };
 
 function normalizar(texto: string): string {
-  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
 function iconoCategoria(nombre: string): IconoSvg {
@@ -58,7 +60,7 @@ const nivelPrecioTexto = (nivel?: number | null) =>
 const distanciaTexto = (km?: number | null) =>
   km != null ? `${km.toFixed(1).replace('.', ',')} km` : 'Sin dato';
 
-/** PU-01 Inicio: buscador y categorías conectados al directorio público (RF-08/RF-20/RF-21). */
+/** PU-01 Inicio estilo SVG: título + buscador pill + mapa + píldoras + destacados (RF-08/RF-20/RF-21). */
 export default function Inicio() {
   const navigate = useNavigate();
   const [texto, setTexto] = useState('');
@@ -85,45 +87,48 @@ export default function Inicio() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
       <section
         aria-labelledby="portada"
-        className="-mx-4 bg-bosque-profundo px-4 pb-6 pt-8 text-white sm:mx-0 sm:rounded-tarjeta"
+        className="rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:px-6"
       >
-        <h1 id="portada" className="font-display text-titulo">
+        <h1 id="portada" className="font-display text-3xl font-extrabold tracking-tight md:text-4xl">
           Descubrí lo mejor del pueblo
         </h1>
 
-        <form role="search" className="mt-4" onSubmit={buscar}>
-          <label htmlFor="q" className="sr-only">
-            ¿Qué buscás?
-          </label>
-          <input
-            id="q"
-            name="q"
-            className="campo"
-            placeholder="¿Qué buscás?"
-            autoComplete="off"
-            value={texto}
-            onChange={(e) => setTexto(e.target.value)}
-          />
-          <p className="mt-1 text-sm text-white/70">Ej.: café, hospedaje, artesanías</p>
-          <button
-            type="submit"
-            className="btn-principal mt-3 inline-flex items-center justify-center gap-2 px-6 py-3 ring-1 ring-white/25"
-          >
-            <Icono icono={MagnifyingGlassIcon} /> Buscar
-          </button>
+        <form role="search" className="mt-4 max-w-2xl" onSubmit={buscar}>
+          <div className="relative">
+            <MagnifyingGlassIcon
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-texto-suave"
+            />
+            <label htmlFor="q" className="sr-only">
+              ¿Qué buscás?
+            </label>
+            <input
+              id="q"
+              name="q"
+              className="w-full rounded-full border border-oliva/15 bg-white py-3 pl-11 pr-28 shadow-sm placeholder:text-texto-suave"
+              placeholder="¿Qué buscás?"
+              autoComplete="off"
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+            />
+            <button type="submit" className="btn-lima absolute bottom-1 right-1 top-1 px-6 text-sm">
+              Buscar
+            </button>
+          </div>
+          <p className="mt-1 text-sm text-texto-suave">Ej.: café, hospedaje, artesanías</p>
         </form>
 
         <div className="relative mt-6">
           {marcadores.isError ? (
-            <div className="flex h-52 flex-col items-center justify-center gap-2 rounded-tarjeta border border-white/20 bg-white/5 px-4 text-center">
-              <Icono icono={ExclamationTriangleIcon} tamano="grande" className="text-oro-cosecha" />
-              <p className="text-sm text-white/85">No pudimos cargar el mapa del pueblo.</p>
+            <div className="flex h-52 flex-col items-center justify-center gap-2 rounded-tarjeta border border-oliva/15 bg-crema px-4 text-center">
+              <Icono icono={ExclamationTriangleIcon} tamano="grande" className="text-error" />
+              <p className="text-sm text-texto-suave">No pudimos cargar el mapa del pueblo.</p>
               <button
                 type="button"
-                className="inline-flex min-h-boton items-center gap-2 rounded-tarjeta border border-white/30 px-4 text-sm font-semibold"
+                className="btn-secundario inline-flex items-center gap-2 px-4 py-2 text-sm"
                 onClick={() => marcadores.refetch()}
               >
                 <Icono icono={ArrowPathIcon} tamano="chico" /> Intentar de nuevo
@@ -132,30 +137,30 @@ export default function Inicio() {
           ) : marcadores.data ? (
             <Suspense
               fallback={
-                <div aria-hidden="true" className="h-52 w-full animate-pulse rounded-tarjeta bg-white/10" />
+                <div aria-hidden="true" className="h-52 w-full animate-pulse rounded-tarjeta bg-crema" />
               }
             >
-              <MapaPortada marcadores={marcadores.data} altoClase="h-52" />
+              <MapaPortada marcadores={marcadores.data} altoClase="h-52 md:h-72" />
             </Suspense>
           ) : (
-            <div aria-hidden="true" className="h-52 w-full animate-pulse rounded-tarjeta bg-white/10" />
+            <div aria-hidden="true" className="h-52 w-full animate-pulse rounded-tarjeta bg-crema" />
           )}
 
           {marcadores.data && (
-            <div className="pointer-events-none absolute bottom-3 left-3 z-[500] flex items-center gap-2 rounded-tarjeta bg-blanco-mercado px-3 py-2 text-tinta-cafe">
-              <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-primario" />
-              <span className="font-display text-cifra-menor leading-none">{abiertosAhora}</span>
+            <div className="pointer-events-none absolute bottom-3 left-3 z-[500] flex items-center gap-2 rounded-full bg-oliva px-3 py-2 text-white">
+              <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-lima" />
+              <span className="font-display text-lg font-extrabold leading-none">{abiertosAhora}</span>
               <span className="max-w-[9rem] text-xs font-semibold leading-tight">abiertos ahora cerca</span>
             </div>
           )}
         </div>
 
-        <nav aria-label="Categorías" className="-mx-4 mt-5 overflow-x-auto px-4 pb-1">
+        <nav aria-label="Categorías" className="mt-5 overflow-x-auto pb-1">
           <ul className="flex w-max items-center gap-2">
-            {categorias.isLoading && <li className="text-sm text-white/70">Cargando categorías…</li>}
+            {categorias.isLoading && <li className="text-sm text-texto-suave">Cargando categorías…</li>}
             {categorias.isError && (
-              <li role="alert" className="flex items-center gap-2 text-sm">
-                <Icono icono={ExclamationTriangleIcon} tamano="chico" className="text-oro-cosecha" />
+              <li role="alert" className="flex items-center gap-2 text-sm text-error">
+                <Icono icono={ExclamationTriangleIcon} tamano="chico" />
                 No pudimos cargar las categorías.
                 <button
                   type="button"
@@ -170,7 +175,7 @@ export default function Inicio() {
               <li key={c.id}>
                 <Link
                   to={`/explorar?categoria=${c.id}`}
-                  className="inline-flex min-h-boton items-center gap-2 rounded-tarjeta border border-white/30 px-4 text-sm font-semibold text-white hover:bg-white/10"
+                  className="inline-flex min-h-boton items-center gap-2 rounded-full border border-oliva/15 bg-white px-4 text-sm font-semibold text-oliva hover:border-oliva/40"
                 >
                   <Icono icono={iconoCategoria(c.nombre)} tamano="chico" />
                   {c.nombre}
@@ -180,20 +185,20 @@ export default function Inicio() {
             <li>
               <Link
                 to="/explorar"
-                className="inline-flex min-h-boton items-center gap-2 rounded-tarjeta border border-white/30 px-4 text-sm font-semibold text-white hover:bg-white/10"
+                className="inline-flex min-h-boton items-center gap-2 rounded-full bg-oliva px-4 text-sm font-semibold text-white"
               >
                 Ver todas
-                <Icono icono={ArrowRightIcon} tamano="chico" />
+                <Icono icono={ArrowRightIcon} tamano="chico" className="text-lima" />
               </Link>
             </li>
           </ul>
         </nav>
       </section>
 
-      <section aria-labelledby="destacados" className="mt-10">
+      <section aria-labelledby="destacados" className="mt-8">
         <div className="flex items-center gap-2">
-          <Icono icono={StarIcon} tamano="grande" className="text-oro-cosecha" />
-          <h2 id="destacados" className="font-display text-titulo-menor">
+          <Icono icono={StarIcon} tamano="grande" className="text-dorado" />
+          <h2 id="destacados" className="font-display text-2xl font-extrabold tracking-tight">
             Destacados
           </h2>
         </div>
@@ -205,7 +210,7 @@ export default function Inicio() {
         )}
         {destacados.isError && (
           <div className="mt-4">
-            <p role="alert" className="flex items-start gap-2 rounded-campo bg-error/10 p-3 text-error">
+            <p role="alert" className="flex items-start gap-2 rounded-tarjeta bg-error/10 p-3 text-error">
               <Icono icono={ExclamationTriangleIcon} className="mt-0.5" />
               <span>{mensajeDeApi(destacados.error)}</span>
             </p>
@@ -227,16 +232,12 @@ export default function Inicio() {
           </p>
         )}
         {destacados.data && destacados.data.contenido.length > 0 && (
-          <ul className="mt-2 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
-            {destacados.data.contenido.map((n) => (
-              <FilaDestacada key={n.id} negocio={n} />
-            ))}
-          </ul>
+          <ListaDestacados negocios={destacados.data.contenido} />
         )}
 
         <Link
           to="/explorar"
-          className="btn-principal mt-6 inline-flex items-center gap-2 px-6 py-3"
+          className="btn-lima mt-6 inline-flex px-6 py-3 text-sm"
         >
           <Icono icono={MapIcon} /> Ver todos en el mapa
         </Link>
@@ -245,53 +246,86 @@ export default function Inicio() {
   );
 }
 
-/** Fila editorial: foto grande a la izquierda, precio y distancia en cifras a la derecha. */
-function FilaDestacada({ negocio: n }: { negocio: FichaNegocio }) {
+function ListaDestacados({ negocios }: { negocios: FichaNegocio[] }) {
+  const { ids: favoritos, alternar: alternarFav } = useFavoritos();
   return (
-    <li className="py-4">
-      <Link to={`/negocios/${n.id}`} className="group flex gap-4">
+    <ul className="mt-3 grid gap-3 md:grid-cols-2">
+      {negocios.map((n) => (
+        <FilaDestacada
+          key={n.id}
+          negocio={n}
+          esFavorito={favoritos.includes(n.id)}
+          onAlternarFav={() => alternarFav(n.id)}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/** Tarjeta SVG: foto o inicial + categoría + estado + precio/distancia + favorito + ver. */
+function FilaDestacada({
+  negocio: n,
+  esFavorito,
+  onAlternarFav
+}: {
+  negocio: FichaNegocio;
+  esFavorito: boolean;
+  onAlternarFav: () => void;
+}) {
+  return (
+    <li
+      className={`rounded-tarjeta bg-white p-3 shadow-sm ${
+        n.destacado ? 'tarjeta-negocio-destacada' : 'border border-oliva/10'
+      }`}
+    >
+      <div className="flex gap-3">
         <FotoDestacada id={n.id} nombre={n.nombre} />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <h3 className="font-display text-seccion group-hover:text-primario">{n.nombre}</h3>
-            {n.destacado && (
-              <span className="inline-flex items-center gap-1 rounded-campo bg-oro-cosecha/20 px-2 py-0.5 text-xs font-semibold text-tinta-cafe">
-                <Icono icono={StarIcon} tamano="chico" className="text-oro-cosecha" />
-                {n.insignia ?? 'Destacada'}
-              </span>
-            )}
+          <div className="flex items-start justify-between gap-2">
+            <span className="rounded-full bg-crema px-2 py-0.5 text-xs font-semibold text-oliva/80">
+              {n.categoria ?? 'Negocio local'}
+            </span>
+            <span className={`flex shrink-0 items-center gap-1 text-xs font-semibold ${n.abiertoAhora ? 'text-exito' : 'text-error'}`}>
+              <span aria-hidden="true" className={`h-2 w-2 rounded-full ${n.abiertoAhora ? 'bg-exito' : 'bg-error'}`} />
+              {n.abiertoAhora ? 'Abierto' : 'Cerrado'}
+            </span>
           </div>
-          <p className="mt-0.5 text-texto-suave">{n.categoria ?? 'Negocio local'}</p>
-          <p className="mt-1 flex items-center gap-2 text-sm">
-            <span
-              aria-hidden="true"
-              className={`h-2.5 w-2.5 shrink-0 rounded-full ${n.abiertoAhora ? 'bg-primario' : 'bg-error'}`}
-            />
-            {n.abiertoAhora ? 'Abierto ahora' : 'Cerrado'}
+          <h3 className="mt-0.5 truncate font-display text-lg font-bold">
+            <Link to={`/negocios/${n.id}`} className="hover:text-primario">{n.nombre}</Link>
+          </h3>
+          <p className="mt-0.5 text-xs text-texto-suave">
+            {nivelPrecioTexto(n.nivelPrecio)}
+            {n.distanciaKm != null ? ` · ${distanciaTexto(n.distanciaKm)}` : ''}
+            {n.destacado && n.insignia ? ` · ${n.insignia}` : ''}
           </p>
-          <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
-            <div>
-              <dt className="text-xs text-texto-suave">Precio</dt>
-              <dd className={n.nivelPrecio ? 'font-display text-cifra-menor' : 'text-sm text-texto-suave'}>
-                {nivelPrecioTexto(n.nivelPrecio)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-texto-suave">Distancia</dt>
-              <dd className={n.distanciaKm != null ? 'font-display text-cifra-menor' : 'text-sm text-texto-suave'}>
-                {distanciaTexto(n.distanciaKm)}
-              </dd>
-            </div>
-          </dl>
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onAlternarFav}
+              aria-pressed={esFavorito}
+              aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+                esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
+              }`}
+            >
+              <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
+            </button>
+            <Link
+              to={`/negocios/${n.id}`}
+              className={`rounded-full px-4 py-2 text-sm font-bold ${n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'}`}
+            >
+              Ver comercio
+            </Link>
+          </div>
         </div>
-      </Link>
+      </div>
     </li>
   );
 }
 
 /**
  * La lista pública no trae foto: se pide la principal de cada destacado (máximo 4 en la portada).
- * Sin foto, el lugar lo ocupa un letrero con la inicial y el color del sistema.
+ * Sin foto, el lugar lo ocupa un letrero con la inicial sobre crema.
  */
 function FotoDestacada({ id, nombre }: { id: number; nombre: string }) {
   const imagenes = useQuery({
@@ -313,7 +347,7 @@ function FotoDestacada({ id, nombre }: { id: number; nombre: string }) {
         src={principal.urlMiniatura}
         alt=""
         loading="lazy"
-        className="h-28 w-28 shrink-0 rounded-tarjeta bg-primario-claro object-cover"
+        className="h-24 w-24 shrink-0 rounded-xl bg-crema object-cover"
       />
     );
   }
@@ -321,9 +355,9 @@ function FotoDestacada({ id, nombre }: { id: number; nombre: string }) {
   return (
     <div
       aria-hidden="true"
-      className="flex h-28 w-28 shrink-0 items-center justify-center rounded-tarjeta bg-primario-claro"
+      className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-crema"
     >
-      <span className="font-display text-cifra text-primario">{nombre.trim().charAt(0).toUpperCase()}</span>
+      <span className="font-display text-3xl font-extrabold text-oliva/60">{nombre.trim().charAt(0).toUpperCase()}</span>
     </div>
   );
 }

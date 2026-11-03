@@ -9,6 +9,7 @@ import {
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
   ExclamationTriangleIcon,
+  HeartIcon,
   MapPinIcon,
   PhoneIcon,
   PhotoIcon,
@@ -30,6 +31,7 @@ import {
 } from '../lib/api';
 import { useSesion } from '../lib/auth';
 import { useCarrito } from '../lib/carrito';
+import { useFavoritos } from '../lib/favoritos';
 import { diaDeSemana, fecha, precio } from '../lib/formato';
 import { Aviso } from '../components/negocio/Aviso';
 import { Dialogo } from '../components/Dialogo';
@@ -147,13 +149,26 @@ function Encabezado({
 }) {
   const resenas = useQuery({ queryKey: ['resenas', id], queryFn: () => getResenas(id), retry: false });
   const promedio = resenas.data?.promedio;
+  const { ids: favoritos, alternar: alternarFav } = useFavoritos();
+  const esFavorito = favoritos.includes(id);
   return (
     <header className="mt-3">
       <div className="flex flex-wrap items-center gap-2">
         <h1 className="font-display text-titulo">{nombre}</h1>
+        <button
+          type="button"
+          onClick={() => alternarFav(id)}
+          aria-pressed={esFavorito}
+          aria-label={esFavorito ? `Quitar ${nombre} de favoritos` : `Guardar ${nombre} en favoritos`}
+          className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+            esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
+          }`}
+        >
+          <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
+        </button>
         {destacado && (
-          <span className="inline-flex items-center gap-1 rounded-campo bg-oro-cosecha/20 px-2 py-1 text-sm font-semibold text-tinta-cafe">
-            <Icono icono={StarIcon} tamano="chico" className="text-oro-cosecha" />
+          <span className="inline-flex items-center gap-1 rounded-campo bg-dorado/20 px-2 py-1 text-sm font-semibold text-oliva">
+            <Icono icono={StarIcon} tamano="chico" className="text-dorado" />
             {insignia ?? 'Destacado'}
           </span>
         )}
@@ -163,7 +178,7 @@ function Encabezado({
         <p className="mt-2 flex items-center gap-2 font-semibold">
           <span
             aria-hidden="true"
-            className={`h-2.5 w-2.5 shrink-0 rounded-full ${estadoAbierto ? 'bg-primario' : 'bg-error'}`}
+            className={`h-2.5 w-2.5 shrink-0 rounded-full ${estadoAbierto ? 'bg-exito' : 'bg-error'}`}
           />
           {estadoAbierto ? 'Abierto ahora' : 'Cerrado ahora'}
         </p>
@@ -185,7 +200,7 @@ function Encabezado({
                 <Icono
                   icono={StarIcon}
                   tamano="chico"
-                  className="text-oro-cosecha"
+                  className="text-dorado"
                   etiqueta={`${promedio.toFixed(1).replace('.', ',')} de 5 estrellas`}
                 />
                 <span className="text-sm text-texto-suave">({resenas.data?.cantidad ?? 0})</span>
@@ -605,7 +620,7 @@ function Estrellas({ valor, etiqueta }: { valor: number; etiqueta: string }) {
           key={n}
           icono={StarIcon}
           tamano="chico"
-          className={n <= llenas ? 'text-oro-cosecha' : 'text-tinta-cafe/20'}
+          className={n <= llenas ? 'text-dorado' : 'text-oliva/20'}
         />
       ))}
     </span>
