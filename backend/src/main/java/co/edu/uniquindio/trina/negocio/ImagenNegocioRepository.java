@@ -13,4 +13,6 @@ public interface ImagenNegocioRepository extends JpaRepository<ImagenNegocio, Lo
   boolean existsByNegocio_Id(Long negocioId);
 
   Optional<ImagenNegocio> findByIdAndNegocio_Id(Long id, Long negocioId);
+
+  List<ImagenNegocio> findByNegocio_IdInAndPrincipalTrue(List<Long> negocioIds);
 }

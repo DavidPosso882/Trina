@@ -185,6 +185,7 @@ export type FichaNegocio = {
   aceptaPedidos?: boolean;
   aceptaReservas?: boolean;
   nivelPrecio?: number | null;
+  imagenPrincipal?: string | null;
 };
 
 export const getNegocio = (id: number) => pedir<FichaNegocio>(`/negocios/${id}`);
@@ -258,6 +259,7 @@ export type ItemCatalogo = {
   disponible: boolean;
   destacado?: boolean;
   activo?: boolean;
+  imagenUrl?: string | null;
 };
 
 export type GrupoCatalogo = {
@@ -325,6 +327,16 @@ export const cambiarDisponibilidadItem = (
 /** Baja lógica: el ítem deja de mostrarse en el catálogo público. */
 export const eliminarItemCatalogo = (negocioId: number, itemId: number) =>
   pedir<void>(`/negocios/${negocioId}/catalogo/items/${itemId}`, { method: 'DELETE' });
+
+/** Foto del producto: la sube el comerciante dueño (JPG, PNG o WebP, hasta 5 MB). */
+export const subirImagenItemCatalogo = (negocioId: number, itemId: number, archivo: File) => {
+  const datos = new FormData();
+  datos.append('file', archivo);
+  return pedir<ItemCatalogo>(`/negocios/${negocioId}/catalogo/items/${itemId}/imagen`, {
+    method: 'POST',
+    body: datos
+  });
+};
 
 export const crearCategoriaCatalogo = (negocioId: number, datos: { nombre: string; orden?: number }) =>
   pedir<CategoriaCatalogo>(`/negocios/${negocioId}/catalogo/categorias`, {

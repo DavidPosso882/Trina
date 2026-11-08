@@ -18,6 +18,7 @@ import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** Mensaje de error de campo: icono + texto (RNF-01). */
 function ErrorCampo({ mensaje }: { mensaje?: string }) {
@@ -64,7 +65,7 @@ export default function Reservar() {
   if (sesion && sesion.rol !== 'CLIENTE') {
     return (
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-        <h1 className="font-display text-titulo">Reservar</h1>
+        <TituloAtras titulo="Reservar" />
         <div className="mt-3">
           <Aviso tipo="info">Para reservar necesitas una cuenta de cliente.</Aviso>
         </div>
@@ -86,7 +87,7 @@ export default function Reservar() {
   if (disponibilidad.isError || !disponibilidad.data) {
     return (
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-        <h1 className="font-display text-titulo">Reservar</h1>
+        <TituloAtras titulo="Reservar" />
         <ErrorRecargar
           mensaje={mensajeDeApi(disponibilidad.error)}
           onReintentar={() => disponibilidad.refetch()}
@@ -105,12 +106,14 @@ export default function Reservar() {
       <Link to={`/negocios/${id}`} className="text-sm font-semibold text-primario">
         ← {nombre}
       </Link>
-      <h1 className="mt-2 font-display text-titulo">
-        {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? 'Reservar alojamiento' : 'Reservar una mesa o servicio'}
-      </h1>
-      <p className="mt-1 text-texto-suave">
-        Paso único: cuéntanos cuándo y cuántas personas. Después el negocio confirma.
-      </p>
+      <TituloAtras
+        titulo={
+          disponibilidad.data.tipoReserva === 'ALOJAMIENTO'
+            ? 'Reservar alojamiento'
+            : 'Reservar una mesa o servicio'
+        }
+        subtitulo="Paso único: cuéntanos cuándo y cuántas personas. Después el negocio confirma."
+      />
 
       {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? (
         <FormularioAlojamiento id={id} />

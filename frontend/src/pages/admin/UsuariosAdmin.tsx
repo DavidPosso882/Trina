@@ -19,6 +19,7 @@ import { Aviso } from '../../components/negocio/Aviso';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 const ROLES: Rol[] = ['CLIENTE', 'COMERCIANTE', 'ADMINISTRADOR'];
 
@@ -85,7 +86,7 @@ export default function UsuariosAdmin() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Usuarios</h1>
+      <TituloAtras titulo="Usuarios" />
       <p className="mt-1 text-texto-suave">Busca, cambia de rol y activa o desactiva cuentas.</p>
 
       {aviso && (

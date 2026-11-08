@@ -14,6 +14,7 @@ import { ConNegocio } from '../../components/negocio/ConNegocio';
 import { DialogoMotivo } from '../../components/DialogoMotivo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** S5 — calificación con Star sólida en oro cosecha; las vacías van en outline. */
 function Estrellas({ valor, etiqueta }: { valor: number; etiqueta: string }) {
@@ -47,9 +48,9 @@ function ListaResenas({ negocio }: { negocio: Negocio }) {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Reseñas</h1>
+        <TituloAtras titulo="Reseñas" />
         {publicado && (
           <Link to={`/negocios/${negocio.id}`} className="text-sm font-semibold text-primario">
             Ver mi perfil público →

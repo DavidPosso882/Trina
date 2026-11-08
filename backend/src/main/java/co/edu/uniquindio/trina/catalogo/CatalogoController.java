@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Catálogo digital (RF-15 a RF-18): lectura pública y gestión del comerciante propietario. Todo lo
@@ -64,6 +65,25 @@ public class CatalogoController {
       @PathVariable Long itemId,
       @Valid @RequestBody CatalogoDto.ItemRequest req) {
     return servicio.actualizarItem(sesionId(), id, itemId, req);
+  }
+
+  @PostMapping("/items/{itemId}/imagen")
+  @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasRole('COMERCIANTE')")
+  public CatalogoDto.ItemRespuesta subirImagenItem(
+      @PathVariable Long id,
+      @PathVariable Long itemId,
+      @RequestParam(value = "file", required = false) MultipartFile file) {
+    if (file == null || file.isEmpty()) {
+      throw new co.edu.uniquindio.trina.negocio.ImagenInvalidaException(
+          "Sube una foto en JPG, PNG o WebP.");
+    }
+    try {
+      return servicio.subirImagenItem(sesionId(), id, itemId, file.getBytes(), file.getContentType());
+    } catch (java.io.IOException e) {
+      throw new co.edu.uniquindio.trina.negocio.ImagenInvalidaException(
+          "No pudimos leer el archivo; prueba de nuevo.");
+    }
   }
 
   @PatchMapping("/items/{itemId}/disponibilidad")

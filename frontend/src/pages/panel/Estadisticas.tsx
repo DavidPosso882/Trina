@@ -10,6 +10,7 @@ import { getEstadisticas, getProductosMasVistos, mensajeDeApi } from '../../lib/
 import { precio } from '../../lib/formato';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** PM-10 Estadísticas: resumen y productos más vistos en 7 o 30 días (RF-40/RF-42). */
 export default function Estadisticas() {
@@ -25,8 +26,8 @@ export default function Estadisticas() {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-      <h1 className="font-display text-titulo">Estadísticas</h1>
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <TituloAtras titulo="Estadísticas" />
       <p className="mt-1 text-texto-suave">Mira cómo te está yendo en TRINA.</p>
 
       <div className="mt-3 flex gap-1" aria-label="Elegir período">

@@ -17,6 +17,7 @@ import {
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { Aviso } from '../../components/negocio/Aviso';
+import { BotonAtras } from '../../components/TituloAtras';
 import { SelectorUbicacion } from '../../components/Mapa';
 import { CampoArea, CampoSelect, CampoTexto } from '../../components/negocio/Campos';
 import { EditorFotos } from '../../components/negocio/EditorFotos';
@@ -259,7 +260,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'cargando') {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <p role="status">Cargando…</p>
       </main>
     );
@@ -267,7 +268,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'error') {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Aviso tipo="error">{errorChequeo}</Aviso>
         <button
           type="button"
@@ -282,11 +283,14 @@ export default function AsistenteNegocio() {
 
   if (enviado) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-        <h1 className="flex items-center gap-2 font-display text-titulo">
-          <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" />
-          ¡Listo! Tu negocio quedó en revisión
-        </h1>
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+        <div className="flex items-center gap-2">
+          <BotonAtras />
+          <h1 className="flex items-center gap-2 font-display text-titulo">
+            <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" />
+            ¡Listo! Tu negocio quedó en revisión
+          </h1>
+        </div>
         <p className="mt-2">Te avisaremos cuando esté publicado. Si necesitamos algo, te lo hacemos saber.</p>
         <Link to="/panel/negocio" className="btn-principal mt-4 inline-block px-6 py-3">
           Ver mi negocio
@@ -521,7 +525,7 @@ export default function AsistenteNegocio() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
       <p className="text-sm font-semibold text-primario">Crear mi negocio</p>
       <div className="mt-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1" aria-hidden="true">

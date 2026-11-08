@@ -14,6 +14,7 @@ import { api, mensajeAmable } from '../lib/api';
 import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
 import { Icono } from '../components/Icono';
+import { TituloAtras } from '../components/TituloAtras';
 
 const esquema = z.object({
   nombre: z.string().trim().min(2, 'Escribe tu nombre (mínimo 2 letras).'),
@@ -74,7 +75,7 @@ export default function Registro() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Crear cuenta</h1>
+      <TituloAtras titulo="Crear cuenta" />
       <p className="mt-1 text-texto-suave">Es gratis y te toma un par de minutos.</p>
 
       {avisoEntrar && (

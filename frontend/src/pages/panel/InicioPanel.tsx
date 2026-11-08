@@ -26,6 +26,7 @@ import { EstadoNegocio } from '../../components/negocio/EstadoNegocio';
 import { SinNegocioPanel } from '../../components/negocio/SinNegocioPanel';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** PM-01 Inicio del panel (RF-27, RF-32, RF-35, RF-40): pendientes, resumen y plan. */
 export default function InicioPanel() {
@@ -33,7 +34,7 @@ export default function InicioPanel() {
 
   if (negocio.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -44,7 +45,7 @@ export default function InicioPanel() {
       return <SinNegocioPanel />;
     }
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(negocio.error)} onReintentar={() => negocio.refetch()} />
       </main>
     );
@@ -52,7 +53,7 @@ export default function InicioPanel() {
 
   if (!negocio.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -64,8 +65,8 @@ export default function InicioPanel() {
 function PanelCargado({ negocio }: { negocio: Negocio }) {
   const { sesion } = useSesion();
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-      <h1 className="font-display text-titulo">Hola, {sesion?.nombre ?? ''}</h1>
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <TituloAtras titulo={<>Hola, {sesion?.nombre ?? ''}</>} />
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="text-texto-suave">{negocio.nombre}:</span>
         <EstadoNegocio estado={negocio.estado} />

@@ -18,6 +18,7 @@ import { DialogoMotivo } from '../../components/DialogoMotivo';
 import { EtiquetaReservaComercio } from '../../components/EstadoEtiqueta';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 // S5 — la página resuelve las claves de icono de las acciones del comerciante.
 const ICONOS_ACCION: Partial<Record<ClaveIconoEstado, IconoSvg>> = {
@@ -67,14 +68,14 @@ export default function DetalleReservaPanel() {
 
   if (reserva.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando la reserva…" />
       </main>
     );
   }
   if (reserva.isError || !reserva.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(reserva.error)} onReintentar={() => reserva.refetch()} />
         <Link to="/panel/reservas" className="mt-3 inline-block font-semibold text-primario">
           Volver a Reservas
@@ -88,12 +89,12 @@ export default function DetalleReservaPanel() {
   const esAlojamiento = r.tipoReserva === 'ALOJAMIENTO';
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
       <Link to="/panel/reservas" className="text-sm font-semibold text-primario">
         ← Reservas
       </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Reserva #{r.id}</h1>
+        <TituloAtras titulo={<>Reserva #{r.id}</>} />
         <EtiquetaReservaComercio estado={r.estado} />
       </div>
 

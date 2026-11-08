@@ -33,17 +33,20 @@ export function NavPanel() {
   return (
     <nav
       aria-label="Secciones del panel"
-      className="border-b bg-superficie lg:sticky lg:top-4 lg:mt-6 lg:ml-4 lg:w-56 lg:shrink-0 lg:rounded-tarjeta lg:border lg:p-2 lg:shadow"
+      className="border-b bg-superficie lg:sticky lg:top-4 lg:mt-6 lg:ml-4 lg:w-64 lg:shrink-0 lg:rounded-2xl lg:border lg:border-oliva/10 lg:p-3 lg:shadow-md"
     >
-      <ul className="flex gap-1 overflow-x-auto px-2 py-2 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-0">
+      <p className="hidden px-3 pb-2 pt-1 text-xs font-bold uppercase tracking-widest text-texto-suave lg:block">
+        Mi negocio
+      </p>
+      <ul className="flex gap-1 overflow-x-auto px-2 py-2 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:px-0">
         {SECCIONES.map((s) => (
           <li key={s.to}>
             <NavLink
               to={s.to}
               end={s.end}
               className={({ isActive }) =>
-                `flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-campo px-3 py-2 ${
-                  isActive ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'
+                `flex min-h-[44px] items-center gap-3 whitespace-nowrap rounded-xl px-4 py-2.5 text-[15px] lg:min-h-[52px] ${
+                  isActive ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave hover:bg-fondo hover:text-texto'
                 }`
               }
             >

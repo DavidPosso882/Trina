@@ -10,6 +10,7 @@ import java.text.Normalizer;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class NegocioService {
       boolean aceptaReservas,
       String tipoReserva,
       Integer nivelPrecio,
-      @JsonInclude(JsonInclude.Include.NON_NULL) Double distanciaKm) {}
+      @JsonInclude(JsonInclude.Include.NON_NULL) Double distanciaKm,
+      @JsonInclude(JsonInclude.Include.NON_NULL) String imagenPrincipal) {}
 
   public record Pagina(List<Ficha> contenido, int pagina, int tamano, long total) {}
 
@@ -76,18 +78,25 @@ public class NegocioService {
   private final HorarioService horarios;
   private final EstadisticaService estadisticas;
   private final CatalogoItemRepository items;
+  private final ImagenNegocioRepository imagenes;
+  private final String baseMedia;
 
   public NegocioService(
       NegocioRepository negocios,
       MembresiaService membresias,
       HorarioService horarios,
       EstadisticaService estadisticas,
-      CatalogoItemRepository items) {
+      CatalogoItemRepository items,
+      ImagenNegocioRepository imagenes,
+      @org.springframework.beans.factory.annotation.Value("${app.minio.base-media:/media}")
+          String baseMedia) {
     this.negocios = negocios;
     this.membresias = membresias;
     this.horarios = horarios;
     this.estadisticas = estadisticas;
     this.items = items;
+    this.imagenes = imagenes;
+    this.baseMedia = baseMedia;
   }
 
   @Transactional(readOnly = true)
@@ -95,11 +104,29 @@ public class NegocioService {
     List<Hallazgo> hallazgos = buscar(filtro);
     int desde = Math.min(page * size, hallazgos.size());
     int hasta = Math.min(desde + size, hallazgos.size());
+    List<Hallazgo> pagina = hallazgos.subList(desde, hasta);
+    Map<Long, String> portadasPorNegocio =
+        portadas(pagina.stream().map(h -> h.negocio().getId()).toList());
     return new Pagina(
-        hallazgos.subList(desde, hasta).stream().map(NegocioService::ficha).toList(),
+        pagina.stream()
+            .map(h -> ficha(h, portadasPorNegocio.get(h.negocio().getId())))
+            .toList(),
         page,
         size,
         hallazgos.size());
+  }
+
+  /** Miniatura principal por negocio en una sola consulta (RF-12 en listados). */
+  private Map<Long, String> portadas(List<Long> negocioIds) {
+    if (negocioIds.isEmpty()) {
+      return Map.of();
+    }
+    return imagenes.findByNegocio_IdInAndPrincipalTrue(negocioIds).stream()
+        .collect(
+            Collectors.toMap(
+                i -> i.getNegocio().getId(),
+                i -> baseMedia + "/" + i.getClaveMiniatura(),
+                (a, b) -> a));
   }
 
   /** RF-24: mismos filtros que la lista, sin paginar y solo con coordenadas válidas (E4). */
@@ -138,7 +165,8 @@ public class NegocioService {
             n,
             horarios.abiertoAhora(n.getId(), Instant.now()),
             membresias.negociosDestacados().contains(n.getId()),
-            null));
+            null),
+        portadas(List.of(n.getId())).get(n.getId()));
   }
 
   // ---- Búsqueda ----
@@ -247,7 +275,7 @@ public class NegocioService {
   }
 
   /** RF-37 E1: la insignia "Destacado" viaja con el negocio cuando su plan efectivo es DESTACADA. */
-  private static Ficha ficha(Hallazgo h) {
+  private static Ficha ficha(Hallazgo h, String imagenPrincipal) {
     var n = h.negocio();
     return new Ficha(
         n.getId(),
@@ -267,7 +295,8 @@ public class NegocioService {
         n.isAceptaReservas(),
         n.getTipoReserva(),
         n.getNivelPrecio(),
-        h.distanciaKm());
+        h.distanciaKm(),
+        imagenPrincipal);
   }
 
   static String normalizar(String s) {

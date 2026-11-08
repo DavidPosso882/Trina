@@ -8,6 +8,7 @@ import { ApiError, mensajeAmable } from '../lib/api';
 import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
 import { Icono } from '../components/Icono';
+import { TituloAtras } from '../components/TituloAtras';
 
 const esquema = z.object({
   email: z.string().email('Ese correo no parece válido'),
@@ -51,7 +52,7 @@ export default function Ingresar() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Ingresar</h1>
+      <TituloAtras titulo="Ingresar" />
       {estado?.mensaje && (
         <div className="mt-3">
           <Aviso tipo="exito">{estado.mensaje}</Aviso>

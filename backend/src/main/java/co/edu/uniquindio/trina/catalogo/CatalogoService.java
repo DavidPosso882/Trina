@@ -1,6 +1,8 @@
 package co.edu.uniquindio.trina.catalogo;
 
+import co.edu.uniquindio.trina.almacenamiento.StoragePort;
 import co.edu.uniquindio.trina.estadistica.EstadisticaService;
+import co.edu.uniquindio.trina.negocio.ImagenInvalidaException;
 import co.edu.uniquindio.trina.negocio.Negocio;
 import co.edu.uniquindio.trina.negocio.NegocioRepository;
 import java.util.ArrayList;
@@ -24,16 +26,23 @@ public class CatalogoService {
   private final CatalogoItemRepository items;
   private final CatalogoCategoriaRepository categorias;
   private final EstadisticaService estadisticas;
+  private final StoragePort almacenamiento;
+  private final String baseMedia;
 
   public CatalogoService(
       NegocioRepository negocios,
       CatalogoItemRepository items,
       CatalogoCategoriaRepository categorias,
-      EstadisticaService estadisticas) {
+      EstadisticaService estadisticas,
+      StoragePort almacenamiento,
+      @org.springframework.beans.factory.annotation.Value("${app.minio.base-media:/media}")
+          String baseMedia) {
     this.negocios = negocios;
     this.items = items;
     this.categorias = categorias;
     this.estadisticas = estadisticas;
+    this.almacenamiento = almacenamiento;
+    this.baseMedia = baseMedia;
   }
 
   // ---- Lectura pública (RF-17/RF-18) ----
@@ -90,7 +99,7 @@ public class CatalogoService {
             limpiar(req.descripcion()),
             req.precioCop(),
             limpiar(req.claveImagen()));
-    return CatalogoDto.ItemRespuesta.de(items.save(item));
+    return CatalogoDto.ItemRespuesta.de(items.save(item), baseMedia);
   }
 
   @Transactional
@@ -106,7 +115,7 @@ public class CatalogoService {
         limpiar(req.descripcion()),
         req.precioCop(),
         limpiar(req.claveImagen()));
-    return CatalogoDto.ItemRespuesta.de(item);
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
   }
 
   @Transactional
@@ -116,7 +125,34 @@ public class CatalogoService {
     var item = itemDe(negocioId, itemId);
     exigirActivo(item);
     item.cambiarDisponibilidad(disponible);
-    return CatalogoDto.ItemRespuesta.de(item);
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
+  }
+
+  /**
+   * Foto del producto (RF-12 en catálogo): valida, guarda en el almacenamiento y deja la clave en
+   * el ítem. Devuelve el ítem con la URL pública resuelta.
+   */
+  @Transactional
+  public CatalogoDto.ItemRespuesta subirImagenItem(
+      Long propietarioId, Long negocioId, Long itemId, byte[] datos, String tipoContenido) {
+    propio(propietarioId, negocioId);
+    var item = itemDe(negocioId, itemId);
+    exigirActivo(item);
+    String extension =
+        switch (tipoContenido == null ? "" : tipoContenido.toLowerCase()) {
+          case "image/jpeg" -> "jpg";
+          case "image/png" -> "png";
+          case "image/webp" -> "webp";
+          default -> throw new ImagenInvalidaException("Usa una imagen JPG, PNG o WebP.");
+        };
+    if (datos == null || datos.length == 0 || datos.length > 5 * 1024 * 1024) {
+      throw new ImagenInvalidaException("La foto no puede superar los 5 MB.");
+    }
+    String clave =
+        "catalogo/" + negocioId + "/" + java.util.UUID.randomUUID() + "." + extension;
+    almacenamiento.guardar(clave, datos, tipoContenido);
+    item.asignarImagen(clave);
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
   }
 
   /** Baja lógica: el ítem queda inactivo y desaparece del catálogo público (RF-16 E2). */
@@ -165,7 +201,7 @@ public class CatalogoService {
       var suyos =
           visibles.stream()
               .filter(i -> i.getCategoria() != null && i.getCategoria().getId().equals(cat.getId()))
-              .map(CatalogoDto.ItemRespuesta::de)
+              .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia))
               .toList();
       if (!suyos.isEmpty()) {
         grupos.add(new CatalogoDto.GrupoCategoria(CatalogoDto.CategoriaRespuesta.de(cat), suyos));
@@ -174,7 +210,7 @@ public class CatalogoService {
     var sinCategoria =
         visibles.stream()
             .filter(i -> i.getCategoria() == null)
-            .map(CatalogoDto.ItemRespuesta::de)
+            .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia))
             .toList();
     return new CatalogoDto.CatalogoPublico(
         negocio.getId(), negocio.getNombre(), grupos, sinCategoria);

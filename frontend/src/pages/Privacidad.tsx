@@ -4,6 +4,7 @@ import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { getPoliticaPrivacidad } from '../lib/api';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** PU-07 Política de privacidad (RF-48): texto y versión vigentes directamente del servidor. */
 export default function Privacidad() {
@@ -15,7 +16,7 @@ export default function Privacidad() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Política de tratamiento de datos</h1>
+      <TituloAtras titulo="Política de tratamiento de datos" />
       <p className="mt-1 text-texto-suave">
         Así cuidamos tu información personal en TRINA. Aplica a clientes, comerciantes y visitantes.
       </p>

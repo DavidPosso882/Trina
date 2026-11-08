@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowDownTrayIcon,
   BellIcon,
+  BuildingStorefrontIcon,
   CalendarDaysIcon,
   ExclamationTriangleIcon,
   LockClosedIcon,
@@ -25,10 +26,11 @@ import { Aviso } from '../components/negocio/Aviso';
 import { Dialogo } from '../components/Dialogo';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** PC-06 Mi cuenta: datos, cambio de clave, descarga de datos y eliminación (RF-48/RF-49). */
 export default function MiCuenta() {
-  const { salir } = useSesion();
+  const { salir, sesion } = useSesion();
   const navegar = useNavigate();
   const datos = useQuery({ queryKey: ['mis-datos'], queryFn: getMisDatos });
 
@@ -56,11 +58,11 @@ export default function MiCuenta() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-      <h1 className="font-display text-titulo">Mi cuenta</h1>
+    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 md:pb-16">
+      <TituloAtras titulo="Mi cuenta" />
       <p className="mt-1 text-texto-suave">Desde aquí manejas tus datos personales.</p>
 
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         <Link
           to="/pedidos"
           className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
@@ -85,10 +87,20 @@ export default function MiCuenta() {
         >
           <Icono icono={LockClosedIcon} tamano="chico" /> Privacidad
         </Link>
+        {sesion?.rol === 'COMERCIANTE' && (
+          <Link
+            to="/panel"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
+          >
+            <Icono icono={BuildingStorefrontIcon} tamano="chico" /> Mi negocio
+          </Link>
+        )}
       </div>
 
+      <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:items-stretch">
       <FormularioDatos datos={datos.data} />
       <FormularioClave />
+      </div>
       <DescargarDatos datos={datos.data} />
       <ZonaPeligrosa onEliminar={alEliminar} />
     </main>
@@ -146,7 +158,7 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
 
   return (
     <form
-      className="tarjeta-form mt-4 space-y-4"
+      className="tarjeta-form flex h-full flex-col gap-4"
       onSubmit={handleSubmit(enviar)}
       noValidate
     >
@@ -154,7 +166,7 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
         <h2 className="text-seccion">Tus datos</h2>
         <p className="mt-1 text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <div className="min-w-0">
           <label htmlFor="nombre" className="mb-1 block text-sm font-semibold">
             Nombre
@@ -183,9 +195,11 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
       </div>
       {error && <Aviso tipo="error">{error}</Aviso>}
       {aviso && <Aviso tipo="exito">{aviso}</Aviso>}
-      <button type="submit" className="btn-principal-md" disabled={formState.isSubmitting}>
-        {formState.isSubmitting ? 'Guardando…' : 'Guardar cambios'}
-      </button>
+      <div className="mt-auto pt-1">
+        <button type="submit" className="btn-principal-md w-full sm:w-auto" disabled={formState.isSubmitting}>
+          {formState.isSubmitting ? 'Guardando…' : 'Guardar cambios'}
+        </button>
+      </div>
     </form>
   );
 }
@@ -232,7 +246,7 @@ function FormularioClave() {
 
   return (
     <form
-      className="tarjeta-form mt-4 space-y-4"
+      className="tarjeta-form flex h-full flex-col gap-4"
       onSubmit={handleSubmit(enviar)}
       noValidate
     >
@@ -250,7 +264,7 @@ function FormularioClave() {
         />
         <ErrorCampo mensaje={formState.errors.actual?.message} />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <div className="min-w-0">
           <label htmlFor="nueva" className="mb-1 block text-sm font-semibold">
             Contraseña nueva
@@ -283,9 +297,11 @@ function FormularioClave() {
         </div>
       </div>
       {error && <Aviso tipo="error">{error}</Aviso>}
-      <button type="submit" className="btn-principal-md" disabled={formState.isSubmitting}>
-        {formState.isSubmitting ? 'Cambiando…' : 'Cambiar contraseña'}
-      </button>
+      <div className="mt-auto pt-1">
+        <button type="submit" className="btn-principal-md w-full sm:w-auto" disabled={formState.isSubmitting}>
+          {formState.isSubmitting ? 'Cambiando…' : 'Cambiar contraseña'}
+        </button>
+      </div>
     </form>
   );
 }

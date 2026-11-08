@@ -25,6 +25,7 @@ import {
 import { Aviso } from '../components/negocio/Aviso';
 import { Icono, type IconoSvg } from '../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 // S5 — mismo criterio de iconos que la campana del header (Campana.tsx).
 const ICONOS: Record<ClaveIconoNotificacion, IconoSvg> = {
@@ -79,7 +80,7 @@ export default function Notificaciones() {
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Notificaciones</h1>
+        <TituloAtras titulo="Notificaciones" />
         <button
           type="button"
           className="btn-secundario inline-flex items-center gap-2 px-4 py-2"

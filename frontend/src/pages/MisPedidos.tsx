@@ -18,6 +18,7 @@ import { fechaHora, precio } from '../lib/formato';
 import { EtiquetaPedido } from '../components/EstadoEtiqueta';
 import { Icono, type IconoSvg } from '../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 // S5 — la página resuelve las claves de icono de lib/estados con Heroicons.
 const ICONOS: Record<ClaveIconoEstado, IconoSvg> = {
@@ -42,7 +43,7 @@ export default function MisPedidos() {
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-      <h1 className="font-display text-titulo">Mis pedidos</h1>
+      <TituloAtras titulo="Mis pedidos" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
         <button

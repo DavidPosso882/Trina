@@ -6,6 +6,8 @@ import { useSesion } from '../lib/auth';
 import { useFavoritos } from '../lib/favoritos';
 import { Cargando } from '../components/Estados';
 import { Icono } from '../components/Icono';
+import { TarjetaNegocio } from '../components/negocio/TarjetaNegocio';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** Favoritos real (S4): guardados en localStorage de este dispositivo, sin cuenta. */
 export default function Favoritos() {
@@ -26,7 +28,7 @@ export default function Favoritos() {
   if (!sesion) {
     return (
       <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-16">
-        <h1 className="font-display text-titulo">Favoritos</h1>
+        <TituloAtras titulo="Favoritos" />
         <p className="mt-1 text-texto-suave">
           Tus comercios guardados.
         </p>
@@ -51,7 +53,7 @@ export default function Favoritos() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-16">
-      <h1 className="font-display text-titulo">Favoritos</h1>
+      <TituloAtras titulo="Favoritos" />
       <p className="mt-1 text-texto-suave">
         Tus comercios guardados.
       </p>
@@ -84,40 +86,14 @@ export default function Favoritos() {
       )}
 
       {detalle.data && detalle.data.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-3">
+        <ul className="mt-3 flex snap-x gap-4 overflow-x-auto pb-2 md:snap-none md:flex-col md:overflow-visible md:pb-0">
           {detalle.data.map((n) => (
-            <li
+            <TarjetaNegocio
               key={n.id}
-              className="flex items-center gap-3 rounded-tarjeta border border-oliva/10 bg-white p-3 shadow-sm"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="max-w-full truncate text-xs font-semibold text-texto-suave">{n.categoria ?? 'Negocio local'}</p>
-                <h2 className="line-clamp-2 font-display text-lg font-bold">{n.nombre}</h2>
-                <p className="flex items-center gap-1 text-xs font-semibold">
-                  <span
-                    aria-hidden="true"
-                    className={`h-2 w-2 rounded-full ${n.abiertoAhora ? 'bg-exito' : 'bg-error'}`}
-                  />
-                  <span className={n.abiertoAhora ? 'text-exito' : 'text-error'}>
-                    {n.abiertoAhora ? 'Abierto' : 'Cerrado'}
-                  </span>
-                </p>
-              </div>
-              <Link
-                to={`/negocios/${n.id}`}
-                className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-oliva px-4 text-sm font-bold text-white"
-              >
-                Ver comercio
-              </Link>
-              <button
-                type="button"
-                onClick={() => quitar(n.id)}
-                aria-label={`Quitar ${n.nombre} de favoritos`}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-oliva/15 text-error"
-              >
-                <HeartIcon className="h-5 w-5" fill="currentColor" aria-hidden="true" />
-              </button>
-            </li>
+              negocio={n}
+              esFavorito
+              onAlternarFav={() => quitar(n.id)}
+            />
           ))}
         </ul>
       )}

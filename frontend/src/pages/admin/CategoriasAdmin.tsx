@@ -21,6 +21,7 @@ import { CampoTexto } from '../../components/negocio/Campos';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 const esquema = z.object({
   nombre: z.string().trim().min(2, 'Escribe el nombre (mínimo 2 letras).'),
@@ -96,7 +97,7 @@ export default function CategoriasAdmin() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Categorías</h1>
+      <TituloAtras titulo="Categorías" />
       <p className="mt-1 text-texto-suave">Ordena cómo se agrupan los negocios en el directorio.</p>
 
       {aviso && (

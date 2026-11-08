@@ -10,6 +10,7 @@ import { Dialogo } from '../components/Dialogo';
 import { EtiquetaReserva } from '../components/EstadoEtiqueta';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** Detalle de una reserva del cliente con cancelación cuando aplica (RF-31). */
 export default function DetalleReserva() {
@@ -71,7 +72,7 @@ export default function DetalleReserva() {
         ← Mis reservas
       </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Reserva #{r.id}</h1>
+        <TituloAtras titulo={<>Reserva #{r.id}</>} />
         <EtiquetaReserva estado={r.estado} />
       </div>
       <p className="mt-1 text-texto-suave">{r.negocio}</p>

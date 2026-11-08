@@ -1,5 +1,6 @@
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import {
+  BuildingStorefrontIcon,
   HomeIcon,
   MagnifyingGlassIcon,
   HeartIcon,
@@ -35,7 +36,10 @@ function Marco() {
     { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
     { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
     { a: '/favoritos', texto: 'Favoritos', icono: HeartIcon, fin: false },
-    { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false }
+    { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false },
+    ...(sesion?.rol === 'COMERCIANTE'
+      ? [{ a: '/panel', texto: 'Mi negocio', icono: BuildingStorefrontIcon, fin: false }]
+      : [])
   ];
   const inicial = (sesion?.nombre ?? 'M').trim().charAt(0).toUpperCase() || 'M';
   return (

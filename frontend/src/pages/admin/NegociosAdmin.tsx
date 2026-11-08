@@ -22,6 +22,7 @@ import { DialogoMotivo } from '../../components/DialogoMotivo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
 import { AltaAsistida } from './AltaAsistida';
+import { TituloAtras } from '../../components/TituloAtras';
 
 const TABS = [
   { valor: '', texto: 'Todos' },
@@ -53,7 +54,7 @@ export default function NegociosAdmin() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Negocios</h1>
+      <TituloAtras titulo="Negocios" />
       <p className="mt-1 text-texto-suave">Revisa las solicitudes y decide si se publican.</p>
 
       {aviso && (

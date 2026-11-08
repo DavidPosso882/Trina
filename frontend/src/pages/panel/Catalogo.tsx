@@ -15,6 +15,7 @@ import {
   getCatalogoPropio,
   listarCategoriasCatalogo,
   mensajeDeApi,
+  subirImagenItemCatalogo,
   type CategoriaCatalogo,
   type DatosItemCatalogo,
   type ItemCatalogo,
@@ -38,6 +39,7 @@ import { EstadoNegocio } from '../../components/negocio/EstadoNegocio';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** PM: catálogo del comerciante (RF-15 a RF-18): ítems, disponibilidad, baja lógica y categorías. */
 export default function Catalogo() {
@@ -77,10 +79,16 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
   };
 
   const guardarItem = useMutation({
-    mutationFn: (entrada: { item: ItemCatalogo | null; datos: DatosItemCatalogo }) =>
-      entrada.item
+    mutationFn: (entrada: { item: ItemCatalogo | null; datos: DatosItemCatalogo; archivo?: File | null }) =>
+      (entrada.item
         ? actualizarItemCatalogo(negocio.id, entrada.item.id, entrada.datos)
-        : crearItemCatalogo(negocio.id, entrada.datos),
+        : crearItemCatalogo(negocio.id, entrada.datos)
+      ).then(async (guardado) => {
+        if (entrada.archivo) {
+          return subirImagenItemCatalogo(negocio.id, guardado.id, entrada.archivo);
+        }
+        return guardado;
+      }),
     onSuccess: (_dato, entrada) => {
       invalidar();
       setItemDialogo(null);
@@ -147,8 +155,8 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
     : 0;
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-      <h1 className="font-display text-titulo">Catálogo</h1>
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <TituloAtras titulo="Catálogo" />
       <p className="mt-1 text-texto-suave">
         Carga tus productos o servicios para que tus clientes puedan verlos y pedirlos.
       </p>
@@ -207,6 +215,14 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
               {grupo.items.map((item) => (
                 <li key={item.id} className="py-4">
                   <div className="flex items-start justify-between gap-3">
+                    {item.imagenUrl && (
+                      <img
+                        src={item.imagenUrl}
+                        alt=""
+                        loading="lazy"
+                        className="h-14 w-14 shrink-0 rounded-campo bg-crema object-cover"
+                      />
+                    )}
                     <div className="min-w-0">
                       <p className="flex items-center gap-2 font-semibold">
                         <Icono
@@ -346,8 +362,8 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
           <FormularioItem
             item={itemDialogo.item}
             categorias={categorias.data ?? []}
-            onGuardar={async (datos) => {
-              await guardarItem.mutateAsync({ item: itemDialogo.item, datos });
+            onGuardar={async (datos, archivo) => {
+              await guardarItem.mutateAsync({ item: itemDialogo.item, datos, archivo });
             }}
             onCancelar={() => setItemDialogo(null)}
           />
@@ -460,10 +476,12 @@ function FormularioItem({
 }: {
   item: ItemCatalogo | null;
   categorias: CategoriaCatalogo[];
-  onGuardar: (datos: DatosItemCatalogo) => Promise<void>;
+  onGuardar: (datos: DatosItemCatalogo, archivo?: File | null) => Promise<void>;
   onCancelar: () => void;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [archivo, setArchivo] = useState<File | null>(null);
+  const [vistaPrevia, setVistaPrevia] = useState<string | null>(item?.imagenUrl ?? null);
   const { register, handleSubmit, formState } = useForm<ValoresItem>({
     resolver: zodResolver(esquemaItem),
     defaultValues: {
@@ -475,16 +493,40 @@ function FormularioItem({
     }
   });
 
+  const elegirFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const elegido = e.target.files?.[0] ?? null;
+    if (vistaPrevia?.startsWith('blob:')) URL.revokeObjectURL(vistaPrevia);
+    if (!elegido) {
+      setArchivo(null);
+      setVistaPrevia(item?.imagenUrl ?? null);
+      return;
+    }
+    if (!/^image\/(jpeg|png|webp)$/.test(elegido.type)) {
+      setError('Usa una imagen JPG, PNG o WebP.');
+      return;
+    }
+    if (elegido.size > 5 * 1024 * 1024) {
+      setError('La foto no puede superar los 5 MB.');
+      return;
+    }
+    setError(null);
+    setArchivo(elegido);
+    setVistaPrevia(URL.createObjectURL(elegido));
+  };
+
   const enviar = async (v: ValoresItem) => {
     setError(null);
     try {
-      await onGuardar({
-        nombre: v.nombre.trim(),
-        precioCop: Number(v.precio),
-        descripcion: v.descripcion.trim() || undefined,
-        tipo: v.tipo,
-        categoriaId: v.categoriaId ? Number(v.categoriaId) : null
-      });
+      await onGuardar(
+        {
+          nombre: v.nombre.trim(),
+          precioCop: Number(v.precio),
+          descripcion: v.descripcion.trim() || undefined,
+          tipo: v.tipo,
+          categoriaId: v.categoriaId ? Number(v.categoriaId) : null
+        },
+        archivo
+      );
     } catch (e) {
       setError(mensajeDeApi(e));
     }
@@ -552,6 +594,34 @@ function FormularioItem({
             </option>
           ))}
         </select>
+      </div>
+      <div>
+        <label htmlFor="item-foto" className="font-semibold">
+          Foto del producto <span className="font-normal text-texto-suave">(opcional, JPG/PNG/WebP hasta 5 MB)</span>
+        </label>
+        <div className="mt-1 flex items-center gap-3">
+          {vistaPrevia ? (
+            <img
+              src={vistaPrevia}
+              alt=""
+              className="h-16 w-16 shrink-0 rounded-campo bg-crema object-cover"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-campo bg-crema text-xl font-extrabold text-oliva/50"
+            >
+              {(item?.nombre ?? '·').trim().charAt(0).toUpperCase() || '·'}
+            </span>
+          )}
+          <input
+            id="item-foto"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={elegirFoto}
+            className="block w-full min-w-0 text-sm text-texto-suave file:mr-3 file:min-h-[44px] file:rounded-full file:border file:border-oliva/15 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-oliva"
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="item-descripcion" className="font-semibold">

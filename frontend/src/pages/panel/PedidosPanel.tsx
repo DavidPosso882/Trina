@@ -17,6 +17,7 @@ import { fechaHora, precio } from '../../lib/formato';
 import { EtiquetaPedidoComercio } from '../../components/EstadoEtiqueta';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 // S5 — la página resuelve las claves de icono de lib/estados con Heroicons.
 const ICONOS: Record<ClaveIconoEstado, IconoSvg> = {
@@ -46,8 +47,8 @@ export default function PedidosPanel() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
-      <h1 className="font-display text-titulo">Pedidos</h1>
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <TituloAtras titulo="Pedidos" />
       <p className="mt-1 text-texto-suave">Aceptá, rechaza o marca como listo cada pedido.</p>
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">

@@ -54,6 +54,10 @@ public class ImagenNegocio {
     return new ImagenNegocio(negocio, claveObjeto, claveMiniatura, principal, orden);
   }
 
+  public Negocio getNegocio() {
+    return negocio;
+  }
+
   public Long getId() {
     return id;
   }

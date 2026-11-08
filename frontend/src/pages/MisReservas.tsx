@@ -15,6 +15,7 @@ import { fecha, hora } from '../lib/formato';
 import { EtiquetaReserva } from '../components/EstadoEtiqueta';
 import { Icono, type IconoSvg } from '../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 // S5 — la página resuelve las claves de icono de lib/estados con Heroicons.
 const ICONOS: Partial<Record<ClaveIconoEstado, IconoSvg>> = {
@@ -35,7 +36,7 @@ export default function MisReservas() {
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-      <h1 className="font-display text-titulo">Mis reservas</h1>
+      <TituloAtras titulo="Mis reservas" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
         <button

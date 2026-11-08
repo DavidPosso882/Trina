@@ -5,6 +5,7 @@ import { listarAuditoria, mensajeDeApi, type FiltrosAuditoria } from '../../lib/
 import { fechaHora } from '../../lib/formato';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** PA-07 Auditoría: bitácora con filtros y paginación (RF-46). Las fechas se envían en UTC. */
 export default function AuditoriaAdmin() {
@@ -43,7 +44,7 @@ export default function AuditoriaAdmin() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Auditoría</h1>
+      <TituloAtras titulo="Auditoría" />
       <p className="mt-1 text-texto-suave">Historial de acciones administrativas de la plataforma.</p>
 
       <form className="mt-4 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4" onSubmit={aplicar}>

@@ -13,6 +13,7 @@ import { etiquetaEstado } from '../../components/negocio/EstadoNegocio';
 import { precio } from '../../lib/formato';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 const NOMBRE_ROL: Record<string, string> = {
   CLIENTE: 'Clientes',
@@ -48,7 +49,7 @@ export default function ResumenAdmin() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Resumen</h1>
+      <TituloAtras titulo="Resumen" />
       <p className="mt-1 text-texto-suave">Cómo está TRINA hoy.</p>
 
       {vacio && <Vacio>Todavía no hay negocios ni usuarios registrados.</Vacio>}

@@ -21,6 +21,7 @@ import { DialogoMotivo } from '../../components/DialogoMotivo';
 import { EtiquetaPedidoComercio } from '../../components/EstadoEtiqueta';
 import { Icono, type IconoSvg } from '../../components/Icono';
 import { Cargando, ErrorRecargar } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 // S5 — la página resuelve las claves de icono de las acciones del comerciante.
 const ICONOS_ACCION: Partial<Record<ClaveIconoEstado, IconoSvg>> = {
@@ -71,14 +72,14 @@ export default function DetallePedidoPanel() {
 
   if (pedido.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando el pedido…" />
       </main>
     );
   }
   if (pedido.isError || !pedido.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(pedido.error)} onReintentar={() => pedido.refetch()} />
         <Link to="/panel/pedidos" className="mt-3 inline-block font-semibold text-primario">
           Volver a Pedidos
@@ -92,12 +93,12 @@ export default function DetallePedidoPanel() {
   const esPagoSandbox = p.metodoPago === 'SANDBOX';
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
       <Link to="/panel/pedidos" className="text-sm font-semibold text-primario">
         ← Pedidos
       </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Pedido #{p.id}</h1>
+        <TituloAtras titulo={<>Pedido #{p.id}</>} />
         <EtiquetaPedidoComercio estado={p.estado} />
       </div>
       <p className="mt-1 text-texto-suave">{fechaHora(p.creadoEn)}</p>

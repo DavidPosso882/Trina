@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon } from '@heroico
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { mensajeDeApi, restablecerClave } from '../lib/api';
 import { Icono } from '../components/Icono';
+import { TituloAtras, BotonAtras } from '../components/TituloAtras';
 
 const esquema = z
   .object({
@@ -58,7 +59,7 @@ export default function RestablecerClave() {
   if (!token) {
     return (
       <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-        <h1 className="font-display text-titulo">Restablecer contraseña</h1>
+        <TituloAtras titulo="Restablecer contraseña" />
         <p className="mt-1 text-texto-suave">
           El enlace del correo trae el token. Si lo abriste en otro dispositivo, pégalo aquí.
         </p>
@@ -101,9 +102,12 @@ export default function RestablecerClave() {
   if (listo) {
     return (
       <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-        <h1 className="flex items-center gap-2 font-display text-titulo">
+        <div className="flex items-center gap-2">
+          <BotonAtras />
+          <h1 className="flex items-center gap-2 font-display text-titulo">
           <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" /> Contraseña nueva lista
         </h1>
+        </div>
         <div className="tarjeta-form mt-4 space-y-4">
           <p>
             Ya puedes ingresar con tu correo y la contraseña nueva. Por seguridad, cerramos las sesiones
@@ -125,7 +129,7 @@ export default function RestablecerClave() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Crea tu contraseña nueva</h1>
+      <TituloAtras titulo="Crea tu contraseña nueva" />
       <p className="mt-1 text-texto-suave">Mínimo 8 caracteres, con letras y números.</p>
       <form className="tarjeta-form mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
         <div>

@@ -16,6 +16,7 @@ import { precio } from '../lib/formato';
 import { Aviso } from '../components/negocio/Aviso';
 import { FormularioPago } from '../components/FormularioPago';
 import { Icono } from '../components/Icono';
+import { TituloAtras } from '../components/TituloAtras';
 
 const esquema = z.object({
   metodoPago: z.enum(['SANDBOX', 'EN_LOCAL']),
@@ -39,7 +40,7 @@ export default function ConfirmarPedido() {
   if (sesion && sesion.rol !== 'CLIENTE') {
     return (
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-        <h1 className="font-display text-titulo">Confirmar pedido</h1>
+        <TituloAtras titulo="Confirmar pedido" />
         <div className="mt-3">
           <Aviso tipo="info">Para confirmar un pedido necesitas una cuenta de cliente.</Aviso>
         </div>
@@ -81,7 +82,7 @@ export default function ConfirmarPedido() {
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-40 pt-6">
-      <h1 className="font-display text-titulo">Confirmar pedido</h1>
+      <TituloAtras titulo="Confirmar pedido" />
 
       {!yaPagando && carrito && (
         <>

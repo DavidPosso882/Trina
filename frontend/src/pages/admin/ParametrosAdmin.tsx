@@ -12,6 +12,7 @@ import { precio } from '../../lib/formato';
 import { Aviso } from '../../components/negocio/Aviso';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** Reglas de RF-45: solo comision_pct tiene rango validado (0-30). */
 function validarParametro(clave: string, valor: string): string | null {
@@ -35,7 +36,7 @@ export default function ParametrosAdmin() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Parámetros y planes</h1>
+      <TituloAtras titulo="Parámetros y planes" />
       <p className="mt-1 text-texto-suave">
         Ajusta los valores del sistema. La comisión se valida entre 0 y 30.
       </p>

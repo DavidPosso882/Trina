@@ -17,6 +17,7 @@ import { EtiquetaPedido } from '../components/EstadoEtiqueta';
 import { FormularioPago } from '../components/FormularioPago';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
+import { TituloAtras } from '../components/TituloAtras';
 
 /** Detalle de un pedido del cliente con seguimiento, pago pendiente y cancelación (RF-31). */
 export default function DetallePedido() {
@@ -79,7 +80,7 @@ export default function DetallePedido() {
         ← Mis pedidos
       </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-display text-titulo">Pedido #{p.id}</h1>
+        <TituloAtras titulo={<>Pedido #{p.id}</>} />
         <EtiquetaPedido estado={p.estado} />
       </div>
       <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1">

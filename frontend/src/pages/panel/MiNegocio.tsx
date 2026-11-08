@@ -78,7 +78,7 @@ function FormularioDatos({ negocio }: { negocio: Negocio }) {
 
   if (categorias.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <p role="status">Cargando tus datos…</p>
       </main>
     );
@@ -86,7 +86,7 @@ function FormularioDatos({ negocio }: { negocio: Negocio }) {
 
   if (categorias.isError) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
         <Aviso tipo="error">No pudimos cargar las categorías. Revisa tu conexión.</Aviso>
         <button type="button" className="btn-secundario mt-3 px-4 py-2" onClick={() => categorias.refetch()}>
           Intentar de nuevo
@@ -184,7 +184,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
       <EncabezadoNegocio negocio={negocio} titulo="Mi negocio" />
 
       <div className="mt-4">

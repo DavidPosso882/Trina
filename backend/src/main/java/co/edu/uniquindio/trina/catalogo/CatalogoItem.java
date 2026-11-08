@@ -94,6 +94,10 @@ public class CatalogoItem {
     this.activo = false;
   }
 
+  public void asignarImagen(String claveImagen) {
+    this.claveImagen = claveImagen;
+  }
+
   public void quitarCategoria() {
     this.categoria = null;
   }

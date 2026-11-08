@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon } from '@heroico
 import { recuperarClave, mensajeDeApi } from '../lib/api';
 import { Aviso } from '../components/negocio/Aviso';
 import { Icono } from '../components/Icono';
+import { TituloAtras } from '../components/TituloAtras';
 
 const esquema = z.object({
   email: z.string().trim().email('Ese correo no parece válido.')
@@ -40,7 +41,7 @@ export default function RecuperarClave() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Recuperar contraseña</h1>
+      <TituloAtras titulo="Recuperar contraseña" />
       <p className="mt-1 text-texto-suave">
         Te enviamos un enlace para crear una contraseña nueva. El enlace vence a los 30 minutos y
         sirve una sola vez.

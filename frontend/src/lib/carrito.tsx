@@ -14,6 +14,7 @@ export type ItemCarrito = {
   nombre: string;
   precioCop: number;
   cantidad: number;
+  imagenUrl?: string | null;
 };
 
 export type Carrito = {
@@ -58,7 +59,10 @@ type Contexto = {
   cantidadTotal: number;
   /** true si el carrito tiene productos de otro negocio: hay que confirmar antes de mezclar. */
   esDeOtroNegocio: (negocioId: number) => boolean;
-  agregar: (negocio: { id: number; nombre: string }, item: { id: number; nombre: string; precioCop: number }) => void;
+  agregar: (
+    negocio: { id: number; nombre: string },
+    item: { id: number; nombre: string; precioCop: number; imagenUrl?: string | null }
+  ) => void;
   cambiarCantidad: (itemId: number, cantidad: number) => void;
   quitar: (itemId: number) => void;
   vaciar: () => void;
@@ -92,13 +96,13 @@ export function ProveedorCarrito({ children }: { children: ReactNode }) {
   );
 
   const agregar = useCallback(
-    (negocio: { id: number; nombre: string }, item: { id: number; nombre: string; precioCop: number }) => {
+    (negocio: { id: number; nombre: string }, item: { id: number; nombre: string; precioCop: number; imagenUrl?: string | null }) => {
       setCarrito((actual) => {
         const items = actual && actual.negocioId === negocio.id ? actual.items : [];
         const existente = items.find((i) => i.itemId === item.id);
         const siguientes = existente
-          ? items.map((i) => (i.itemId === item.id ? { ...i, cantidad: i.cantidad + 1 } : i))
-          : [...items, { itemId: item.id, nombre: item.nombre, precioCop: item.precioCop, cantidad: 1 }];
+          ? items.map((i) => (i.itemId === item.id ? { ...i, cantidad: i.cantidad + 1, imagenUrl: i.imagenUrl ?? item.imagenUrl ?? null } : i))
+          : [...items, { itemId: item.id, nombre: item.nombre, precioCop: item.precioCop, cantidad: 1, imagenUrl: item.imagenUrl ?? null }];
         return { negocioId: negocio.id, negocioNombre: negocio.nombre, items: siguientes };
       });
     },

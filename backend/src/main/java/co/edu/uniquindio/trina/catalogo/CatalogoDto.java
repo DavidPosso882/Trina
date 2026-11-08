@@ -3,6 +3,7 @@ package co.edu.uniquindio.trina.catalogo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 
@@ -36,10 +37,11 @@ public final class CatalogoDto {
       String descripcion,
       int precioCop,
       String claveImagen,
+      @JsonInclude(JsonInclude.Include.NON_NULL) String imagenUrl,
       boolean disponible,
       boolean destacado,
       boolean activo) {
-    static ItemRespuesta de(CatalogoItem i) {
+    static ItemRespuesta de(CatalogoItem i, String baseMedia) {
       return new ItemRespuesta(
           i.getId(),
           i.getCategoria() == null ? null : i.getCategoria().getId(),
@@ -48,6 +50,7 @@ public final class CatalogoDto {
           i.getDescripcion(),
           i.getPrecioCop(),
           i.getClaveImagen(),
+          i.getClaveImagen() == null ? null : baseMedia + "/" + i.getClaveImagen(),
           i.isDisponible(),
           i.isDestacado(),
           i.isActivo());

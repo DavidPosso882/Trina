@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,6 +14,7 @@ import {
   PhoneIcon,
   PhotoIcon,
   PlusIcon,
+  ShareIcon,
   ShoppingCartIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon, StarIcon } from '@heroicons/react/24/solid';
@@ -37,6 +38,7 @@ import { Aviso } from '../components/negocio/Aviso';
 import { Dialogo } from '../components/Dialogo';
 import { Cargando, ErrorRecargar, Vacio } from '../components/Estados';
 import { Icono } from '../components/Icono';
+import { BotonAtras } from '../components/TituloAtras';
 
 type Seccion = 'informacion' | 'catalogo' | 'resenas';
 
@@ -92,6 +94,9 @@ export default function PerfilNegocio() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-40 pt-4 md:pt-6">
+      <div className="mb-3">
+        <BotonAtras />
+      </div>
       <div className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-24px_rgba(27,33,23,0.35)]">
       <TarjetaPortada
         id={id}
@@ -149,6 +154,7 @@ function TarjetaPortada({
   aprobado: boolean;
 }) {
   const { sesion } = useSesion();
+  const navigate = useNavigate();
   const esCliente = !sesion || sesion.rol === 'CLIENTE';
   const { ids: favoritos, alternar: alternarFav } = useFavoritos();
   const esFavorito = favoritos.includes(id);
@@ -180,6 +186,27 @@ function TarjetaPortada({
     }, 5000);
     return () => clearTimeout(temporizador);
   }, [activa, ordenadas.length]);
+  const [copiado, setCopiado] = useState(false);
+  const compartir = async () => {
+    const url = window.location.href;
+    const datos = { title: nombre, text: `Mira ${nombre} en TRINA`, url };
+    const nav = navigator as Navigator & { share?: (datos: ShareData) => Promise<void> };
+    if (typeof nav.share === 'function') {
+      try {
+        await nav.share(datos);
+      } catch {
+        /* El usuario canceló el diálogo. */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    } catch {
+      setCopiado(false);
+    }
+  };
   const alDeslizar = () => {
     const el = carrusel.current;
     if (!el || ordenadas.length === 0) return;
@@ -191,7 +218,9 @@ function TarjetaPortada({
       )}`
     : null;
   const abierto = estadoAbierto ?? false;
-  const hayAcciones = Boolean(telefono || enlaceWa || (aprobado && esCliente));
+  const { cantidadTotal } = useCarrito();
+  const hayItems = cantidadTotal > 0;
+  const hayAcciones = Boolean(telefono || enlaceWa || aprobado);
   return (
     <section aria-label={nombre}>
       <div className="relative">
@@ -258,17 +287,42 @@ function TarjetaPortada({
             {abierto ? 'Abierto ahora' : 'Cerrado ahora'}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => alternarFav(id)}
-          aria-pressed={esFavorito}
-          aria-label={esFavorito ? `Quitar ${nombre} de favoritos` : `Guardar ${nombre} en favoritos`}
-          className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/70 backdrop-blur-md transition hover:bg-white/90 ${
-            esFavorito ? 'text-error' : 'text-oliva/70'
-          }`}
-        >
-          <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
-        </button>
+        <div className="absolute right-4 top-4 flex gap-2">
+          <button
+            type="button"
+            onClick={compartir}
+            aria-label={`Compartir ${nombre}`}
+            title="Compartir"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70 text-oliva/70 backdrop-blur-md transition hover:bg-white/90"
+          >
+            <Icono icono={ShareIcon} />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!sesion) {
+                navigate('/favoritos');
+                return;
+              }
+              alternarFav(id);
+            }}
+            aria-pressed={esFavorito}
+            aria-label={esFavorito ? `Quitar ${nombre} de favoritos` : `Guardar ${nombre} en favoritos`}
+            className={`flex h-11 w-11 items-center justify-center rounded-full bg-white/70 backdrop-blur-md transition hover:bg-white/90 ${
+              esFavorito ? 'text-error' : 'text-oliva/70'
+            }`}
+          >
+            <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
+          </button>
+        </div>
+        {copiado && (
+          <p
+            role="status"
+            className="absolute right-4 top-[4.25rem] rounded-full bg-oliva px-3 py-1 text-xs font-semibold text-white shadow-lg"
+          >
+            ¡Enlace copiado!
+          </p>
+        )}
         <div className="absolute inset-x-5 bottom-24">
           <h1 className="font-display text-2xl font-bold text-white md:text-4xl">{nombre}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
@@ -322,6 +376,21 @@ function TarjetaPortada({
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
             )}
+            <Link
+              to="/carrito"
+              aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
+              className={`relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border px-3 text-sm shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
+            >
+              <Icono icono={ShoppingCartIcon} tamano="chico" /> Pedido
+              {hayItems && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-1 -top-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-oliva px-1 text-[11px] font-extrabold text-white"
+                >
+                  {cantidadTotal > 99 ? '99+' : cantidadTotal}
+                </span>
+              )}
+            </Link>
           </div>
           {aprobado && !esCliente && (
             <p className="mt-2 text-center text-xs text-texto-suave">
@@ -476,7 +545,7 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
   const hayItems = grupos.some((g) => g.items.length > 0);
 
   const agregarDirecto = (item: ItemCatalogo) => {
-    agregar({ id, nombre }, { id: item.id, nombre: item.nombre, precioCop: item.precioCop });
+    agregar({ id, nombre }, { id: item.id, nombre: item.nombre, precioCop: item.precioCop, imagenUrl: item.imagenUrl ?? null });
     setAviso(`${item.nombre} se agregó a tu pedido.`);
   };
   const pedirAgregar = (item: ItemCatalogo) => {
@@ -504,7 +573,16 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
           <ul className="mt-1 divide-y divide-tinta-cafe/10 border-t border-tinta-cafe/10">
             {grupo.items.map((item) => (
               <li key={item.id} className="flex items-start justify-between gap-3 py-4">
-                <div className="min-w-0">
+                <div className="flex min-w-0 flex-1 items-start gap-3">
+                  {item.imagenUrl && (
+                    <img
+                      src={item.imagenUrl}
+                      alt=""
+                      loading="lazy"
+                      className="h-16 w-16 shrink-0 rounded-campo bg-crema object-cover"
+                    />
+                  )}
+                  <div className="min-w-0">
                   <p className="font-semibold">{item.nombre}</p>
                   {item.descripcion && <p className="text-sm text-texto-suave">{item.descripcion}</p>}
                   <p className="mt-1 font-display text-cifra-menor">{precio(item.precioCop)}</p>
@@ -514,6 +592,7 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
                       No disponible por ahora
                     </p>
                   )}
+                  </div>
                 </div>
                 <button
                   type="button"

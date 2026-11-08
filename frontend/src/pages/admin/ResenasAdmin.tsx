@@ -13,6 +13,7 @@ import { Aviso } from '../../components/negocio/Aviso';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
+import { TituloAtras } from '../../components/TituloAtras';
 
 /** S5 — calificación con Star sólida en oro cosecha; las vacías van en outline. */
 function Estrellas({ valor, etiqueta }: { valor: number; etiqueta: string }) {
@@ -63,7 +64,7 @@ export default function ResenasAdmin() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Reseñas</h1>
+      <TituloAtras titulo="Reseñas" />
       <p className="mt-1 text-texto-suave">
         Oculta una reseña que no corresponde: deja de mostrarse y no cuenta en el promedio.
       </p>
