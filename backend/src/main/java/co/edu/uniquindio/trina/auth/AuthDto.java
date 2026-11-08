@@ -9,17 +9,17 @@ public final class AuthDto {
   private AuthDto() {}
 
   public record RegistroRequest(
-      @NotBlank(message = "Escribí tu correo") @Email(message = "Ese correo no parece válido") String email,
-      @NotBlank(message = "Elegí una contraseña")
+      @NotBlank(message = "Escribe tu correo") @Email(message = "Ese correo no parece válido") String email,
+      @NotBlank(message = "Elige una contraseña")
           @Pattern(
               regexp = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$",
               message = "La contraseña necesita mínimo 8 caracteres, con letras y números")
           String password,
-      @NotBlank(message = "Escribí tu nombre") String nombre,
-      @NotBlank(message = "Elegí un rol")
+      @NotBlank(message = "Escribe tu nombre") String nombre,
+      @NotBlank(message = "Elige un rol")
           @Pattern(regexp = "CLIENTE|COMERCIANTE", message = "Ese rol no está permitido")
           String rol,
-      @AssertTrue(message = "Necesitás aceptar la política de datos para continuar")
+      @AssertTrue(message = "Necesitas aceptar la política de datos para continuar")
           boolean consentimiento,
       Optional<Boolean> esResidente) {}
 
@@ -28,11 +28,11 @@ public final class AuthDto {
       @NotBlank String password) {}
 
   public record RecuperarClaveRequest(
-      @NotBlank(message = "Escribí tu correo") @Email(message = "Ese correo no parece válido") String email) {}
+      @NotBlank(message = "Escribe tu correo") @Email(message = "Ese correo no parece válido") String email) {}
 
   public record RestablecerClaveRequest(
       @NotBlank(message = "El enlace no es válido") String token,
-      @NotBlank(message = "Elegí una contraseña")
+      @NotBlank(message = "Elige una contraseña")
           @Pattern(
               regexp = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$",
               message = "La contraseña necesita mínimo 8 caracteres, con letras y números")

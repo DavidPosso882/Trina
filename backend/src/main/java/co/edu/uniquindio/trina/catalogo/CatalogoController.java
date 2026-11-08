@@ -25,7 +25,7 @@ public class CatalogoController {
   private Long sesionId() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !(auth.getPrincipal() instanceof Long usuarioId)) {
-      throw new BadCredentialsException("Iniciá sesión.");
+      throw new BadCredentialsException("Inicia sesión.");
     }
     return usuarioId;
   }

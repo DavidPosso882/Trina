@@ -69,11 +69,11 @@ export function EditorFotos({
     const validos: Pendiente[] = [];
     for (const file of files) {
       if (!TIPOS.includes(file.type)) {
-        setError('Esta foto no se puede subir. Usá una imagen JPG, PNG o WebP.');
+        setError('Esta foto no se puede subir. Usa una imagen JPG, PNG o WebP.');
         continue;
       }
       if (file.size > MAX_BYTES) {
-        setError('La foto no puede superar los 5 MB. Probá con una más liviana.');
+        setError('La foto no puede superar los 5 MB. Prueba con una más liviana.');
         continue;
       }
       validos.push({ file, url: URL.createObjectURL(file) });
@@ -124,7 +124,7 @@ export function EditorFotos({
   };
 
   const borrar = async (imagenId: number) => {
-    if (!window.confirm('¿Querés eliminar esta foto? No se puede deshacer.')) return;
+    if (!window.confirm('¿Quieres eliminar esta foto? No se puede deshacer.')) return;
     setError(null);
     setAviso(null);
     try {
@@ -144,7 +144,7 @@ export function EditorFotos({
       {isLoading && <p role="status">Cargando fotos…</p>}
       {isError && (
         <div className="space-y-2">
-          <Aviso tipo="error">No pudimos cargar tus fotos. Revisá tu conexión e intentá de nuevo.</Aviso>
+          <Aviso tipo="error">No pudimos cargar tus fotos. Revisa tu conexión e intenta de nuevo.</Aviso>
           <button type="button" className="btn-secundario px-4 py-2" onClick={() => refetch()}>
             Intentar de nuevo
           </button>
@@ -154,11 +154,11 @@ export function EditorFotos({
       {imagenes && (
         <>
           <p className="text-sm text-texto-suave">
-            Tenés {imagenes.length} de {MAX_FOTOS} fotos. La principal se muestra primero en tu perfil.
+            Tienes {imagenes.length} de {MAX_FOTOS} fotos. La principal se muestra primero en tu perfil.
           </p>
           {imagenes.length === 0 && (
             <p className="text-texto-suave">
-              Todavía no subiste fotos. Subí al menos una para poder publicar tu negocio.
+              Todavía no subiste fotos. Sube al menos una para poder publicar tu negocio.
             </p>
           )}
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -214,7 +214,7 @@ export function EditorFotos({
                 <p className="truncate text-sm">{p.file.name}</p>
                 <button
                   type="button"
-                  className="btn-secundario w-full px-2 py-2 text-sm"
+                  className="btn-secundario w-full truncate px-2 py-2 text-sm sm:w-auto"
                   onClick={() => quitarPendiente(i)}
                   disabled={subiendo}
                 >
@@ -258,12 +258,12 @@ export function EditorFotos({
             disabled={subiendo}
           />
           <p id="fotos-ayuda" className="mt-1 text-sm text-texto-suave">
-            JPG, PNG o WebP, hasta 5 MB por foto. Podés elegir varias a la vez. Ej.: la fachada de tu
+            JPG, PNG o WebP, hasta 5 MB por foto. Puedes elegir varias a la vez. Ej.: la fachada de tu
             negocio y tus productos.
           </p>
         </div>
       ) : (
-        <Aviso tipo="info">Ya tenés {MAX_FOTOS} fotos; eliminá una para subir otra.</Aviso>
+        <Aviso tipo="info">Ya tienes {MAX_FOTOS} fotos; elimina una para subir otra.</Aviso>
       )}
 
       {error && <Aviso tipo="error">{error}</Aviso>}

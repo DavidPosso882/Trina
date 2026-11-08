@@ -15,7 +15,7 @@ import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
 
 /** Reglas de RF-45: solo comision_pct tiene rango validado (0-30). */
 function validarParametro(clave: string, valor: string): string | null {
-  if (valor.trim() === '') return 'Escribí un valor.';
+  if (valor.trim() === '') return 'Escribe un valor.';
   if (clave === 'comision_pct') {
     const n = Number(valor.replace(',', '.'));
     if (!Number.isFinite(n) || n < 0 || n > 30) {
@@ -37,7 +37,7 @@ export default function ParametrosAdmin() {
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Parámetros y planes</h1>
       <p className="mt-1 text-texto-suave">
-        Ajustá los valores del sistema. La comisión se valida entre 0 y 30.
+        Ajusta los valores del sistema. La comisión se valida entre 0 y 30.
       </p>
 
       {aviso && (
@@ -78,7 +78,7 @@ export default function ParametrosAdmin() {
       <section className="mt-6 border-t border-tinta-cafe/10 pt-4" aria-label="Planes de membresía">
         <h2 className="text-seccion">Planes de membresía</h2>
         <p className="mt-1 text-sm text-texto-suave">
-          Los planes se definen en la configuración inicial de la plataforma; acá los ves como referencia.
+          Los planes se definen en la configuración inicial de la plataforma; aquí los ves como referencia.
         </p>
         {planes.isLoading && <Cargando texto="Cargando los planes…" />}
         {planes.isError && (
@@ -86,7 +86,8 @@ export default function ParametrosAdmin() {
         )}
         {planes.data && planes.data.length === 0 && <Vacio>No hay planes cargados.</Vacio>}
         {planes.data && planes.data.length > 0 && (
-          <table className="mt-2 w-full text-left">
+          <div className="mt-2 overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left">
             <caption className="sr-only">Planes de membresía vigentes</caption>
             <thead>
               <tr className="border-b border-tinta-cafe/10 text-sm text-texto-suave">
@@ -112,7 +113,8 @@ export default function ParametrosAdmin() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         )}
       </section>
     </main>

@@ -139,7 +139,7 @@ public class Pago {
   /** Valida el PAN de prueba y devuelve solo sus dígitos (sin espacios ni guiones). */
   private static String exigirPan(String tarjetaPan) {
     if (tarjetaPan == null || tarjetaPan.isBlank()) {
-      throw new IllegalArgumentException("Ingresá el número de la tarjeta.");
+      throw new IllegalArgumentException("Ingresa el número de la tarjeta.");
     }
     String digitos = tarjetaPan.replaceAll("[\\s-]", "");
     if (!digitos.matches("\\d{13,19}")) {

@@ -39,7 +39,7 @@ function Marco() {
   ];
   const inicial = (sesion?.nombre ?? 'M').trim().charAt(0).toUpperCase() || 'M';
   return (
-    <div className="min-h-screen bg-crema text-texto">
+    <div className="flex min-h-screen flex-col bg-crema text-texto">
       <header className="bg-oliva text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <Logo />
@@ -86,17 +86,27 @@ function Marco() {
                 </button>
               </>
             ) : (
-              <Link to="/ingresar" className="btn-lima px-5 py-2 text-sm">
-                Ingresar
-              </Link>
+              <>
+                <Link to="/ingresar" className="btn-lima px-5 py-2 text-sm">
+                  Ingresar
+                </Link>
+                <Link
+                  to="/registro"
+                  className="inline-flex min-h-[44px] items-center rounded-full border border-white/40 px-5 text-sm font-bold text-white hover:bg-white/10"
+                >
+                  Crear cuenta
+                </Link>
+              </>
             )}
           </div>
         </div>
       </header>
 
-      <Outlet />
+      <div className="flex w-full flex-1 flex-col">
+        <Outlet />
+      </div>
 
-      <footer className="hidden bg-oliva py-4 text-xs text-white/60 md:block">
+      <footer className="mt-auto hidden bg-oliva py-4 text-xs text-white/60 md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
           <p>© 2026 TRINA · Explorando lo local</p>
           <div className="flex gap-4">

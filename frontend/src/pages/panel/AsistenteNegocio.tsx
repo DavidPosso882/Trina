@@ -40,9 +40,9 @@ const PASOS = [
     ayuda: 'La dirección y las coordenadas ayudan a tus clientes a llegar.'
   },
   { pregunta: '¿Cómo te contactan?', ayuda: 'Con un teléfono o un WhatsApp alcanza.' },
-  { pregunta: '¿Cuándo abres?', ayuda: 'Cargá tus días y horarios de atención.' },
-  { pregunta: 'Fotos de tu negocio', ayuda: 'Subí al menos una foto para poder publicar.' },
-  { pregunta: 'Revisá y publicá', ayuda: 'Confirmá que todo esté bien antes de enviarlo.' }
+  { pregunta: '¿Cuándo abres?', ayuda: 'Carga tus días y horarios de atención.' },
+  { pregunta: 'Fotos de tu negocio', ayuda: 'Sube al menos una foto para poder publicar.' },
+  { pregunta: 'Revisa y publica', ayuda: 'Confirma que todo esté bien antes de enviarlo.' }
 ];
 
 /** Paso donde se completa lo que falta, según el mensaje 422 del backend. */
@@ -166,7 +166,7 @@ export default function AsistenteNegocio() {
     if (paso === 2) {
       if (!(await trigger(['direccion', 'latitud', 'longitud']))) return;
       if (negocioId === null) {
-        setErrorPaso('Volvé al paso 1: falta crear tu negocio.');
+        setErrorPaso('Vuelve al paso 1: falta crear tu negocio.');
         return;
       }
       setGuardando(true);
@@ -189,7 +189,7 @@ export default function AsistenteNegocio() {
     if (paso === 3) {
       if (!(await trigger(['telefono', 'whatsapp']))) return;
       if (negocioId === null) {
-        setErrorPaso('Volvé al paso 1: falta crear tu negocio.');
+        setErrorPaso('Vuelve al paso 1: falta crear tu negocio.');
         return;
       }
       setGuardando(true);
@@ -215,7 +215,7 @@ export default function AsistenteNegocio() {
         return;
       }
       if (negocioId === null) {
-        setErrorPaso('Volvé al paso 1: falta crear tu negocio.');
+        setErrorPaso('Vuelve al paso 1: falta crear tu negocio.');
         return;
       }
       setGuardando(true);
@@ -233,7 +233,7 @@ export default function AsistenteNegocio() {
 
     if (paso === 5) {
       if (fotosPendientes > 0) {
-        setErrorPaso('Tenés fotos sin subir. Tocá “Agregar fotos” o quitalas para seguir.');
+        setErrorPaso('Tienes fotos sin subir. Toca “Agregar fotos” o quítalas para seguir.');
         return;
       }
       setPaso(6);
@@ -242,7 +242,7 @@ export default function AsistenteNegocio() {
 
     if (paso === 6) {
       if (negocioId === null) {
-        setErrorPaso('Volvé al paso 1: falta crear tu negocio.');
+        setErrorPaso('Vuelve al paso 1: falta crear tu negocio.');
         return;
       }
       setGuardando(true);
@@ -259,7 +259,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'cargando') {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <p role="status">Cargando…</p>
       </main>
     );
@@ -267,7 +267,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'error') {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Aviso tipo="error">{errorChequeo}</Aviso>
         <button
           type="button"
@@ -282,7 +282,7 @@ export default function AsistenteNegocio() {
 
   if (enviado) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <h1 className="flex items-center gap-2 font-display text-titulo">
           <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" />
           ¡Listo! Tu negocio quedó en revisión
@@ -329,10 +329,10 @@ export default function AsistenteNegocio() {
             etiqueta="Categoría"
             registro={register('categoriaId')}
             error={formState.errors.categoriaId?.message}
-            ayuda={categorias.isLoading ? 'Cargando categorías…' : 'Elegí la que mejor lo describe.'}
+            ayuda={categorias.isLoading ? 'Cargando categorías…' : 'Elige la que mejor lo describe.'}
             disabled={categorias.isLoading}
           >
-            <option value="">Elegí una categoría…</option>
+            <option value="">Elige una categoría…</option>
             {categorias.data?.map((c) => (
               <option key={c.id} value={String(c.id)}>
                 {c.nombre}
@@ -341,7 +341,7 @@ export default function AsistenteNegocio() {
           </CampoSelect>
           {categorias.isError && (
             <Aviso tipo="error">
-              No pudimos cargar las categorías. Revisá tu conexión.{' '}
+              No pudimos cargar las categorías. Revisa tu conexión.{' '}
               <button type="button" className="underline" onClick={() => categorias.refetch()}>
                 Intentar de nuevo
               </button>
@@ -351,7 +351,7 @@ export default function AsistenteNegocio() {
             etiqueta="Descripción"
             registro={register('descripcion')}
             error={formState.errors.descripcion?.message}
-            ayuda="Contá en pocas palabras qué ofrecés. Ej.: Café de origen, desayunos y tortas caseras."
+            ayuda="Cuenta en pocas palabras qué ofreces. Ej.: Café de origen, desayunos y tortas caseras."
           />
         </>
       );
@@ -432,7 +432,7 @@ export default function AsistenteNegocio() {
 
     if (paso === 5) {
       if (negocioId === null) {
-        return <Aviso tipo="error">Volvé al paso 1: falta crear tu negocio.</Aviso>;
+        return <Aviso tipo="error">Vuelve al paso 1: falta crear tu negocio.</Aviso>;
       }
       return (
         <EditorFotos
@@ -521,7 +521,7 @@ export default function AsistenteNegocio() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <p className="text-sm font-semibold text-primario">Crear mi negocio</p>
       <div className="mt-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1" aria-hidden="true">

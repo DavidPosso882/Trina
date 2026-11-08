@@ -14,8 +14,8 @@ public final class CuentaDto {
   public record EditarRequest(String nombre, String telefono) {}
 
   public record CambiarClaveRequest(
-      @NotBlank(message = "Escribí tu contraseña actual") String actual,
-      @NotBlank(message = "Elegí una contraseña")
+      @NotBlank(message = "Escribe tu contraseña actual") String actual,
+      @NotBlank(message = "Elige una contraseña")
           @Pattern(
               regexp = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$",
               message = "La contraseña necesita mínimo 8 caracteres, con letras y números")

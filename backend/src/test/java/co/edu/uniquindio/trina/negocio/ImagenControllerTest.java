@@ -128,7 +128,7 @@ class ImagenControllerTest {
     subir(id, pdf, "application/pdf")
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.codigo").value("VALIDACION"))
-        .andExpect(jsonPath("$.mensaje").value("Usá una imagen JPG, PNG o WebP"));
+        .andExpect(jsonPath("$.mensaje").value("Usa una imagen JPG, PNG o WebP"));
     // Un PDF disfrazado de imagen tampoco pasa: el tipo se valida por contenido real.
     subir(id, pdf, "image/jpeg")
         .andExpect(status().isBadRequest())
@@ -242,7 +242,7 @@ class ImagenControllerTest {
         .andExpect(status().isUnprocessableEntity())
         .andExpect(
             jsonPath("$.mensaje")
-                .value("Falta un paso para publicar: agregá al menos una foto"));
+                .value("Falta un paso para publicar: agrega al menos una foto"));
 
     subir(id, imagen("jpg", 40), "image/jpeg").andExpect(status().isCreated());
 

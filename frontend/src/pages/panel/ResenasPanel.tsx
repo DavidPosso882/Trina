@@ -47,7 +47,7 @@ function ListaResenas({ negocio }: { negocio: Negocio }) {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-display text-titulo">Reseñas</h1>
         {publicado && (
@@ -57,14 +57,14 @@ function ListaResenas({ negocio }: { negocio: Negocio }) {
         )}
       </div>
       <p className="mt-1 text-texto-suave">
-        Si una reseña no corresponde, podés reportarla y el equipo de TRINA la revisa.
+        Si una reseña no corresponde, puedes reportarla y el equipo de TRINA la revisa.
       </p>
 
       {!publicado && (
         <div className="mt-4">
           <Aviso tipo="info">
             Tu negocio todavía no está publicado, así que aún no recibe reseñas. Cuando esté aprobado vas a
-            verlas acá.
+            verlas aquí.
           </Aviso>
           <Link
             to="/panel/negocio"
@@ -81,7 +81,7 @@ function ListaResenas({ negocio }: { negocio: Negocio }) {
       )}
       {publicado && resenas.data && resenas.data.resenas.length === 0 && (
         <Vacio>
-          Todavía no tenés reseñas. Cuando tus clientes califiquen tu negocio, aparecen acá.
+          Todavía no tienes reseñas. Cuando tus clientes califiquen tu negocio, aparecen aquí.
         </Vacio>
       )}
       {publicado && resenas.data && resenas.data.cantidad > 0 && (
@@ -181,7 +181,7 @@ function FilaResena({ resena }: { resena: Resena }) {
       <DialogoMotivo
         abierto={reportando}
         titulo="¿Reportar esta reseña?"
-        descripcion={`Vas a reportar la reseña de ${resena.clienteNombre}. Contanos por qué no corresponde.`}
+        descripcion={`Vas a reportar la reseña de ${resena.clienteNombre}. Cuéntanos por qué no corresponde.`}
         textoConfirmar="Reportar reseña"
         peligro={false}
         guardando={reportar.isPending}

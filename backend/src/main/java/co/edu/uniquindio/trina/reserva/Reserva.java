@@ -64,7 +64,7 @@ public class Reserva {
   public static Reserva crear(
       Usuario cliente, Negocio negocio, Instant inicio, Instant fin, int personas, String nota) {
     if (inicio == null || fin == null) {
-      throw new IllegalArgumentException("Indicá el inicio y el fin de la reserva.");
+      throw new IllegalArgumentException("Indica el inicio y el fin de la reserva.");
     }
     if (!fin.isAfter(inicio)) {
       throw new IllegalArgumentException("La salida tiene que ser posterior a la entrada.");
@@ -142,7 +142,7 @@ public class Reserva {
 
   private static void exigirMotivo(String motivo) {
     if (motivo == null || motivo.isBlank()) {
-      throw new IllegalArgumentException("Contanos el motivo de esta decisión.");
+      throw new IllegalArgumentException("Cuéntanos el motivo de esta decisión.");
     }
   }
 

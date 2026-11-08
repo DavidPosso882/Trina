@@ -9,7 +9,7 @@ public final class NegocioGestionDto {
   private NegocioGestionDto() {}
 
   public record CrearRequest(
-      @NotBlank(message = "Ponéle un nombre a tu negocio") String nombre, Long categoriaId) {}
+      @NotBlank(message = "Ponle un nombre a tu negocio") String nombre, Long categoriaId) {}
 
   public record ActualizarRequest(
       String nombre,

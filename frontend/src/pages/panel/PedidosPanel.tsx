@@ -46,9 +46,9 @@ export default function PedidosPanel() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Pedidos</h1>
-      <p className="mt-1 text-texto-suave">Aceptá, rechazá o marcá como listo cada pedido.</p>
+      <p className="mt-1 text-texto-suave">Aceptá, rechaza o marca como listo cada pedido.</p>
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
         <button
@@ -83,8 +83,8 @@ export default function PedidosPanel() {
       {pedidos.data && pedidos.data.length === 0 && (
         <Vacio>
           {filtro
-            ? 'No tenés pedidos con ese estado.'
-            : 'Todavía no tenés pedidos. Cuando un cliente compre, aparece acá.'}
+            ? 'No tienes pedidos con ese estado.'
+            : 'Todavía no tienes pedidos. Cuando un cliente compre, aparece aquí.'}
         </Vacio>
       )}
       {pedidos.data && pedidos.data.length > 0 && (

@@ -223,7 +223,7 @@ class HorarioControllerTest {
         .andExpect(status().isUnprocessableEntity())
         .andExpect(
             jsonPath("$.mensaje")
-                .value("Falta un paso para publicar: configurá tus horarios"));
+                .value("Falta un paso para publicar: configura tus horarios"));
 
     putHorarios(n.getId(), tokenDueno, List.of(franja(1, "08:00", "18:00")))
         .andExpect(status().isOk());

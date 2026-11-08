@@ -40,7 +40,7 @@ export function DialogoMotivo({
 
   const confirmar = () => {
     if (motivo.trim().length < 5) {
-      setErrorLocal('Contanos el motivo (mínimo 5 letras).');
+      setErrorLocal('Cuéntanos el motivo (mínimo 5 letras).');
       return;
     }
     setErrorLocal(null);

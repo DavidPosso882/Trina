@@ -65,9 +65,9 @@ public class ResenaService {
         usuarios
             .findById(clienteId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Iniciá sesión."));
+                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Inicia sesión."));
     if (resenas.findByNegocio_IdAndCliente_Id(negocioId, clienteId).isPresent()) {
-      throw new IllegalStateException("Ya reseñaste este negocio. Editá tu reseña anterior.");
+      throw new IllegalStateException("Ya reseñaste este negocio. Edita tu reseña anterior.");
     }
     boolean verificada = tieneCompraCompletada(clienteId, negocioId);
     var resena =

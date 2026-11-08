@@ -44,7 +44,7 @@ export function Dialogo({
         aria-modal="true"
         aria-labelledby={idTitulo}
         tabIndex={-1}
-        className="w-full max-w-md rounded-tarjeta bg-superficie p-5 shadow-lg"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-tarjeta bg-superficie p-5 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id={idTitulo} className="font-display text-titulo-menor">

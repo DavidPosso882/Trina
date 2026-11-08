@@ -27,7 +27,7 @@ async function pedir<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
   if (res.status === 204 || res.status === 202) return undefined as T;
   const cuerpo = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new ApiError(res.status, cuerpo.codigo ?? 'INTERNO', cuerpo.mensaje ?? 'Algo salió mal. Intentá de nuevo.');
+    throw new ApiError(res.status, cuerpo.codigo ?? 'INTERNO', cuerpo.mensaje ?? 'Algo salió mal. Intenta de nuevo.');
   }
   return cuerpo as T;
 }
@@ -852,19 +852,19 @@ export const cambiarVisibilidadResena = (id: number, visible: boolean) =>
 /** Mensajes del panel: el backend ya escribe para el usuario final (RNF-01, §6.2). */
 export function mensajeDeApi(e: unknown): string {
   if (e instanceof ApiError) {
-    if (e.estado === 401) return 'Tu sesión venció. Volvé a ingresar para seguir.';
+    if (e.estado === 401) return 'Tu sesión venció. Vuelve a ingresar para seguir.';
     return e.message;
   }
-  return 'Sin conexión o respuesta lenta. Revisá tu internet e intentá de nuevo.';
+  return 'Sin conexión o respuesta lenta. Revisa tu internet e intenta de nuevo.';
 }
 
 /** Mensajes del diseño UI §6.2 según código de error. */
 export function mensajeAmable(e: unknown): string {
   if (e instanceof ApiError) {
-    if (e.estado === 401) return 'El correo o la contraseña no coinciden. Revisá e intentalo de nuevo.';
-    if (e.estado === 409) return 'Ese correo ya está en uso. ¿Querés ingresar o recuperar tu contraseña?';
-    if (e.estado === 429) return 'Hiciste varios intentos. Esperá unos minutos y volvé a probar.';
+    if (e.estado === 401) return 'El correo o la contraseña no coinciden. Revisa e inténtalo de nuevo.';
+    if (e.estado === 409) return 'Ese correo ya está en uso. ¿Quieres ingresar o recuperar tu contraseña?';
+    if (e.estado === 429) return 'Hiciste varios intentos. Espera unos minutos y vuelve a probar.';
     return e.message;
   }
-  return 'Sin conexión o respuesta lenta. Revisá tu internet e intentá de nuevo.';
+  return 'Sin conexión o respuesta lenta. Revisa tu internet e intenta de nuevo.';
 }

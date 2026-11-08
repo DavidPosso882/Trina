@@ -54,7 +54,7 @@ export default function NegociosAdmin() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Negocios</h1>
-      <p className="mt-1 text-texto-suave">Revisá las solicitudes y decidí si se publican.</p>
+      <p className="mt-1 text-texto-suave">Revisa las solicitudes y decide si se publican.</p>
 
       {aviso && (
         <div className="mt-3">

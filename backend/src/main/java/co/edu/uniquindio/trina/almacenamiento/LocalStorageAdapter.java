@@ -29,7 +29,7 @@ public class LocalStorageAdapter implements StoragePort {
       Files.createDirectories(destino.getParent());
       Files.write(destino, datos);
     } catch (IOException e) {
-      throw new UncheckedIOException("No se pudo guardar la imagen. Intentá de nuevo.", e);
+      throw new UncheckedIOException("No se pudo guardar la imagen. Intenta de nuevo.", e);
     }
   }
 
@@ -38,7 +38,7 @@ public class LocalStorageAdapter implements StoragePort {
     try {
       Files.deleteIfExists(raiz.resolve(clave));
     } catch (IOException e) {
-      throw new UncheckedIOException("No se pudo eliminar la imagen. Intentá de nuevo.", e);
+      throw new UncheckedIOException("No se pudo eliminar la imagen. Intenta de nuevo.", e);
     }
   }
 }

@@ -48,9 +48,9 @@ public class AuthController {
   public AuthDto.CuentaResponse me() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !(auth.getPrincipal() instanceof Long id)) {
-      throw new org.springframework.security.authentication.BadCredentialsException("Iniciá sesión");
+      throw new org.springframework.security.authentication.BadCredentialsException("Inicia sesión");
     }
-    var u = usuarios.findById(id).orElseThrow(() -> new org.springframework.security.authentication.BadCredentialsException("Iniciá sesión"));
+    var u = usuarios.findById(id).orElseThrow(() -> new org.springframework.security.authentication.BadCredentialsException("Inicia sesión"));
     return new AuthDto.CuentaResponse(u.getId(), u.getEmail(), u.getNombre(), u.getRol());
   }
 

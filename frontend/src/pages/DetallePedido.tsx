@@ -154,7 +154,7 @@ export default function DetallePedido() {
         </p>
         <p className="mt-2 flex items-center gap-2 text-texto-suave">
           <Icono icono={esPagoSandbox ? CreditCardIcon : BuildingStorefrontIcon} tamano="chico" />
-          {esPagoSandbox ? 'Pagás ahora (prueba)' : 'Pagás en el local'}
+          {esPagoSandbox ? 'Pagas ahora (prueba)' : 'Pagas en el local'}
         </p>
         {p.nota && (
           <p className="mt-2 flex items-start gap-2 text-texto-suave">
@@ -175,7 +175,7 @@ export default function DetallePedido() {
             }}
           />
           <p className="mt-2 text-texto-suave">
-            El pedido se cancela solo si no completás el pago en 30 minutos.
+            El pedido se cancela solo si no completas el pago en 30 minutos.
           </p>
         </>
       )}

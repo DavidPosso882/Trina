@@ -31,7 +31,7 @@ public class ImagenNegocioService {
 
   private static final Logger log = LoggerFactory.getLogger(ImagenNegocioService.class);
 
-  static final String TIPO_PERMITIDO = "Usá una imagen JPG, PNG o WebP";
+  static final String TIPO_PERMITIDO = "Usa una imagen JPG, PNG o WebP";
   static final int ANCHO_PRINCIPAL = 1200;
   static final int ANCHO_MINIATURA = 400;
   private static final int MAX_IMAGENES_POR_DEFECTO = 10;
@@ -63,7 +63,7 @@ public class ImagenNegocioService {
       Long propietarioId, Long negocioId, byte[] bytes, String tipoContenido) {
     var negocio = propio(propietarioId, negocioId);
     if (bytes == null || bytes.length == 0) {
-      throw new ImagenInvalidaException("Subí una foto en JPG, PNG o WebP.");
+      throw new ImagenInvalidaException("Sube una foto en JPG, PNG o WebP.");
     }
     int maxMb = parametro("max_mb_imagen", MAX_MB_POR_DEFECTO);
     if (bytes.length > maxMb * 1024L * 1024L) {
@@ -73,7 +73,7 @@ public class ImagenNegocioService {
     int maxImagenes = parametro("max_imagenes", MAX_IMAGENES_POR_DEFECTO);
     if (imagenes.countByNegocio_Id(negocioId) >= maxImagenes) {
       throw new IllegalArgumentException(
-          "Ya tenés " + maxImagenes + " fotos; eliminá una para subir otra.");
+          "Ya tienes " + maxImagenes + " fotos; elimina una para subir otra.");
     }
     boolean principal = !imagenes.existsByNegocio_Id(negocioId);
     int orden =
@@ -200,7 +200,7 @@ public class ImagenNegocioService {
       // este slice). Si el runtime lo agrega, este camino acepta WebP sin más cambios.
       throw new ImagenInvalidaException(
           formato == Formato.WEBP
-              ? "Por ahora no podemos procesar WebP: subí la foto en JPG o PNG."
+              ? "Por ahora no podemos procesar WebP: sube la foto en JPG o PNG."
               : TIPO_PERMITIDO);
     }
     return imagen;
@@ -258,7 +258,7 @@ public class ImagenNegocioService {
           .toOutputStream(salida);
       return salida.toByteArray();
     } catch (IOException e) {
-      throw new ImagenInvalidaException("No pudimos procesar la imagen; probá con otra foto.");
+      throw new ImagenInvalidaException("No pudimos procesar la imagen; prueba con otra foto.");
     }
   }
 

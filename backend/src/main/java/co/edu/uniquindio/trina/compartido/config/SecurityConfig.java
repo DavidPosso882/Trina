@@ -54,7 +54,7 @@ public class SecurityConfig {
                       res.setContentType("application/json");
                       res.getWriter()
                           .write(
-                              "{\"codigo\":\"AUTENTICACION\",\"mensaje\":\"Iniciá sesión\",\"campos\":[]}");
+                              "{\"codigo\":\"AUTENTICACION\",\"mensaje\":\"Inicia sesión\",\"campos\":[]}");
                     }));
     return http.build();
   }

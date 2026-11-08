@@ -15,25 +15,25 @@ public final class PedidoDto {
   private PedidoDto() {}
 
   public record LineaRequest(
-      @NotNull(message = "Indicá el ítem") Long itemId,
-      @NotNull(message = "Indicá la cantidad")
+      @NotNull(message = "Indica el ítem") Long itemId,
+      @NotNull(message = "Indica la cantidad")
           @Positive(message = "La cantidad tiene que ser mayor que cero")
           Integer cantidad) {}
 
   public record CrearPedidoRequest(
-      @NotNull(message = "Indicá el negocio") Long negocioId,
-      @NotBlank(message = "Elegí cómo vas a pagar")
+      @NotNull(message = "Indica el negocio") Long negocioId,
+      @NotBlank(message = "Elige cómo vas a pagar")
           @Pattern(
               regexp = "SANDBOX|EN_LOCAL",
               message = "El método de pago tiene que ser SANDBOX o EN_LOCAL")
           String metodoPago,
       String nota,
-      @NotEmpty(message = "Agregá al menos un ítem al pedido")
+      @NotEmpty(message = "Agrega al menos un ítem al pedido")
           @Valid
           List<LineaRequest> items) {}
 
   public record AccionRequest(
-      @NotBlank(message = "Indicá la acción")
+      @NotBlank(message = "Indica la acción")
           @Pattern(
               regexp = "ACEPTAR|RECHAZAR|MARCAR_LISTO|COMPLETAR|CANCELAR",
               message = "Esa acción no existe")

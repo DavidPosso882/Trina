@@ -37,7 +37,7 @@ public class CuentaService {
 
   /** Usuario de la sesión; si no existe, la sesión dejó de ser válida (401). */
   private Usuario exigir(Long usuarioId) {
-    return usuarios.findById(usuarioId).orElseThrow(() -> new BadCredentialsException("Iniciá sesión"));
+    return usuarios.findById(usuarioId).orElseThrow(() -> new BadCredentialsException("Inicia sesión"));
   }
 
   /** RF-49 E1: actualiza solo los campos presentes en el cuerpo. */

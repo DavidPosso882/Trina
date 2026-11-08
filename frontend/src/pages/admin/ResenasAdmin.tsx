@@ -65,7 +65,7 @@ export default function ResenasAdmin() {
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Reseñas</h1>
       <p className="mt-1 text-texto-suave">
-        Ocultá una reseña que no corresponde: deja de mostrarse y no cuenta en el promedio.
+        Oculta una reseña que no corresponde: deja de mostrarse y no cuenta en el promedio.
       </p>
 
       {aviso && (

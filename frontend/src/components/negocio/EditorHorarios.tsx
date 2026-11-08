@@ -33,7 +33,7 @@ export function normalizarFranjas(franjas: Franja[]): Franja[] {
 /** Devuelve el primer problema que impide guardar, o null si la grilla está bien. */
 export function problemasDeHorarios(franjas: Franja[]): string | null {
   for (const f of franjas) {
-    if (!f.abre || !f.cierra) return 'Completá la hora de apertura y la de cierre en cada franja.';
+    if (!f.abre || !f.cierra) return 'Completa la hora de apertura y la de cierre en cada franja.';
     if (f.abre === f.cierra) return 'En una franja, la apertura y el cierre no pueden ser la misma hora.';
   }
   return null;
@@ -114,7 +114,7 @@ export function EditorHorarios({
         </button>
       </div>
       <p className="text-sm text-texto-suave">
-        Podés cargar varias franjas por día (por ejemplo, cerrar al mediodía). Un día sin franjas queda
+        Puedes cargar varias franjas por día (por ejemplo, cerrar al mediodía). Un día sin franjas queda
         como cerrado.
       </p>
 

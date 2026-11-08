@@ -54,10 +54,10 @@ public class AuthService {
     if (u == null || !claves.matches(passwordPlana, u.getPasswordHash())) {
       intentos.registrarFallo(correoClave, ipClave);
       // Mensaje genérico: no revela si falló el correo o la clave (RF-02 E2)
-      throw new BadCredentialsException("El correo o la contraseña no coinciden. Revisá e intentalo de nuevo.");
+      throw new BadCredentialsException("El correo o la contraseña no coinciden. Revisa e inténtalo de nuevo.");
     }
     if (!u.isActivo()) {
-      throw new DisabledException("Tu cuenta está desactivada. Contactá al administrador.");
+      throw new DisabledException("Tu cuenta está desactivada. Contacta al administrador.");
     }
     if (u.isCambioClaveObligatorio()) {
       throw new CambioClaveObligatorioException(

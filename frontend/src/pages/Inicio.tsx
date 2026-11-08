@@ -92,8 +92,8 @@ export default function Inicio() {
         aria-labelledby="portada"
         className="rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:px-6"
       >
-        <h1 id="portada" className="font-display text-3xl font-extrabold tracking-tight md:text-4xl">
-          Descubrí lo mejor del pueblo
+        <h1 id="portada" className="font-display text-titulo">
+          Descubre lo mejor del pueblo
         </h1>
 
         <form role="search" className="mt-4 max-w-2xl" onSubmit={buscar}>
@@ -103,18 +103,18 @@ export default function Inicio() {
               className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-texto-suave"
             />
             <label htmlFor="q" className="sr-only">
-              ¿Qué buscás?
+              ¿Qué buscas?
             </label>
             <input
               id="q"
               name="q"
-              className="w-full rounded-full border border-oliva/15 bg-white py-3 pl-11 pr-28 shadow-sm placeholder:text-texto-suave"
-              placeholder="¿Qué buscás?"
+              className="w-full rounded-full border border-oliva/15 bg-white py-3 pl-11 pr-24 shadow-sm placeholder:text-texto-suave"
+              placeholder="¿Qué buscas?"
               autoComplete="off"
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
             />
-            <button type="submit" className="btn-lima absolute bottom-1 right-1 top-1 px-6 text-sm">
+            <button type="submit" className="btn-lima absolute bottom-1 right-1 top-1 px-4 text-sm [min-height:40px]">
               Buscar
             </button>
           </div>
@@ -147,7 +147,7 @@ export default function Inicio() {
           )}
 
           {marcadores.data && (
-            <div className="pointer-events-none absolute bottom-3 left-3 z-[500] flex items-center gap-2 rounded-full bg-oliva px-3 py-2 text-white">
+            <div className="pointer-events-none absolute left-3 top-3 z-[500] flex max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-full bg-oliva px-3 py-2 text-white">
               <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-lima" />
               <span className="font-display text-lg font-extrabold leading-none">{abiertosAhora}</span>
               <span className="max-w-[9rem] text-xs font-semibold leading-tight">abiertos ahora cerca</span>
@@ -198,7 +198,7 @@ export default function Inicio() {
       <section aria-labelledby="destacados" className="mt-8">
         <div className="flex items-center gap-2">
           <Icono icono={StarIcon} tamano="grande" className="text-dorado" />
-          <h2 id="destacados" className="font-display text-2xl font-extrabold tracking-tight">
+          <h2 id="destacados" className="font-display text-titulo-menor">
             Destacados
           </h2>
         </div>
@@ -225,7 +225,7 @@ export default function Inicio() {
         )}
         {destacados.data && destacados.data.contenido.length === 0 && (
           <p className="mt-4 text-texto-suave">
-            Todavía no hay negocios publicados. Creá el tuyo y aparecé acá.{' '}
+            Todavía no hay negocios publicados. Crea el tuyo y aparece aquí.{' '}
             <Link to="/registro" className="font-semibold text-primario underline">
               Quiero vender
             </Link>
@@ -304,7 +304,7 @@ function FilaDestacada({
               onClick={onAlternarFav}
               aria-pressed={esFavorito}
               aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-              className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
                 esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
               }`}
             >
@@ -312,7 +312,7 @@ function FilaDestacada({
             </button>
             <Link
               to={`/negocios/${n.id}`}
-              className={`rounded-full px-4 py-2 text-sm font-bold ${n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'}`}
+              className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-bold ${n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'}`}
             >
               Ver comercio
             </Link>

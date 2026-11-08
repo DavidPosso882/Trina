@@ -49,7 +49,7 @@ export default function RecuperarClave() {
       {estado?.temporal && (
         <div className="mt-4">
           <Aviso tipo="info">
-            Entraste con una contraseña temporal. Para poder usar TRINA, pedí el enlace y creá tu
+            Entraste con una contraseña temporal. Para poder usar TRINA, pide el enlace y crea tu
             propia contraseña.
           </Aviso>
         </div>
@@ -59,7 +59,7 @@ export default function RecuperarClave() {
         <div className="mt-4 space-y-4">
           <Aviso tipo="exito">
             Si <strong>{getValues('email').trim()}</strong> está registrado, te enviamos un enlace
-            para cambiar la contraseña. Revisá tu correo y, si no lo ves, mirá la carpeta de spam.
+            para cambiar la contraseña. Revisa tu correo y, si no lo ves, mira la carpeta de spam.
           </Aviso>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link to="/restablecer-clave" className="btn-principal px-6 py-3 text-center">

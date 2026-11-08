@@ -10,7 +10,7 @@ import { Icono } from './Icono';
 const esquema = z.object({
   tarjeta: z
     .string()
-    .refine((v) => /^\d{16}$/.test(v.replace(/\s/g, '')), 'Escribí los 16 números de la tarjeta')
+    .refine((v) => /^\d{16}$/.test(v.replace(/\s/g, '')), 'Escribe los 16 números de la tarjeta')
 });
 
 type Valores = z.infer<typeof esquema>;
@@ -60,7 +60,7 @@ export function FormularioPago({
         await onAprobado();
       } else {
         setError(
-          `No se pudo procesar el pago: ${resultado.motivo ?? 'el banco lo rechazó'}. Podés probar con otra tarjeta.`
+          `No se pudo procesar el pago: ${resultado.motivo ?? 'el banco lo rechazó'}. Puedes probar con otra tarjeta.`
         );
       }
     } catch (e) {
@@ -72,7 +72,7 @@ export function FormularioPago({
     <form className="mt-4 space-y-4 rounded-tarjeta bg-superficie p-4 shadow" onSubmit={handleSubmit(pagar)} noValidate>
       <h2 className="font-display text-seccion">{titulo ?? `Pagar ahora (${precio(montoCop)})`}</h2>
       <p className="text-sm text-texto-suave">
-        Es un pago de prueba: usá la tarjeta 4111 1111 1111 1111 para que se apruebe.
+        Es un pago de prueba: usa la tarjeta 4111 1111 1111 1111 para que se apruebe.
       </p>
       <div>
         <label htmlFor="tarjeta" className="font-semibold">

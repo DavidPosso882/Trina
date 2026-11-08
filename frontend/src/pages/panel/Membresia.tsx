@@ -58,7 +58,7 @@ export default function Membresia() {
     try {
       const pendiente = await solicitarDestacada();
       if (pendiente.id == null) {
-        setError('No pudimos crear tu suscripción. Intentá de nuevo.');
+        setError('No pudimos crear tu suscripción. Intenta de nuevo.');
         return;
       }
       setPago({ id: pendiente.id, montoCop: pendiente.precioMensualCop ?? 0 });
@@ -72,7 +72,7 @@ export default function Membresia() {
 
   if (suscripcion.isLoading || planes.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu membresía…" />
       </main>
     );
@@ -80,7 +80,7 @@ export default function Membresia() {
 
   if (suscripcion.isError || planes.isError || !suscripcion.data || !planes.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <ErrorRecargar
           mensaje={mensajeDeApi(suscripcion.error ?? planes.error)}
           onReintentar={() => {
@@ -101,9 +101,9 @@ export default function Membresia() {
   const esDestacada = s.planEfectivo === 'DESTACADA';
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Mi membresía</h1>
-      <p className="mt-1 text-texto-suave">Elegí cómo querés mostrarte en TRINA.</p>
+      <p className="mt-1 text-texto-suave">Elige cómo quieres mostrarte en TRINA.</p>
 
       {aviso && (
         <div className="mt-3">
@@ -159,7 +159,7 @@ export default function Membresia() {
         <section aria-label="Pagar la membresía">
           {pago && (
             <p className="mt-3 text-texto-suave">
-              Ya guardamos tu solicitud. Terminá el pago para activar la insignia.
+              Ya guardamos tu solicitud. Termina el pago para activar la insignia.
             </p>
           )}
           <FormularioPago
@@ -169,7 +169,7 @@ export default function Membresia() {
             onAprobado={async () => {
               setPago(null);
               setError(null);
-              setAviso('¡Listo! Tu plan Destacado quedó activo y ya tenés la insignia Destacado.');
+              setAviso('¡Listo! Tu plan Destacado quedó activo y ya tienes la insignia Destacado.');
               await cliente.invalidateQueries({ queryKey: ['mi-suscripcion'] });
             }}
           />
@@ -193,7 +193,7 @@ export default function Membresia() {
       </section>
 
       <p className="mt-4 text-sm text-texto-suave">
-        El pago es de prueba: usá la tarjeta 4111 1111 1111 1111. No guardamos datos de tarjetas.
+        El pago es de prueba: usa la tarjeta 4111 1111 1111 1111. No guardamos datos de tarjetas.
       </p>
     </main>
   );
@@ -251,7 +251,7 @@ function TarjetaPlan({
       </ul>
       {actual && (
         <p className="mt-2 font-semibold text-primario">
-          {renovacion ? 'Tu plan actual, podés renovarlo abajo.' : 'Es tu plan actual.'}
+          {renovacion ? 'Tu plan actual, puedes renovarlo abajo.' : 'Es tu plan actual.'}
         </p>
       )}
       {esDestacada && onSuscribir && (

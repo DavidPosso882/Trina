@@ -58,7 +58,7 @@ export default function MiCuenta() {
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
       <h1 className="font-display text-titulo">Mi cuenta</h1>
-      <p className="mt-1 text-texto-suave">Desde acá manejás tus datos personales.</p>
+      <p className="mt-1 text-texto-suave">Desde aquí manejas tus datos personales.</p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         <Link
@@ -107,13 +107,13 @@ function ErrorCampo({ id, mensaje }: { id?: string; mensaje?: string }) {
 }
 
 const esquemaDatos = z.object({
-  nombre: z.string().trim().min(2, 'Escribí tu nombre (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Escribe tu nombre (mínimo 2 letras).'),
   telefono: z
     .string()
     .trim()
     .refine(
       (v) => v === '' || /^[+\d][\d\s()-]{6,}$/.test(v),
-      'Escribí un teléfono válido. Ej.: 300 123 4567'
+      'Escribe un teléfono válido. Ej.: 300 123 4567'
     )
 });
 
@@ -151,7 +151,7 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
       noValidate
     >
       <h2 className="text-seccion">Tus datos</h2>
-      <p className="text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde acá).</p>
+      <p className="text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
       <div>
         <label htmlFor="nombre" className="font-semibold">
           Nombre
@@ -188,7 +188,7 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
 
 const esquemaClave = z
   .object({
-    actual: z.string().min(1, 'Escribí tu contraseña actual.'),
+    actual: z.string().min(1, 'Escribe tu contraseña actual.'),
     nueva: z
       .string()
       .min(8, 'La contraseña necesita mínimo 8 caracteres, con letras y números.')
@@ -219,7 +219,7 @@ function FormularioClave() {
       salir();
       navegar('/ingresar', {
         replace: true,
-        state: { mensaje: 'Tu contraseña quedó cambiada. Por seguridad, ingresá de nuevo.' }
+        state: { mensaje: 'Tu contraseña quedó cambiada. Por seguridad, ingresa de nuevo.' }
       });
     } catch (e) {
       setError(mensajeDeApi(e));
@@ -301,7 +301,7 @@ function DescargarDatos({ datos }: { datos: MisDatos }) {
       // Damos un respiro al navegador para iniciar la descarga antes de liberar la URL.
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
-      setError('No se pudo preparar la descarga. Intentá de nuevo.');
+      setError('No se pudo preparar la descarga. Intenta de nuevo.');
     }
   };
 
@@ -309,7 +309,7 @@ function DescargarDatos({ datos }: { datos: MisDatos }) {
     <section className="mt-6 border-t border-tinta-cafe/10 pt-4">
       <h2 className="text-seccion">Mis datos</h2>
       <p className="mt-1 text-texto-suave">
-        Descargá una copia de tus datos personales y tu actividad en TRINA (pedidos y reservas).
+        Descarga una copia de tus datos personales y tu actividad en TRINA (pedidos y reservas).
       </p>
       {error && <Aviso tipo="error">{error}</Aviso>}
       <button
@@ -357,8 +357,8 @@ function ZonaPeligrosa({ onEliminar }: { onEliminar: () => void }) {
 
       <Dialogo abierto={dialogo} titulo="¿Eliminar tu cuenta?" onCerrar={() => setDialogo(false)}>
         <p>
-          Tu nombre, correo y teléfono se anonimizan, se cierran tus sesiones y perdés el acceso a tus
-          pedidos y reservas. Si tenés un negocio, queda oculto del directorio.
+          Tu nombre, correo y teléfono se anonimizan, se cierran tus sesiones y pierdes el acceso a tus
+          pedidos y reservas. Si tienes un negocio, queda oculto del directorio.
         </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <button type="button" className="btn-peligro px-4 py-3" disabled={eliminando} onClick={eliminar}>

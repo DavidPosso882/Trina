@@ -14,17 +14,17 @@ import { Aviso } from '../components/negocio/Aviso';
 import { Icono } from '../components/Icono';
 
 const esquema = z.object({
-  nombre: z.string().trim().min(2, 'Escribí tu nombre (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Escribe tu nombre (mínimo 2 letras).'),
   email: z.string().trim().email('Ese correo no parece válido.'),
   password: z
     .string()
     .min(8, 'La contraseña necesita mínimo 8 caracteres, con letras y números.')
     .regex(/^(?=.*[A-Za-z])(?=.*\d)/, 'La contraseña necesita mínimo 8 caracteres, con letras y números.'),
   rol: z.enum(['CLIENTE', 'COMERCIANTE'], {
-    errorMap: () => ({ message: 'Elegí si vas a comprar o a ofrecer tus productos.' })
+    errorMap: () => ({ message: 'Elige si vas a comprar o a ofrecer tus productos.' })
   }),
   consentimiento: z.boolean().refine((v) => v, {
-    message: 'Necesitás aceptar la política de datos para continuar.'
+    message: 'Necesitas aceptar la política de datos para continuar.'
   }),
   esResidente: z.enum(['', 'si', 'no'])
 });
@@ -65,7 +65,7 @@ export default function Registro() {
       navigate(rol === 'COMERCIANTE' ? '/panel' : '/', { replace: true });
     } catch {
       setAvisoEntrar(
-        'Tu cuenta quedó creada. El ingreso automático no salió; ingresá con tu correo y contraseña.'
+        'Tu cuenta quedó creada. El ingreso automático no salió; ingresa con tu correo y contraseña.'
       );
     }
   };
@@ -159,7 +159,7 @@ export default function Registro() {
                   <Icono icono={ShoppingBagIcon} tamano="chico" /> Quiero comprar
                 </span>
                 <span className="block text-sm text-texto-suave">
-                  Descubrí negocios, pedí productos, reservá y calificá.
+                  Descubre negocios, pide productos, reserva y calificá.
                 </span>
               </span>
             </label>
@@ -170,7 +170,7 @@ export default function Registro() {
                   <Icono icono={BuildingStorefrontIcon} tamano="chico" /> Quiero vender
                 </span>
                 <span className="block text-sm text-texto-suave">
-                  Publicá tu negocio, tu catálogo y gestioná pedidos y reservas.
+                  Publica tu negocio, tu catálogo y gestiona pedidos y reservas.
                 </span>
               </span>
             </label>
@@ -185,7 +185,7 @@ export default function Registro() {
 
         <div>
           <label htmlFor="esResidente" className="font-semibold">
-            ¿Sos residente del municipio? <span className="font-normal text-texto-suave">(opcional)</span>
+            ¿Eres residente del municipio? <span className="font-normal text-texto-suave">(opcional)</span>
           </label>
           <select id="esResidente" className="campo mt-1" {...register('esResidente')}>
             <option value="">Prefiero no decirlo</option>
@@ -231,7 +231,7 @@ export default function Registro() {
       </form>
 
       <p className="mt-4 text-center">
-        ¿Ya tenés cuenta?{' '}
+        ¿Ya tienes cuenta?{' '}
         <Link to="/ingresar" className="font-semibold text-primario underline">
           Ingresar
         </Link>

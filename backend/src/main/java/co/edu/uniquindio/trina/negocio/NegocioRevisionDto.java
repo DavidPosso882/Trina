@@ -22,9 +22,9 @@ public final class NegocioRevisionDto {
   }
 
   public record CambiarEstadoRequest(
-      @NotNull(message = "Elegí qué hacer con el negocio.") Accion accion, String motivo) {
+      @NotNull(message = "Elige qué hacer con el negocio.") Accion accion, String motivo) {
 
-    @AssertTrue(message = "Contanos el motivo de esta decisión.")
+    @AssertTrue(message = "Cuéntanos el motivo de esta decisión.")
     public boolean isMotivoCargado() {
       return accion == null || !accion.exigeMotivo() || (motivo != null && !motivo.isBlank());
     }

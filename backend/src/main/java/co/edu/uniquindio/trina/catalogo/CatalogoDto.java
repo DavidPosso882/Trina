@@ -12,8 +12,8 @@ public final class CatalogoDto {
   private CatalogoDto() {}
 
   public record ItemRequest(
-      @NotBlank(message = "Ponéle un nombre al ítem") String nombre,
-      @NotNull(message = "Indicá el precio")
+      @NotBlank(message = "Ponle un nombre al ítem") String nombre,
+      @NotNull(message = "Indica el precio")
           @Positive(message = "El precio tiene que ser mayor que cero")
           Integer precioCop,
       String descripcion,
@@ -23,10 +23,10 @@ public final class CatalogoDto {
       String claveImagen) {}
 
   public record CategoriaRequest(
-      @NotBlank(message = "Ponéle un nombre a la categoría") String nombre, Integer orden) {}
+      @NotBlank(message = "Ponle un nombre a la categoría") String nombre, Integer orden) {}
 
   public record DisponibilidadRequest(
-      @NotNull(message = "Indicá si el ítem está disponible") Boolean disponible) {}
+      @NotNull(message = "Indica si el ítem está disponible") Boolean disponible) {}
 
   public record ItemRespuesta(
       Long id,

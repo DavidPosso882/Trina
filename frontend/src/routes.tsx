@@ -64,8 +64,8 @@ function SoloLogueado({ children }: { children: ReactNode }) {
 function NoPermiso() {
   return (
     <main className="p-6">
-      <h1 className="text-xl font-bold">No tenés permiso para ver esta página</h1>
-      <p className="text-texto-suave">Ingresá con la cuenta correcta o volvé al inicio.</p>
+      <h1 className="text-xl font-bold">No tienes permiso para ver esta página</h1>
+      <p className="text-texto-suave">Ingresa con la cuenta correcta o vuelve al inicio.</p>
     </main>
   );
 }

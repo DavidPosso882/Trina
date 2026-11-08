@@ -16,7 +16,7 @@ export default function Carrito() {
     return (
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
         <h1 className="font-display text-titulo">Tu carrito</h1>
-        <Vacio>Aún no tenés productos en tu pedido. ¡Explorá los negocios del pueblo!</Vacio>
+        <Vacio>Aún no tienes productos en tu pedido. ¡Explora los negocios del pueblo!</Vacio>
         <Link to="/explorar" className="btn-principal mt-4 inline-block px-6 py-3">
           Explorar negocios
         </Link>
@@ -28,7 +28,7 @@ export default function Carrito() {
     <main className="mx-auto max-w-xl px-4 pb-40 pt-6">
       <h1 className="font-display text-titulo">Tu pedido en {carrito.negocioNombre}</h1>
       <p className="mt-1 text-texto-suave">
-        Revisá las cantidades. Vas a pagar al confirmar.
+        Revisa las cantidades. Vas a pagar al confirmar.
       </p>
 
       <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
@@ -80,7 +80,7 @@ export default function Carrito() {
           <span className="font-semibold">Total</span>
           <span className="font-display text-cifra-menor leading-none">{precio(totalCop)}</span>
         </p>
-        <p className="mt-1 text-texto-suave">Recogés en: {carrito.negocioNombre}</p>
+        <p className="mt-1 text-texto-suave">Recoges en: {carrito.negocioNombre}</p>
       </div>
 
       <Link to="/pedido/confirmar" className="btn-principal mt-4 block px-6 py-3 text-center">

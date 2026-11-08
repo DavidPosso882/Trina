@@ -69,7 +69,7 @@ public class Resena {
   /** RF-39 E1: reporte del Comerciante con motivo obligatorio; queda en la cola del Administrador. */
   public void reportar(String motivo) {
     if (motivo == null || motivo.isBlank()) {
-      throw new IllegalArgumentException("Contanos por qué reportás esta reseña.");
+      throw new IllegalArgumentException("Cuéntanos por qué reportas esta reseña.");
     }
     this.reportada = true;
     this.motivoReporte = motivo.trim();
@@ -82,10 +82,10 @@ public class Resena {
 
   private void asignar(int calificacion, String comentario) {
     if (calificacion < 1 || calificacion > 5) {
-      throw new IllegalArgumentException("Elegí una calificación de 1 a 5 estrellas.");
+      throw new IllegalArgumentException("Elige una calificación de 1 a 5 estrellas.");
     }
     if (comentario == null || comentario.isBlank()) {
-      throw new IllegalArgumentException("Contanos qué te pareció el negocio.");
+      throw new IllegalArgumentException("Cuéntanos qué te pareció el negocio.");
     }
     this.calificacion = (short) calificacion;
     this.comentario = comentario.trim();

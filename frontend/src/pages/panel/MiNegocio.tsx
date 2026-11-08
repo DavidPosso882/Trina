@@ -38,7 +38,7 @@ function ExplicacionEstado({ negocio }: { negocio: Negocio }) {
   if (negocio.estado === 'BORRADOR') {
     return (
       <Aviso tipo="info">
-        Tu negocio está sin terminar. Revisá los datos, los horarios y las fotos, y enviálo a revisión.
+        Tu negocio está sin terminar. Revisa los datos, los horarios y las fotos, y envíalo a revisión.
       </Aviso>
     );
   }
@@ -63,7 +63,7 @@ function ExplicacionEstado({ negocio }: { negocio: Negocio }) {
   return (
     <Aviso tipo="error">
       {negocio.estado === 'RECHAZADO' ? 'Tu negocio no fue aprobado.' : 'Tu negocio necesita ajustes.'}
-      {negocio.motivoRevision ? ` Motivo: ${negocio.motivoRevision}.` : ''} Corregí lo indicado y volvé a
+      {negocio.motivoRevision ? ` Motivo: ${negocio.motivoRevision}.` : ''} Corrige lo indicado y vuelve a
       enviarlo.
     </Aviso>
   );
@@ -78,7 +78,7 @@ function FormularioDatos({ negocio }: { negocio: Negocio }) {
 
   if (categorias.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <p role="status">Cargando tus datos…</p>
       </main>
     );
@@ -86,8 +86,8 @@ function FormularioDatos({ negocio }: { negocio: Negocio }) {
 
   if (categorias.isError) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
-        <Aviso tipo="error">No pudimos cargar las categorías. Revisá tu conexión.</Aviso>
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
+        <Aviso tipo="error">No pudimos cargar las categorías. Revisa tu conexión.</Aviso>
         <button type="button" className="btn-secundario mt-3 px-4 py-2" onClick={() => categorias.refetch()}>
           Intentar de nuevo
         </button>
@@ -184,7 +184,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <EncabezadoNegocio negocio={negocio} titulo="Mi negocio" />
 
       <div className="mt-4">
@@ -211,11 +211,11 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           ayuda={
             bloqueado
               ? 'Para cambiar la categoría, escribinos y lo actualizamos.'
-              : 'Elegí la que mejor lo describe.'
+              : 'Elige la que mejor lo describe.'
           }
           disabled={bloqueado}
         >
-          <option value="">Elegí una categoría…</option>
+          <option value="">Elige una categoría…</option>
           {!categoriaActual && negocio.categoria && (
             <option value="" disabled>
               {negocio.categoria} (ya no disponible)
@@ -231,7 +231,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           etiqueta="Descripción"
           registro={register('descripcion')}
           error={formState.errors.descripcion?.message}
-          ayuda="Contá en pocas palabras qué ofrecés. Ej.: Café de origen, desayunos y tortas caseras."
+          ayuda="Cuenta en pocas palabras qué ofreces. Ej.: Café de origen, desayunos y tortas caseras."
         />
         <CampoTexto
           etiqueta="Dirección"

@@ -71,14 +71,14 @@ export default function DetallePedidoPanel() {
 
   if (pedido.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando el pedido…" />
       </main>
     );
   }
   if (pedido.isError || !pedido.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(pedido.error)} onReintentar={() => pedido.refetch()} />
         <Link to="/panel/pedidos" className="mt-3 inline-block font-semibold text-primario">
           Volver a Pedidos
@@ -92,7 +92,7 @@ export default function DetallePedidoPanel() {
   const esPagoSandbox = p.metodoPago === 'SANDBOX';
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <Link to="/panel/pedidos" className="text-sm font-semibold text-primario">
         ← Pedidos
       </Link>
@@ -190,7 +190,7 @@ export default function DetallePedidoPanel() {
           </div>
           {esPagoSandbox && acciones.some((a) => a.motivo) && (
             <p className="mt-2 text-sm text-texto-suave">
-              Si rechazás o cancelás un pedido que ya pagó, se devuelve el pago de prueba.
+              Si rechazas o cancelas un pedido que ya pagó, se devuelve el pago de prueba.
             </p>
           )}
         </section>

@@ -60,13 +60,13 @@ public class PagoService {
       Long usuarioId, PagoDto.CobroRequest req, String claveIdempotencia) {
     String clave = limpiarClave(claveIdempotencia);
     if (req.pedidoId() != null && req.suscripcionId() != null) {
-      throw new IllegalArgumentException("Elegí un solo destino para el pago.");
+      throw new IllegalArgumentException("Elige un solo destino para el pago.");
     }
     if (req.suscripcionId() != null) {
       return cobrarSuscripcion(usuarioId, req.suscripcionId(), req.tarjeta(), clave);
     }
     if (req.pedidoId() == null) {
-      throw new IllegalArgumentException("Indicá el pedido o la suscripción que querés pagar.");
+      throw new IllegalArgumentException("Indica el pedido o la suscripción que quieres pagar.");
     }
     return cobrarPedido(usuarioId, req.pedidoId(), req.tarjeta(), clave);
   }

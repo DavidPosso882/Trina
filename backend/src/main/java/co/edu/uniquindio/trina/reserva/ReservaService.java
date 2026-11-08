@@ -72,7 +72,7 @@ public class ReservaService {
         usuarios
             .findById(clienteId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Iniciá sesión."));
+                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Inicia sesión."));
     var negocio =
         reservas
             .bloquearNegocio(req.negocioId())
@@ -85,23 +85,23 @@ public class ReservaService {
       throw new IllegalArgumentException("Ese negocio no está recibiendo reservas ahora.");
     }
     if (req.inicio() == null || !req.inicio().isAfter(Instant.now())) {
-      throw new IllegalArgumentException("Elegí una fecha y hora futuras para la reserva.");
+      throw new IllegalArgumentException("Elige una fecha y hora futuras para la reserva.");
     }
     Instant fin = calcularFin(negocio, req);
     // RF-26 E2: la franja tiene que caer dentro de la atención; sin franjas no se bloquea.
     if (FRANJA.equals(negocio.getTipoReserva())
         && !horarios.abiertoSiTieneFranjas(negocio.getId(), req.inicio())) {
       throw new IllegalArgumentException(
-          "Ese horario está fuera del horario de atención del negocio. Elegí otra hora.");
+          "Ese horario está fuera del horario de atención del negocio. Elige otra hora.");
     }
     if (reservas.contarSuperpuestasActivas(negocio.getId(), req.inicio(), fin)
         >= negocio.getCapacidadReservas()) {
-      throw new IllegalStateException("No hay cupo para ese horario. Probá con otra franja.");
+      throw new IllegalStateException("No hay cupo para ese horario. Prueba con otra franja.");
     }
     var reserva =
         reservas.save(
             Reserva.crear(cliente, negocio, req.inicio(), fin, req.personas(), req.nota()));
-    notificaciones.notificar(negocio.getPropietario().getId(), "RESERVA_CREADA", "Tenés una reserva nueva de " + cliente.getNombre() + ".", "RESERVA", reserva.getId());
+    notificaciones.notificar(negocio.getPropietario().getId(), "RESERVA_CREADA", "Tienes una reserva nueva de " + cliente.getNombre() + ".", "RESERVA", reserva.getId());
     return ReservaDto.ReservaRespuesta.de(reserva);
   }
 
@@ -124,7 +124,7 @@ public class ReservaService {
               filtro == null
                   ? reservas.findAllByOrderByCreadoEnDesc()
                   : reservas.findByEstadoOrderByCreadoEnDesc(filtro);
-          default -> throw new AccessDeniedException("No podés ver reservas.");
+          default -> throw new AccessDeniedException("No puedes ver reservas.");
         };
     return encontradas.stream().map(ReservaDto.ReservaRespuesta::de).toList();
   }
@@ -163,7 +163,7 @@ public class ReservaService {
         } else if (CLIENTE.equals(rol)) {
           reserva.cancelar();
         } else {
-          throw new AccessDeniedException("No podés cancelar reservas.");
+          throw new AccessDeniedException("No puedes cancelar reservas.");
         }
         notificaciones.notificar(reserva.getCliente().getId(), "RESERVA_CANCELADA", "Tu reserva en " + reserva.getNegocio().getNombre() + " fue cancelada.", "RESERVA", reserva.getId());
       }
@@ -231,7 +231,7 @@ public class ReservaService {
   private Instant calcularFin(Negocio negocio, ReservaDto.CrearReservaRequest req) {
     if (ALOJAMIENTO.equals(negocio.getTipoReserva())) {
       if (req.fin() == null) {
-        throw new IllegalArgumentException("Indicá la fecha de salida.");
+        throw new IllegalArgumentException("Indica la fecha de salida.");
       }
       if (!req.fin().isAfter(req.inicio())) {
         throw new IllegalArgumentException("La salida tiene que ser posterior a la entrada.");

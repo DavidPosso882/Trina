@@ -11,7 +11,7 @@ public final class PagoDto {
   public record CobroRequest(
       Long pedidoId,
       Long suscripcionId,
-      @NotBlank(message = "Ingresá el número de la tarjeta") String tarjeta) {}
+      @NotBlank(message = "Ingresa el número de la tarjeta") String tarjeta) {}
 
   /** Respuesta del cobro: `motivo` solo llega cuando el simulador rechaza o repetís una clave. */
   public record CobroRespuesta(

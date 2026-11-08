@@ -17,7 +17,7 @@ import { Icono } from '../../components/Icono';
 
 const esquemaComerciante = z.object({
   email: z.string().email('Ese correo no parece válido.'),
-  nombre: z.string().trim().min(2, 'Escribí el nombre (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Escribe el nombre (mínimo 2 letras).'),
   telefono: z.string()
 });
 
@@ -25,7 +25,7 @@ type ValoresComerciante = z.infer<typeof esquemaComerciante>;
 
 const esquemaNegocio = z
   .object({
-    nombre: z.string().trim().min(2, 'Escribí el nombre del negocio (mínimo 2 letras).'),
+    nombre: z.string().trim().min(2, 'Escribe el nombre del negocio (mínimo 2 letras).'),
     categoriaId: z.string(),
     descripcion: z.string(),
     direccion: z.string(),
@@ -143,7 +143,7 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
     >
       <h2 className="text-seccion">Alta asistida</h2>
       <p className="mt-1 text-sm text-texto-suave">
-        Creá la cuenta del comerciante y su negocio de una vez. La clave temporal se muestra una sola vez.
+        Crea la cuenta del comerciante y su negocio de una vez. La clave temporal se muestra una sola vez.
       </p>
 
       {aviso && (
@@ -215,7 +215,7 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
             etiqueta="Categoría (opcional)"
             registro={formNegocio.register('categoriaId')}
             error={formNegocio.formState.errors.categoriaId?.message}
-            ayuda="Podés dejarla sin categoría y completarla después."
+            ayuda="Puedes dejarla sin categoría y completarla después."
           >
             <option value="">Sin categoría…</option>
             {(categorias.data ?? [])

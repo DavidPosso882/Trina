@@ -33,12 +33,12 @@ public class NegocioGestionService {
   @Transactional
   public Negocio crear(Long propietarioId, String nombre, Long categoriaId) {
     if (negocios.existsByPropietario_Id(propietarioId)) {
-      throw new IllegalStateException("Ya tenés un negocio registrado.");
+      throw new IllegalStateException("Ya tienes un negocio registrado.");
     }
     var dueno =
         usuarios
             .findById(propietarioId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Iniciá sesión"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Inicia sesión"));
     CategoriaNegocio cat = categoriaId == null ? null : categorias.findById(categoriaId).orElse(null);
     return negocios.save(Negocio.borrador(dueno, cat, nombre));
   }

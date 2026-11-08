@@ -41,7 +41,7 @@ export default function MisReservas() {
         <button
           type="button"
           aria-pressed={filtro === ''}
-          className={`rounded-campo px-3 py-2 ${filtro === '' ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${filtro === '' ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
           onClick={() => setFiltro('')}
         >
           Todas
@@ -53,7 +53,7 @@ export default function MisReservas() {
               key={estado}
               type="button"
               aria-pressed={filtro === estado}
-              className={`inline-flex items-center gap-2 rounded-campo px-3 py-2 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+              className={`inline-flex items-center gap-2 inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
               onClick={() => setFiltro(estado)}
             >
               <Icono icono={ICONOS[info.icono] ?? InformationCircleIcon} tamano="chico" />
@@ -70,8 +70,8 @@ export default function MisReservas() {
       {reservas.data && reservas.data.length === 0 && (
         <Vacio>
           {filtro
-            ? 'No tenés reservas con ese estado.'
-            : 'Aún no tenés reservas. ¡Mirá los negocios que reciben reservas!'}
+            ? 'No tienes reservas con ese estado.'
+            : 'Aún no tienes reservas. ¡Mira los negocios que reciben reservas!'}
         </Vacio>
       )}
       {reservas.data && reservas.data.length > 0 && (

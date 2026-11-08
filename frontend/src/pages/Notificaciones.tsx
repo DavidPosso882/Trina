@@ -94,7 +94,7 @@ export default function Notificaciones() {
         <button
           type="button"
           aria-pressed={!soloNoLeidas}
-          className={`rounded-campo px-3 py-2 ${!soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${!soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
           onClick={() => setSoloNoLeidas(false)}
         >
           Todas
@@ -102,7 +102,7 @@ export default function Notificaciones() {
         <button
           type="button"
           aria-pressed={soloNoLeidas}
-          className={`rounded-campo px-3 py-2 ${soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
           onClick={() => setSoloNoLeidas(true)}
         >
           Sin leer {sinLeer > 0 ? `(${sinLeer})` : ''}
@@ -119,7 +119,7 @@ export default function Notificaciones() {
         <ErrorRecargar mensaje={mensajeDeApi(lista.error)} onReintentar={() => lista.refetch()} />
       )}
       {lista.data && visibles.length === 0 && (
-        <Vacio>{soloNoLeidas ? 'No tenés notificaciones sin leer.' : 'Todavía no tenés notificaciones.'}</Vacio>
+        <Vacio>{soloNoLeidas ? 'No tienes notificaciones sin leer.' : 'Todavía no tienes notificaciones.'}</Vacio>
       )}
       {visibles.length > 0 && (
         <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">

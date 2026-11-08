@@ -11,7 +11,7 @@ import { Icono } from '../components/Icono';
 
 const esquema = z.object({
   email: z.string().email('Ese correo no parece válido'),
-  password: z.string().min(1, 'Escribí tu contraseña')
+  password: z.string().min(1, 'Escribe tu contraseña')
 });
 
 type Valores = z.infer<typeof esquema>;
@@ -116,7 +116,7 @@ export default function Ingresar() {
         </Link>
       </p>
       <p className="mt-2">
-        ¿No tenés cuenta?{' '}
+        ¿No tienes cuenta?{' '}
         <Link to="/registro" className="font-semibold text-primario underline">
           Crear cuenta
         </Link>

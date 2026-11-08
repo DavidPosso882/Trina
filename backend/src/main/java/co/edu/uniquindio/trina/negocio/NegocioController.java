@@ -84,7 +84,7 @@ public class NegocioController {
     }
     if ((lat == null) != (lng == null)) {
       throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Para buscar por cercanía indicá latitud y longitud juntas.");
+          HttpStatus.BAD_REQUEST, "Para buscar por cercanía indica latitud y longitud juntas.");
     }
     if (lat != null
         && (lat.compareTo(BigDecimal.valueOf(-90)) < 0
@@ -112,7 +112,7 @@ public class NegocioController {
     }
     if ("cercania".equals(orden) && lat == null) {
       throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Para ordenar por cercanía indicá latitud y longitud.");
+          HttpStatus.BAD_REQUEST, "Para ordenar por cercanía indica latitud y longitud.");
     }
   }
 }

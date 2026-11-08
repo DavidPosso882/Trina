@@ -55,7 +55,7 @@ public class AdminUsuarioService {
   @Transactional
   public AdminUsuarioDto.UsuarioRespuesta cambiarEstado(Long actorId, Long usuarioId, boolean activo) {
     if (!activo && Objects.equals(actorId, usuarioId)) {
-      throw new IllegalArgumentException("No podés desactivar tu propia cuenta.");
+      throw new IllegalArgumentException("No puedes desactivar tu propia cuenta.");
     }
     var usuario = exigir(usuarioId);
     if (activo) {
@@ -77,7 +77,7 @@ public class AdminUsuarioService {
   public AdminUsuarioDto.UsuarioRespuesta cambiarRol(Long actorId, Long usuarioId, String rol) {
     String nuevo = rol == null ? "" : rol.trim().toUpperCase(Locale.ROOT);
     if (!ROLES_ASIGNABLES.contains(nuevo)) {
-      throw new IllegalArgumentException("Ese rol no existe. Elegí CLIENTE, COMERCIANTE o ADMINISTRADOR.");
+      throw new IllegalArgumentException("Ese rol no existe. Elige CLIENTE, COMERCIANTE o ADMINISTRADOR.");
     }
     var usuario = exigir(usuarioId);
     if (!nuevo.equals(usuario.getRol())) {

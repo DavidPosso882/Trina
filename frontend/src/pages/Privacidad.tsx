@@ -23,7 +23,7 @@ export default function Privacidad() {
       {politica.isLoading && <Cargando texto="Cargando la política…" />}
       {politica.isError && (
         <ErrorRecargar
-          mensaje="No pudimos cargar la política. Revisá tu conexión e intentá de nuevo."
+          mensaje="No pudimos cargar la política. Revisa tu conexión e intenta de nuevo."
           onReintentar={() => politica.refetch()}
         />
       )}
@@ -41,7 +41,7 @@ export default function Privacidad() {
         <Link to="/cuenta" className="font-semibold text-primario underline">
           Mi cuenta
         </Link>{' '}
-        podés descargar tus datos o eliminar tu cuenta cuando quieras.
+        puedes descargar tus datos o eliminar tu cuenta cuando quieras.
       </p>
     </main>
   );

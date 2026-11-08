@@ -8,7 +8,7 @@ export function SinNegocioPanel() {
     <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Mi negocio</h1>
       <p className="mt-2">
-        Todavía no creaste tu negocio. Creálo en unos minutos y empezá a mostrarte en TRINA.
+        Todavía no creaste tu negocio. Crealo en unos minutos y empieza a mostrarte en TRINA.
       </p>
       <Link
         to="/panel/negocio/nuevo"

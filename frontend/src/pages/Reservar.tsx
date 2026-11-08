@@ -66,7 +66,7 @@ export default function Reservar() {
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
         <h1 className="font-display text-titulo">Reservar</h1>
         <div className="mt-3">
-          <Aviso tipo="info">Para reservar necesitás una cuenta de cliente.</Aviso>
+          <Aviso tipo="info">Para reservar necesitas una cuenta de cliente.</Aviso>
         </div>
         <Link to={`/negocios/${id}`} className="mt-3 inline-block font-semibold text-primario">
           Volver al perfil del negocio
@@ -109,7 +109,7 @@ export default function Reservar() {
         {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? 'Reservar alojamiento' : 'Reservar una mesa o servicio'}
       </h1>
       <p className="mt-1 text-texto-suave">
-        Paso único: contanos cuándo y cuántas personas. Después el negocio confirma.
+        Paso único: cuéntanos cuándo y cuántas personas. Después el negocio confirma.
       </p>
 
       {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? (
@@ -128,10 +128,10 @@ export default function Reservar() {
 
 const esquemaBase = z.object({
   personas: z
-    .number({ invalid_type_error: 'Indicá cuántas personas van.' })
+    .number({ invalid_type_error: 'Indica cuántas personas van.' })
     .int()
     .min(1, 'Tiene que ser al menos una persona.')
-    .max(50, 'Podés reservar hasta 50 personas desde acá; para más, escribile al negocio.'),
+    .max(50, 'Puedes reservar hasta 50 personas desde aquí; para más, escríbele al negocio.'),
   nota: z.string().max(300, 'La nota no puede pasar de 300 letras.').optional()
 });
 
@@ -157,7 +157,7 @@ function FormularioFranja({
   const enviar = async (v: z.infer<typeof esquemaBase>) => {
     setError(null);
     if (!franja) {
-      setError('Elegí un horario disponible para continuar.');
+      setError('Elige un horario disponible para continuar.');
       return;
     }
     try {
@@ -195,7 +195,7 @@ function FormularioFranja({
       </div>
 
       <fieldset>
-        <legend className="font-semibold">Elegí un horario</legend>
+        <legend className="font-semibold">Elige un horario</legend>
         <p className="text-sm text-texto-suave">Solo van los horarios con cupo.</p>
         <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {disponibilidad.franjas.map((f) => {
@@ -206,7 +206,7 @@ function FormularioFranja({
                 type="button"
                 aria-pressed={seleccionada}
                 disabled={!f.disponible}
-                className={`min-h-boton rounded-campo border-2 px-2 py-2 text-left ${
+                className={`min-h-boton min-w-0 rounded-campo border-2 px-2 py-2 text-left leading-tight ${
                   seleccionada
                     ? 'border-primario bg-primario-claro font-bold text-primario'
                     : f.disponible
@@ -215,7 +215,7 @@ function FormularioFranja({
                 }`}
                 onClick={() => setFranja(f)}
               >
-                <span className="block">
+                <span className="block line-clamp-2 break-words">
                   {f.hora} a {horaDeFranja(f.fin)}
                 </span>
                 <span className="block text-sm">
@@ -268,8 +268,8 @@ function FormularioFranja({
 
 const esquemaAlojamiento = esquemaBase
   .extend({
-    entrada: z.string().min(1, 'Elegí el día de entrada.'),
-    salida: z.string().min(1, 'Elegí el día de salida.')
+    entrada: z.string().min(1, 'Elige el día de entrada.'),
+    salida: z.string().min(1, 'Elige el día de salida.')
   })
   .refine((v) => v.salida > v.entrada, {
     path: ['salida'],

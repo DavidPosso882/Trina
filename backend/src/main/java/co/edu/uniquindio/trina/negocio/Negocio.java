@@ -262,7 +262,7 @@ public class Negocio {
 
   private static void exigirMotivo(String motivo) {
     if (motivo == null || motivo.isBlank()) {
-      throw new IllegalArgumentException("Contanos el motivo de esta decisión.");
+      throw new IllegalArgumentException("Cuéntanos el motivo de esta decisión.");
     }
   }
 
@@ -282,16 +282,16 @@ public class Negocio {
         || longitud == null
         || ((telefono == null || telefono.isBlank()) && (whatsapp == null || whatsapp.isBlank()))) {
       throw new IllegalArgumentException(
-          "Falta un paso para publicar: completá datos, ubicación y al menos un contacto.");
+          "Falta un paso para publicar: completa datos, ubicación y al menos un contacto.");
     }
     if (!"BORRADOR".equals(estado) && !"RECHAZADO".equals(estado) && !"CORRECCION_SOLICITADA".equals(estado)) {
       throw new IllegalStateException("Este negocio ya está en revisión o publicado.");
     }
     if (!tieneHorarios) {
-      throw new IllegalArgumentException("Falta un paso para publicar: configurá tus horarios");
+      throw new IllegalArgumentException("Falta un paso para publicar: configura tus horarios");
     }
     if (!tieneImagenes) {
-      throw new IllegalArgumentException("Falta un paso para publicar: agregá al menos una foto");
+      throw new IllegalArgumentException("Falta un paso para publicar: agrega al menos una foto");
     }
     this.estado = "PENDIENTE";
   }

@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RecuperacionClaveService {
 
   static final Duration VIGENCIA = Duration.ofMinutes(30);
-  static final String MENSAJE_INVALIDO = "El enlace venció o ya se usó. Pedí uno nuevo.";
+  static final String MENSAJE_INVALIDO = "El enlace venció o ya se usó. Pide uno nuevo.";
   private static final Logger log = LoggerFactory.getLogger(RecuperacionClaveService.class);
 
   private final UsuarioRepository usuarios;

@@ -7,6 +7,7 @@ import {
   BeakerIcon,
   BuildingStorefrontIcon,
   CakeIcon,
+  ChevronDownIcon,
   FireIcon,
   HeartIcon,
   HomeModernIcon,
@@ -113,9 +114,22 @@ export default function Explorar() {
     queryFn: () => listarNegocios(filtros)
   });
 
+  // Mapa fijo en Alcalá: si no hay punto elegido, pedimos cercanos a Alcalá (15 km)
+  // para que siempre aparezcan puntos con las coordenadas de cada negocio.
+  const filtrosMapa = useMemo<FiltrosExplorar>(
+    () => ({
+      ...filtros,
+      lat: filtros.lat ?? 4.6736,
+      lng: filtros.lng ?? -75.7825,
+      radioKm: 15,
+      orden: 'cercania'
+    }),
+    [filtros]
+  );
+
   const marcadores = useQuery({
-    queryKey: ['explorar-mapa', filtros],
-    queryFn: () => mapaNegocios(filtros)
+    queryKey: ['explorar-mapa', filtrosMapa],
+    queryFn: () => mapaNegocios(filtrosMapa)
   });
 
   const actualizarParametros = (cambios: Record<string, string | null>) => {
@@ -156,7 +170,7 @@ export default function Explorar() {
   const pedirUbicacion = () => {
     setAvisoUbicacion(null);
     if (!('geolocation' in navigator)) {
-      setAvisoUbicacion('Tu navegador no permite usar tu ubicación. Elegí tu punto en el mapa.');
+      setAvisoUbicacion('Tu navegador no permite usar tu ubicación. Elige tu punto en el mapa.');
       return;
     }
     setBuscandoUbicacion(true);
@@ -167,7 +181,7 @@ export default function Explorar() {
       },
       () => {
         setBuscandoUbicacion(false);
-        setAvisoUbicacion('No pudimos usar tu ubicación. Elegí tu punto de referencia en el mapa.');
+        setAvisoUbicacion('No pudimos usar tu ubicación. Elige tu punto de referencia en el mapa.');
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
@@ -189,16 +203,16 @@ export default function Explorar() {
   const { ids: favoritos, alternar: alternarFav } = useFavoritos();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
-      <h1 className="font-display text-3xl font-extrabold tracking-tight md:text-4xl">
+    <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16">
+      <h1 className="font-display text-titulo font-extrabold tracking-tight">
         Descubre comercios locales
       </h1>
       <p className="mt-1 text-texto-suave">
         Encuentra restaurantes, cafés, tiendas y más cerca de ti
       </p>
 
-      <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center">
-        <form role="search" className="flex-1" onSubmit={buscar}>
+      <div className="mt-4 flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
+        <form role="search" className="min-w-0 flex-1" onSubmit={buscar}>
           <div className="relative">
             <MagnifyingGlassIcon
               aria-hidden="true"
@@ -209,12 +223,12 @@ export default function Explorar() {
             </label>
             <input
               id="buscar"
-              className="w-full rounded-full border border-oliva/15 bg-white py-3 pl-11 pr-28 shadow-sm placeholder:text-texto-suave"
+              className="w-full rounded-full border border-oliva/15 bg-white py-3 pl-11 pr-24 shadow-sm placeholder:text-texto-suave"
               placeholder="Buscar por nombre o palabra clave…"
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
             />
-            <button type="submit" className="btn-lima absolute bottom-1 right-1 top-1 px-6 text-sm">
+            <button type="submit" className="btn-lima absolute bottom-1 right-1 top-1 px-4 text-sm [min-height:40px]">
               Buscar
             </button>
           </div>
@@ -239,13 +253,13 @@ export default function Explorar() {
         </button>
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
-        <div className="flex flex-1 gap-2 overflow-x-auto pb-1" role="group" aria-label="Categorías">
+      <div className="mt-3 flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1" role="group" aria-label="Categorías">
           <button
             type="button"
             onClick={() => cambiarCategoria(null)}
             aria-pressed={categoriaId === null}
-            className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
+            className={`inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold ${
               categoriaId === null ? 'bg-oliva text-white' : 'border border-oliva/15 bg-white text-oliva'
             }`}
           >
@@ -261,7 +275,7 @@ export default function Explorar() {
                 type="button"
                 onClick={() => cambiarCategoria(activa ? null : c.id)}
                 aria-pressed={activa}
-                className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
+                className={`inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold ${
                   activa ? 'bg-oliva text-white' : 'border border-oliva/15 bg-white text-oliva'
                 }`}
               >
@@ -287,7 +301,10 @@ export default function Explorar() {
       )}
 
       <details className="mt-3 rounded-tarjeta border border-oliva/15 bg-white px-4 py-2">
-        <summary className="cursor-pointer py-1 text-sm font-semibold">Más filtros: precio y cercanía</summary>
+        <summary className="flex cursor-pointer list-none items-center gap-2 py-1 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+          <ChevronDownIcon aria-hidden="true" className="h-4 w-4 shrink-0 text-texto-suave" />
+          Más filtros: precio y cercanía
+        </summary>
         <div className="grid gap-3 py-3 sm:grid-cols-2">
           <div>
             <label htmlFor="filtro-precio" className="font-semibold">
@@ -374,14 +391,14 @@ export default function Explorar() {
         </p>
       )}
 
-      <div className="mt-4 grid gap-6 lg:grid-cols-[44%_56%]">
-        <section aria-label="Mapa de comercios">
+      <div className="mt-4 grid min-w-0 gap-6 lg:grid-cols-[44fr_56fr]">
+        <section aria-label="Mapa de comercios" className="min-w-0">
           {modoPunto && (
             <p role="status" className="mb-2 rounded-tarjeta bg-info/10 p-3 text-info">
-              Tocá el mapa donde estés parado para calcular las distancias.
+              Toca el mapa donde estés parado para calcular las distancias.
             </p>
           )}
-          <div className="lg:sticky lg:top-4">
+          <div className="min-w-0 lg:sticky lg:top-4">
             {marcadores.isLoading && <Cargando texto="Cargando el mapa…" />}
             {marcadores.isError && (
               <ErrorRecargar
@@ -390,7 +407,7 @@ export default function Explorar() {
               />
             )}
             {marcadores.data && (
-              <div className="relative">
+              <div className="relative min-w-0 overflow-hidden rounded-tarjeta">
                 <MapaExplorar
                   marcadores={marcadores.data}
                   punto={ubicacion}
@@ -401,8 +418,8 @@ export default function Explorar() {
                   }}
                   altoClase="h-72 md:h-[36rem]"
                 />
-                <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between gap-2">
-                  <p className="rounded-full bg-oliva/90 px-3 py-1.5 text-sm font-semibold text-white" role="status">
+                <div className="pointer-events-none absolute left-3 top-3 z-[500] flex max-w-[calc(100%-1.5rem)]">
+                  <p className="max-w-full truncate rounded-full bg-oliva/90 px-3 py-1.5 text-sm font-semibold text-white" role="status">
                     {total} comercio{total === 1 ? '' : 's'} encontrado{total === 1 ? '' : 's'}
                   </p>
                 </div>
@@ -411,23 +428,26 @@ export default function Explorar() {
           </div>
         </section>
 
-        <section aria-label="Lista de comercios">
+        <section aria-label="Lista de comercios" className="min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold">
               {total} comercio{total === 1 ? '' : 's'} encontrado{total === 1 ? '' : 's'}
             </h2>
             <label className="flex items-center gap-2 text-sm">
               <span className="sr-only">Ordenar</span>
-              <select
-                value={ubicacion ? 'cercania' : orden}
-                disabled={Boolean(ubicacion)}
-                onChange={(e) => setOrden(e.target.value as 'destacados' | 'nombre' | 'cercania')}
-                className="rounded-full border border-oliva/15 bg-white px-3 py-2 text-sm font-semibold"
-              >
-                <option value="destacados">Ordenar: Relevancia</option>
-                <option value="nombre">Ordenar: Nombre</option>
-                <option value="cercania">Ordenar: Cercanía</option>
-              </select>
+              <span className="relative inline-flex items-center">
+                <select
+                  value={ubicacion ? 'cercania' : orden}
+                  disabled={Boolean(ubicacion)}
+                  onChange={(e) => setOrden(e.target.value as 'destacados' | 'nombre' | 'cercania')}
+                  className="appearance-none rounded-full border border-oliva/15 bg-white py-2 pl-3 pr-9 text-sm font-semibold disabled:opacity-60"
+                >
+                  <option value="destacados">Ordenar: Relevancia</option>
+                  <option value="nombre">Ordenar: Nombre</option>
+                  <option value="cercania">Ordenar: Cercanía</option>
+                </select>
+                <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-3 h-4 w-4 text-texto-suave" />
+              </span>
             </label>
           </div>
 
@@ -440,7 +460,7 @@ export default function Explorar() {
           )}
           {negocios.data && negocios.data.total === 0 && (
             <Vacio>
-              Sin resultados. Probá quitar filtros o buscar por otra palabra, por ejemplo “café”.
+              Sin resultados. Prueba quitar filtros o buscar por otra palabra, por ejemplo “café”.
             </Vacio>
           )}
           {negocios.data && negocios.data.total > 0 && (
@@ -490,8 +510,8 @@ function TarjetaNegocio({
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <span className="rounded-full bg-crema px-2 py-0.5 text-xs font-semibold text-oliva/80">
+          <div className="flex min-w-0 items-start justify-between gap-2">
+            <span className="max-w-[60%] truncate rounded-full bg-crema px-2 py-0.5 text-xs font-semibold text-oliva/80">
               {n.categoria ?? 'Negocio local'}
             </span>
             <span className={`flex shrink-0 items-center gap-1 text-xs font-semibold ${n.abiertoAhora ? 'text-exito' : 'text-error'}`}>
@@ -499,12 +519,12 @@ function TarjetaNegocio({
               {n.abiertoAhora ? 'Abierto' : 'Cerrado'}
             </span>
           </div>
-          <h3 className="mt-1 truncate font-display text-lg font-bold">{n.nombre}</h3>
-          <p className="truncate text-sm text-texto-suave">
+          <h3 className="mt-1 line-clamp-2 font-display text-lg font-bold">{n.nombre}</h3>
+          <p className="line-clamp-2 text-sm text-texto-suave">
             {[n.descripcion?.split('·')[0]?.trim() ?? n.categoria ?? 'Comercio local', n.direccion].filter(Boolean).join(' · ')}
           </p>
-          <div className="mt-1 flex items-center justify-between gap-2">
-            <p className="text-xs text-texto-suave">
+          <div className="mt-3 flex items-start justify-between gap-3 border-t border-oliva/10 pt-3">
+            <p className="min-w-0 pt-2 text-xs leading-relaxed text-texto-suave">
               {nivelPrecioTexto(n.nivelPrecio)}
               {n.distanciaKm != null ? ` · ${n.distanciaKm.toFixed(1).replace('.', ',')} km` : ''}
               {n.destacado && n.insignia ? ` · ${n.insignia}` : ''}
@@ -515,7 +535,7 @@ function TarjetaNegocio({
                 onClick={onAlternarFav}
                 aria-pressed={esFavorito}
                 aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-                className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
                   esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
                 }`}
               >
@@ -523,7 +543,7 @@ function TarjetaNegocio({
               </button>
               <Link
                 to={`/negocios/${n.id}`}
-                className={`rounded-full px-4 py-2 text-sm font-bold ${
+                className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-bold ${
                   n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'
                 }`}
               >

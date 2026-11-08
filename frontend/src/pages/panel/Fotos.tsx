@@ -10,10 +10,10 @@ export default function Fotos() {
 
 function PantallaFotos({ negocio }: { negocio: Negocio }) {
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <EncabezadoNegocio negocio={negocio} titulo="Fotos" />
       <p className="mt-4 text-texto-suave">
-        Subí fotos de tu negocio. La principal es la que se muestra primero en tu perfil.
+        Sube fotos de tu negocio. La principal es la que se muestra primero en tu perfil.
       </p>
       <div className="mt-4">
         <EditorFotos negocioId={negocio.id} nombreNegocio={negocio.nombre} />

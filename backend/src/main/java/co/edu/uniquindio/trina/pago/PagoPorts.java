@@ -28,10 +28,10 @@ public final class PagoPorts {
       return switch (pan) {
         case "4111111111111111" -> new ResultadoCobro(true, "SIM-" + s.claveIdempotencia(), null);
         case "4000000000000002" ->
-            new ResultadoCobro(false, null, "Fondos insuficientes. Probá con otra tarjeta.");
+            new ResultadoCobro(false, null, "Fondos insuficientes. Prueba con otra tarjeta.");
         case "4000000000000069" ->
-            new ResultadoCobro(false, null, "Tarjeta vencida. Probá con otra tarjeta.");
-        default -> new ResultadoCobro(false, null, "No se pudo procesar el pago. Intentá de nuevo.");
+            new ResultadoCobro(false, null, "Tarjeta vencida. Prueba con otra tarjeta.");
+        default -> new ResultadoCobro(false, null, "No se pudo procesar el pago. Intenta de nuevo.");
       };
     }
 

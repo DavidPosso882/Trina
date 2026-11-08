@@ -3,8 +3,8 @@ import { z } from 'zod';
 /** Esquema compartido de datos del negocio: asistente PM-02 y datos PM-03. */
 export const esquemaNegocio = z
   .object({
-    nombre: z.string().trim().min(2, 'Escribí el nombre de tu negocio (mínimo 2 letras)'),
-    categoriaId: z.string().min(1, 'Elegí la categoría que mejor lo describe'),
+    nombre: z.string().trim().min(2, 'Escribe el nombre de tu negocio (mínimo 2 letras)'),
+    categoriaId: z.string().min(1, 'Elige la categoría que mejor lo describe'),
     descripcion: z.string(),
     direccion: z.string(),
     latitud: z.string(),

@@ -80,7 +80,7 @@ public class Pedido {
   public static Pedido crear(
       Usuario cliente, Negocio negocio, String metodoPago, String nota, List<Linea> lineas) {
     if (!SANDBOX.equals(metodoPago) && !EN_LOCAL.equals(metodoPago)) {
-      throw new IllegalArgumentException("Elegí cómo vas a pagar el pedido.");
+      throw new IllegalArgumentException("Elige cómo vas a pagar el pedido.");
     }
     if (lineas == null || lineas.isEmpty()) {
       throw new IllegalArgumentException("El pedido tiene que tener al menos un ítem.");
@@ -169,7 +169,7 @@ public class Pedido {
 
   private static void exigirMotivo(String motivo) {
     if (motivo == null || motivo.isBlank()) {
-      throw new IllegalArgumentException("Contanos el motivo de esta decisión.");
+      throw new IllegalArgumentException("Cuéntanos el motivo de esta decisión.");
     }
   }
 

@@ -38,12 +38,12 @@ public class ImagenNegocioController {
       @PathVariable Long id,
       @RequestParam(value = "file", required = false) MultipartFile file) {
     if (file == null || file.isEmpty()) {
-      throw new ImagenInvalidaException("Subí una foto en JPG, PNG o WebP.");
+      throw new ImagenInvalidaException("Sube una foto en JPG, PNG o WebP.");
     }
     try {
       return servicio.subir(sesionId(), id, file.getBytes(), file.getContentType());
     } catch (IOException e) {
-      throw new ImagenInvalidaException("No pudimos leer el archivo; probá de nuevo.");
+      throw new ImagenInvalidaException("No pudimos leer el archivo; prueba de nuevo.");
     }
   }
 

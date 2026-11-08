@@ -50,7 +50,7 @@ public class HorarioService {
     if (franjas != null) {
       for (var f : franjas) {
         if (f == null || f.diaSemana() == null) {
-          throw new IllegalArgumentException("Elegí el día de cada franja.");
+          throw new IllegalArgumentException("Elige el día de cada franja.");
         }
         if (f.diaSemana() < 1 || f.diaSemana() > 7) {
           throw new IllegalArgumentException("El día tiene que estar entre lunes (1) y domingo (7).");

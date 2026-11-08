@@ -25,7 +25,7 @@ public class IntentoLoginService {
     podar(ipClave);
     if (fallos.getOrDefault(correoClave, new ArrayDeque<>()).size() >= MAX_FALLOS
         || fallos.getOrDefault(ipClave, new ArrayDeque<>()).size() >= MAX_FALLOS) {
-      throw new LimiteExcedido("Hiciste varios intentos. Esperá unos minutos y volvé a probar.");
+      throw new LimiteExcedido("Hiciste varios intentos. Espera unos minutos y vuelve a probar.");
     }
   }
 

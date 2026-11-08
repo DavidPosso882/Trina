@@ -36,7 +36,7 @@ public class ApiExceptionHandler {
         .body(
             new ApiError(
                 "VALIDACION",
-                "Revisá los datos marcados e intentá de nuevo.",
+                "Revisa los datos marcados e intenta de nuevo.",
                 campos,
                 traceId,
                 OffsetDateTime.now()));
@@ -56,7 +56,7 @@ public class ApiExceptionHandler {
   @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
   public ResponseEntity<ApiError> sinPermiso(
       org.springframework.security.access.AccessDeniedException ex) {
-    return body(HttpStatus.FORBIDDEN, "AUTORIZACION", "No tenés permiso para hacer esto.");
+    return body(HttpStatus.FORBIDDEN, "AUTORIZACION", "No tienes permiso para hacer esto.");
   }
 
   @ExceptionHandler({
@@ -89,7 +89,7 @@ public class ApiExceptionHandler {
     var resp = body(
         HttpStatus.INTERNAL_SERVER_ERROR,
         "INTERNO",
-        "Algo salió mal. Intentá de nuevo en un momento.");
+        "Algo salió mal. Intenta de nuevo en un momento.");
     org.slf4j.LoggerFactory.getLogger(ApiExceptionHandler.class)
         .error("Error no controlado traceId={}", resp.getBody() == null ? "-" : resp.getBody().traceId(), ex);
     return resp;

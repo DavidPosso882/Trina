@@ -13,7 +13,7 @@
   --color-oliva: #1b2117;
   --color-lima: #94b839;
   --color-lima-oscura: #5a8a0a;
-  --color-crema: #f8fce1;
+  --color-crema: #edefe7;
   --color-dorado: #d4c04d;
   --color-marron: #3d1a11;
 }
@@ -62,8 +62,16 @@ h3 {
     min-height: 48px;
   }
   .btn-secundario {
-    @apply rounded-tarjeta border-2 border-primario px-6 text-primario;
+    @apply inline-flex min-h-boton items-center justify-center gap-2 rounded-tarjeta border-2 border-primario px-6 font-semibold text-primario;
     min-height: 48px;
+  }
+  .btn-sm {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 text-sm font-bold;
+    min-height: 44px;
+  }
+  .chip-filtro {
+    @apply inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-semibold;
+    min-height: 44px;
   }
   .btn-peligro {
     @apply w-full sm:w-auto min-h-boton rounded-tarjeta bg-error px-6 font-bold text-white disabled:opacity-60;
@@ -81,4 +89,19 @@ h3 {
     @apply rounded-tarjeta bg-superficie p-4 shadow;
     border: 2px solid var(--color-lima);
   }
+}
+
+/* Etiqueta con el nombre encima del pin cuando hay zoom en la zona. */
+.etiqueta-negocio {
+  font-weight: 700;
+  font-size: 12px;
+  color: #1b2117;
+  background: #ffffff;
+  border: 1px solid rgba(27, 33, 23, 0.2);
+  border-radius: 9999px;
+  padding: 2px 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.etiqueta-negocio::before {
+  display: none;
 }

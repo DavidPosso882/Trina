@@ -11,15 +11,15 @@ public final class AdminUsuarioDto {
   private AdminUsuarioDto() {}
 
   public record EstadoRequest(
-      @NotNull(message = "Indicá si la cuenta queda activa.") Boolean activo) {}
+      @NotNull(message = "Indica si la cuenta queda activa.") Boolean activo) {}
 
-  public record RolRequest(@NotBlank(message = "Elegí el rol.") String rol) {}
+  public record RolRequest(@NotBlank(message = "Elige el rol.") String rol) {}
 
   public record ComercianteRequest(
-      @NotBlank(message = "Escribí el correo")
+      @NotBlank(message = "Escribe el correo")
           @Email(message = "Ese correo no parece válido")
           String email,
-      @NotBlank(message = "Escribí el nombre") String nombre,
+      @NotBlank(message = "Escribe el nombre") String nombre,
       String telefono) {}
 
   public record UsuarioRespuesta(

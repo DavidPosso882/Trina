@@ -45,7 +45,7 @@ public class CuentaController {
   private Long usuarioActual() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !(auth.getPrincipal() instanceof Long id)) {
-      throw new BadCredentialsException("Iniciá sesión");
+      throw new BadCredentialsException("Inicia sesión");
     }
     return id;
   }

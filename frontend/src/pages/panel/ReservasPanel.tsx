@@ -41,9 +41,9 @@ export default function ReservasPanel() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Reservas</h1>
-      <p className="mt-1 text-texto-suave">Confirmá o rechazá las reservas de tus clientes.</p>
+      <p className="mt-1 text-texto-suave">Confirma o rechaza las reservas de tus clientes.</p>
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
         <button
@@ -78,8 +78,8 @@ export default function ReservasPanel() {
       {reservas.data && reservas.data.length === 0 && (
         <Vacio>
           {filtro
-            ? 'No tenés reservas con ese estado.'
-            : 'Todavía no tenés reservas. Cuando alguien reserve, aparece acá.'}
+            ? 'No tienes reservas con ese estado.'
+            : 'Todavía no tienes reservas. Cuando alguien reserve, aparece aquí.'}
         </Vacio>
       )}
       {reservas.data && reservas.data.length > 0 && (

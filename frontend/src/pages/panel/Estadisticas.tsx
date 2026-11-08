@@ -25,9 +25,9 @@ export default function Estadisticas() {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Estadísticas</h1>
-      <p className="mt-1 text-texto-suave">Mirá cómo te está yendo en TRINA.</p>
+      <p className="mt-1 text-texto-suave">Mira cómo te está yendo en TRINA.</p>
 
       <div className="mt-3 flex gap-1" aria-label="Elegir período">
         {[7, 30].map((d) => (
@@ -59,8 +59,8 @@ export default function Estadisticas() {
             {resumen.data.visitas === 0 && resumen.data.pedidos === 0 && resumen.data.reservas === 0 && (
               <div className="mt-3">
                 <Vacio>
-                  Todavía no hay movimiento en este período. Compartí tu perfil con tus clientes y volvé a
-                  mirar acá.
+                  Todavía no hay movimiento en este período. Comparte tu perfil con tus clientes y vuelve a
+                  mirar aquí.
                 </Vacio>
               </div>
             )}
@@ -77,11 +77,12 @@ export default function Estadisticas() {
         {top.data && top.data.length === 0 && (
           <p className="mt-2 text-texto-suave">
             Todavía no hay visitas a tus productos en este período. Cuando tus clientes abran tu catálogo,
-            acá vas a ver cuáles miran más.
+            aquí vas a ver cuáles miran más.
           </p>
         )}
         {top.data && top.data.length > 0 && (
-          <table className="mt-2 w-full text-left">
+          <div className="mt-2 overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left">
             <caption className="sr-only">Productos ordenados por cantidad de visitas</caption>
             <thead>
               <tr className="border-b border-tinta-cafe/10 text-sm text-texto-suave">
@@ -105,7 +106,8 @@ export default function Estadisticas() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         )}
       </section>
     </main>

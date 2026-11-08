@@ -62,7 +62,7 @@ public class PedidoService {
         usuarios
             .findById(clienteId)
             .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Iniciá sesión."));
+                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Inicia sesión."));
     var negocio =
         negocios
             .findByIdAndEstado(req.negocioId(), APROBADO)
@@ -74,7 +74,7 @@ public class PedidoService {
     // RF-25 E3: el pedido es para ahora; sin franjas configuradas no se bloquea.
     if (!horarios.abiertoSiTieneFranjas(negocio.getId(), Instant.now())) {
       throw new IllegalArgumentException(
-          "Este negocio está cerrado ahora. Revisá sus horarios y volvé cuando abra.");
+          "Este negocio está cerrado ahora. Revisa sus horarios y vuelve cuando abra.");
     }
     var lineas = new ArrayList<Pedido.Linea>();
     for (var pedida : req.items()) {
@@ -100,7 +100,7 @@ public class PedidoService {
       lineas.add(new Pedido.Linea(item, pedida.cantidad()));
     }
     var pedido = pedidos.save(Pedido.crear(cliente, negocio, req.metodoPago(), req.nota(), lineas));
-    notificaciones.notificar(negocio.getPropietario().getId(), "PEDIDO_CREADO", "Tenés un pedido nuevo de " + cliente.getNombre() + ".", "PEDIDO", pedido.getId());
+    notificaciones.notificar(negocio.getPropietario().getId(), "PEDIDO_CREADO", "Tienes un pedido nuevo de " + cliente.getNombre() + ".", "PEDIDO", pedido.getId());
     return PedidoDto.PedidoRespuesta.de(pedido);
   }
 
@@ -124,7 +124,7 @@ public class PedidoService {
               filtro == null
                   ? pedidos.findAllByOrderByCreadoEnDesc()
                   : pedidos.findByEstadoOrderByCreadoEnDesc(filtro);
-          default -> throw new AccessDeniedException("No podés ver pedidos.");
+          default -> throw new AccessDeniedException("No puedes ver pedidos.");
         };
     return encontrados.stream().map(PedidoDto.PedidoRespuesta::de).toList();
   }
@@ -169,7 +169,7 @@ public class PedidoService {
         } else if (CLIENTE.equals(rol)) {
           pedido.cancelar();
         } else {
-          throw new AccessDeniedException("No podés cancelar pedidos.");
+          throw new AccessDeniedException("No puedes cancelar pedidos.");
         }
         pagos.reembolsarPedido(pedido.getId());
         notificaciones.notificar(pedido.getCliente().getId(), "PEDIDO_CANCELADO", "Tu pedido en " + pedido.getNegocio().getNombre() + " fue cancelado.", "PEDIDO", pedido.getId());

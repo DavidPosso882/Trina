@@ -192,10 +192,10 @@ class NegocioRevisionTest {
   void solicitarCorreccionConMotivoPermiteReenviar() throws Exception {
     long id = pendiente();
 
-    cambiar(id, tokenAdmin, Map.of("accion", "SOLICITAR_CORRECCION", "motivo", "Agregá los horarios."))
+    cambiar(id, tokenAdmin, Map.of("accion", "SOLICITAR_CORRECCION", "motivo", "Agrega los horarios."))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.estado").value("CORRECCION_SOLICITADA"))
-        .andExpect(jsonPath("$.motivoRevision").value("Agregá los horarios."));
+        .andExpect(jsonPath("$.motivoRevision").value("Agrega los horarios."));
 
     mvc.perform(
             post("/api/v1/negocios/" + id + "/enviar-revision")

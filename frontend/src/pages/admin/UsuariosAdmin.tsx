@@ -86,7 +86,7 @@ export default function UsuariosAdmin() {
   return (
     <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Usuarios</h1>
-      <p className="mt-1 text-texto-suave">Buscá, cambiá de rol y activá o desactivá cuentas.</p>
+      <p className="mt-1 text-texto-suave">Buscá, cambia de rol y activa o desactiva cuentas.</p>
 
       {aviso && (
         <div className="mt-3">
@@ -220,9 +220,9 @@ export default function UsuariosAdmin() {
                     <td className="px-4 py-3">
                       <button
                         type="button"
-                        className={u.activo ? 'btn-peligro px-3 py-2 text-sm' : 'btn-secundario px-3 py-2 text-sm'}
+                        className={u.activo ? 'btn-peligro whitespace-nowrap px-3 py-2 text-sm' : 'btn-secundario whitespace-nowrap px-3 py-2 text-sm'}
                         disabled={soyYo}
-                        title={soyYo ? 'No podés desactivar tu propia cuenta.' : undefined}
+                        title={soyYo ? 'No puedes desactivar tu propia cuenta.' : undefined}
                         onClick={() => {
                           setError(null);
                           setAviso(null);
@@ -232,7 +232,7 @@ export default function UsuariosAdmin() {
                         {u.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
                       </button>
                       {soyYo && (
-                        <p className="mt-1 text-xs text-texto-suave">No podés desactivar tu propia cuenta.</p>
+                        <p className="mt-1 text-xs text-texto-suave">No puedes desactivar tu propia cuenta.</p>
                       )}
                     </td>
                   </tr>

@@ -19,7 +19,7 @@ import { Icono, type IconoSvg } from './Icono';
 
 /**
  * S5 — iconos por estado. Las palabras y clases siguen viniendo de lib/estados (fuera de T1);
- * acá se reemplaza el emoji por su Heroicon equivalente.
+ * aquí se reemplaza el emoji por su Heroicon equivalente.
  */
 const ICONOS: Record<string, IconoSvg> = {
   PENDIENTE_PAGO: CreditCardIcon,

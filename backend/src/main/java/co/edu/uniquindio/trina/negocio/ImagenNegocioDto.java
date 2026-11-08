@@ -16,12 +16,12 @@ public final class ImagenNegocioDto {
       Boolean principal,
       @Min(value = 0, message = "El orden no puede ser negativo") Integer orden) {
 
-    @AssertTrue(message = "Indicá si la foto es principal o su nuevo orden.")
+    @AssertTrue(message = "Indica si la foto es principal o su nuevo orden.")
     public boolean isCambioValido() {
       return (principal != null) ^ (orden != null);
     }
 
-    @AssertTrue(message = "Solo podés marcar una foto como principal.")
+    @AssertTrue(message = "Solo puedes marcar una foto como principal.")
     public boolean isPrincipalValido() {
       return principal == null || principal;
     }

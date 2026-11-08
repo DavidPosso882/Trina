@@ -13,16 +13,16 @@ public final class ResenaDto {
   private ResenaDto() {}
 
   public record PublicarRequest(
-      @Min(value = 1, message = "Elegí una calificación de 1 a 5 estrellas.")
-          @Max(value = 5, message = "Elegí una calificación de 1 a 5 estrellas.")
+      @Min(value = 1, message = "Elige una calificación de 1 a 5 estrellas.")
+          @Max(value = 5, message = "Elige una calificación de 1 a 5 estrellas.")
           int calificacion,
-      @NotBlank(message = "Contanos qué te pareció el negocio.") String comentario) {}
+      @NotBlank(message = "Cuéntanos qué te pareció el negocio.") String comentario) {}
 
   /** RF-39 E1: el motivo se valida en el dominio para responder 422 (§5.9). */
   public record ReportarRequest(String motivo) {}
 
   public record VisibilidadRequest(
-      @NotNull(message = "Indicá si la reseña se muestra") Boolean visible) {}
+      @NotNull(message = "Indica si la reseña se muestra") Boolean visible) {}
 
   public record ResenaRespuesta(
       Long id,

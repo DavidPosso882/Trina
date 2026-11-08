@@ -12,7 +12,7 @@ public class PoliticaPrivacidadController {
   private static final String TEXTO =
       "En TRINA tratamos tus datos personales solo para operar la plataforma: identificar tu"
           + " cuenta, gestionar pedidos, reservas y pagos, y avisarte sobre tu actividad. No"
-          + " vendemos tus datos ni los compartimos con terceros ajenos al servicio. Podés"
+          + " vendemos tus datos ni los compartimos con terceros ajenos al servicio. Puedes"
           + " consultar, actualizar, exportar y eliminar tu cuenta desde Mi cuenta; la eliminación"
           + " anonimiza tus datos personales y conserva los registros transaccionales sin"
           + " identificarte. Responsable: proyecto TRINA, Universidad del Quindío. Esta política"

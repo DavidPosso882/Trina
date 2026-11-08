@@ -33,7 +33,7 @@ export default function InicioPanel() {
 
   if (negocio.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -44,7 +44,7 @@ export default function InicioPanel() {
       return <SinNegocioPanel />;
     }
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(negocio.error)} onReintentar={() => negocio.refetch()} />
       </main>
     );
@@ -52,7 +52,7 @@ export default function InicioPanel() {
 
   if (!negocio.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -64,7 +64,7 @@ export default function InicioPanel() {
 function PanelCargado({ negocio }: { negocio: Negocio }) {
   const { sesion } = useSesion();
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Hola, {sesion?.nombre ?? ''}</h1>
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="text-texto-suave">{negocio.nombre}:</span>
@@ -105,7 +105,7 @@ function Pendientes() {
         cantidad={pedidos.data?.length ?? 0}
         singular="pedido nuevo"
         plural="pedidos nuevos"
-        vacio="No tenés pedidos nuevos por ahora. Cuando alguien pida, aparece acá."
+        vacio="No tienes pedidos nuevos por ahora. Cuando alguien pida, aparece aquí."
         enlace="/panel/pedidos?estado=PENDIENTE"
         textoEnlace="Ver pedidos"
       />
@@ -117,7 +117,7 @@ function Pendientes() {
         cantidad={reservas.data?.length ?? 0}
         singular="reserva por confirmar"
         plural="reservas por confirmar"
-        vacio="No tenés reservas esperando respuesta."
+        vacio="No tienes reservas esperando respuesta."
         enlace="/panel/reservas?estado=PENDIENTE_CONFIRMACION"
         textoEnlace="Ver reservas"
       />
@@ -270,7 +270,7 @@ function Plan() {
           )}
           {suscripcion.data.estado === 'PENDIENTE_PAGO' && (
             <div className="mt-2">
-              <Aviso tipo="info">Te falta pagar la suscripción Destacada. Podés terminarla desde acá.</Aviso>
+              <Aviso tipo="info">Te falta pagar la suscripción Destacada. Puedes terminarla desde aquí.</Aviso>
             </div>
           )}
           <Link

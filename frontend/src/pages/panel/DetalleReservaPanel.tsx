@@ -67,14 +67,14 @@ export default function DetalleReservaPanel() {
 
   if (reserva.isLoading) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando la reserva…" />
       </main>
     );
   }
   if (reserva.isError || !reserva.data) {
     return (
-      <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+      <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(reserva.error)} onReintentar={() => reserva.refetch()} />
         <Link to="/panel/reservas" className="mt-3 inline-block font-semibold text-primario">
           Volver a Reservas
@@ -88,7 +88,7 @@ export default function DetalleReservaPanel() {
   const esAlojamiento = r.tipoReserva === 'ALOJAMIENTO';
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <Link to="/panel/reservas" className="text-sm font-semibold text-primario">
         ← Reservas
       </Link>

@@ -41,7 +41,7 @@ export default function ConfirmarPedido() {
       <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
         <h1 className="font-display text-titulo">Confirmar pedido</h1>
         <div className="mt-3">
-          <Aviso tipo="info">Para confirmar un pedido necesitás una cuenta de cliente.</Aviso>
+          <Aviso tipo="info">Para confirmar un pedido necesitas una cuenta de cliente.</Aviso>
         </div>
         <Link to="/explorar" className="mt-3 inline-block font-semibold text-primario">
           Explorar negocios
@@ -114,7 +114,7 @@ export default function ConfirmarPedido() {
 
           <form className="mt-4 space-y-4" onSubmit={handleSubmit(confirmar)} noValidate>
             <fieldset className="rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4">
-              <legend className="font-bold">¿Cómo querés pagar?</legend>
+              <legend className="font-bold">¿Cómo quieres pagar?</legend>
               <label className="mt-3 flex min-h-boton items-center gap-3">
                 <input type="radio" value="SANDBOX" {...register('metodoPago')} />
                 <span>
@@ -134,7 +134,7 @@ export default function ConfirmarPedido() {
                     <Icono icono={BuildingStorefrontIcon} tamano="chico" />
                     <strong>Pagar en el local</strong>
                   </span>
-                  <span className="block text-sm text-texto-suave">Pagás cuando recogés el pedido.</span>
+                  <span className="block text-sm text-texto-suave">Pagas cuando recoges el pedido.</span>
                 </span>
               </label>
             </fieldset>
@@ -181,7 +181,7 @@ export default function ConfirmarPedido() {
       {yaPagando && (
         <>
           <Aviso tipo="info">
-            Tu pedido #{pedido.id} quedó creado. Completá el pago para que el negocio lo reciba.
+            Tu pedido #{pedido.id} quedó creado. Completa el pago para que el negocio lo reciba.
           </Aviso>
           <FormularioPago
             pedidoId={pedido.id}

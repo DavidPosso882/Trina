@@ -17,8 +17,8 @@ public final class AdminNegocioDto {
   }
 
   public record AltaRequest(
-      @NotNull(message = "Elegí el comerciante") Long comercianteId,
-      @NotBlank(message = "Ponéle un nombre al negocio") String nombre,
+      @NotNull(message = "Elige el comerciante") Long comercianteId,
+      @NotBlank(message = "Ponle un nombre al negocio") String nombre,
       Long categoriaId,
       String descripcion,
       String direccion,
@@ -26,7 +26,7 @@ public final class AdminNegocioDto {
       BigDecimal longitud,
       String telefono,
       String whatsapp,
-      @NotNull(message = "Elegí el estado inicial") EstadoInicial estadoInicial) {}
+      @NotNull(message = "Elige el estado inicial") EstadoInicial estadoInicial) {}
 
   public record Respuesta(
       Long id,

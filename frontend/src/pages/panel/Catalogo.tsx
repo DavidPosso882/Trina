@@ -147,10 +147,10 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
     : 0;
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Catálogo</h1>
       <p className="mt-1 text-texto-suave">
-        Cargá tus productos o servicios para que tus clientes puedan verlos y pedirlos.
+        Carga tus productos o servicios para que tus clientes puedan verlos y pedirlos.
       </p>
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <EstadoNegocio estado={negocio.estado} />
@@ -183,7 +183,7 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
         {noPublicado && (
           <div className="mt-3">
             <Aviso tipo="info">
-              Tu negocio está en estado <strong>{negocio.estado}</strong>. Podés cargar tus ítems
+              Tu negocio está en estado <strong>{negocio.estado}</strong>. Puedes cargar tus ítems
               desde ya; se ven en tu perfil público cuando esté aprobado.
             </Aviso>
           </div>
@@ -196,7 +196,7 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
         )}
         {catalogo.data && totalItems === 0 && (
           <Vacio>
-            Todavía no cargaste ítems. Empezá con “Nuevo ítem”: un producto o un servicio con su
+            Todavía no cargaste ítems. Empieza con “Nuevo ítem”: un producto o un servicio con su
             precio.
           </Vacio>
         )}
@@ -296,7 +296,7 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
           />
         )}
         {categorias.data && categorias.data.length === 0 && (
-          <Vacio>Sin categorías todavía. Podés agrupar tus ítems cuando quieras.</Vacio>
+          <Vacio>Sin categorías todavía. Puedes agrupar tus ítems cuando quieras.</Vacio>
         )}
         {categorias.data && categorias.data.length > 0 && (
           <ul className="mt-2 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
@@ -436,11 +436,11 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
 }
 
 const esquemaItem = z.object({
-  nombre: z.string().trim().min(2, 'Ponéle un nombre al ítem (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Ponle un nombre al ítem (mínimo 2 letras).'),
   precio: z
     .string()
     .trim()
-    .min(1, 'Indicá el precio.')
+    .min(1, 'Indica el precio.')
     .refine(
       (v) => /^\d+$/.test(v) && Number(v) > 0,
       'El precio tiene que ser un número entero mayor que cero. Ej.: 9500'
@@ -579,7 +579,7 @@ function FormularioItem({
 }
 
 const esquemaCategoria = z.object({
-  nombre: z.string().trim().min(2, 'Ponéle un nombre a la categoría (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Ponle un nombre a la categoría (mínimo 2 letras).'),
   orden: z
     .string()
     .trim()

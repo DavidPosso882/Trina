@@ -139,7 +139,7 @@ public class EstadisticaService {
         .orElseThrow(
             () ->
                 new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Todavía no tenés un negocio."));
+                    HttpStatus.NOT_FOUND, "Todavía no tienes un negocio."));
   }
 
   private static void exigirPeriodo(int dias) {

@@ -246,46 +246,46 @@ function Acciones({
   const esCliente = !sesion || sesion.rol === 'CLIENTE';
   const enlaceWa = whatsapp
     ? `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(
-        `Hola, te escribo desde TRINA por ${nombre}. ¿Me podés dar más información?`
+        `Hola, te escribo desde TRINA por ${nombre}. ¿Me puedes dar más información?`
       )}`
     : null;
   return (
     <section className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap" aria-label="Acciones del negocio">
       {telefono && (
-        <a className="btn-secundario inline-flex items-center justify-center gap-2 px-4 py-3" href={`tel:${telefono}`}>
-          <Icono icono={PhoneIcon} /> Llamar
+        <a className="btn-secundario inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3" href={`tel:${telefono}`}>
+          <Icono icono={PhoneIcon} /> <span className="truncate">Llamar</span>
         </a>
       )}
       {enlaceWa && (
         <a
-          className="btn-secundario inline-flex items-center justify-center gap-2 px-4 py-3 text-center"
+          className="btn-secundario col-span-2 inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3 text-center sm:col-span-1"
           href={enlaceWa}
           target="_blank"
           rel="noreferrer"
         >
-          <Icono icono={ChatBubbleLeftRightIcon} /> Escribir por WhatsApp
+          <Icono icono={ChatBubbleLeftRightIcon} /> <span className="truncate">Escribir por WhatsApp</span>
         </a>
       )}
       {aprobado && esCliente && (
         <>
           <button
             type="button"
-            className="btn-principal inline-flex items-center justify-center gap-2 px-4 py-3"
+            className="btn-principal inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3"
             onClick={onIrACatalogo}
           >
-            <Icono icono={ShoppingCartIcon} /> Agregar
+            <Icono icono={ShoppingCartIcon} /> <span className="truncate">Agregar</span>
           </button>
           <Link
-            className="btn-secundario inline-flex items-center justify-center gap-2 px-4 py-3 text-center"
+            className="btn-secundario inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3 text-center"
             to={`/reservar/${id}`}
           >
-            <Icono icono={CalendarDaysIcon} /> Reservar
+            <Icono icono={CalendarDaysIcon} /> <span className="truncate">Reservar</span>
           </Link>
         </>
       )}
       {aprobado && !esCliente && (
         <div className="col-span-2 sm:w-full">
-          <Aviso tipo="info">Para agregar productos o reservar necesitás una cuenta de cliente.</Aviso>
+          <Aviso tipo="info">Para agregar productos o reservar necesitas una cuenta de cliente.</Aviso>
         </div>
       )}
       {!telefono && !whatsapp && (
@@ -560,7 +560,7 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
         onCerrar={() => setItemPendiente(null)}
       >
         <p>
-          Tenés productos de <strong>{carrito?.negocioNombre}</strong> en el carrito. Si agregás{' '}
+          Tienes productos de <strong>{carrito?.negocioNombre}</strong> en el carrito. Si agregas{' '}
           <strong>{itemPendiente?.nombre}</strong>, se vacía y empieza un pedido en {nombre}.
         </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -583,7 +583,7 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
       </Dialogo>
 
       {carrito?.negocioId === id && carrito.items.length > 0 && (
-        <div className="fixed inset-x-0 bottom-14 z-30 border-t border-tinta-cafe/10 bg-primario-claro p-3 sm:bottom-0">
+        <div className="fixed inset-x-0 bottom-24 z-30 border-t border-tinta-cafe/10 bg-primario-claro p-3 sm:bottom-0">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
             <span className="flex items-center gap-2 font-semibold">
               <Icono icono={ShoppingCartIcon} tamano="chico" />
@@ -601,11 +601,11 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
 
 const esquemaResena = z.object({
   calificacion: z
-    .number({ invalid_type_error: 'Elegí una calificación de 1 a 5 estrellas.' })
+    .number({ invalid_type_error: 'Elige una calificación de 1 a 5 estrellas.' })
     .int()
-    .min(1, 'Elegí una calificación de 1 a 5 estrellas.')
-    .max(5, 'Elegí una calificación de 1 a 5 estrellas.'),
-  comentario: z.string().trim().min(5, 'Contanos qué te pareció (mínimo 5 letras).')
+    .min(1, 'Elige una calificación de 1 a 5 estrellas.')
+    .max(5, 'Elige una calificación de 1 a 5 estrellas.'),
+  comentario: z.string().trim().min(5, 'Cuéntanos qué te pareció (mínimo 5 letras).')
 });
 
 type ValoresResena = z.infer<typeof esquemaResena>;
@@ -670,7 +670,7 @@ function Resenas({ id }: { id: number }) {
               {sesion.rol === 'COMERCIANTE' && (
                 <>
                   {' '}
-                  Si este es tu negocio, podés reportar reseñas desde{' '}
+                  Si este es tu negocio, puedes reportar reseñas desde{' '}
                   <Link to="/panel/resenas" className="font-bold underline">
                     el panel
                   </Link>
@@ -683,7 +683,7 @@ function Resenas({ id }: { id: number }) {
           <Aviso tipo="info">
             Para dejar tu reseña,{' '}
             <Link to="/ingresar" state={{ desde: `/negocios/${id}` }} className="font-bold underline">
-              ingresá a tu cuenta
+              ingresa a tu cuenta
             </Link>
             .
           </Aviso>
@@ -749,7 +749,7 @@ function FormularioResena({ negocioId, mia }: { negocioId: number; mia?: Resena 
       onSubmit={handleSubmit(enviar)}
       noValidate
     >
-      <h3 className="text-seccion">{mia ? 'Editar mi reseña' : 'Contá tu experiencia'}</h3>
+      <h3 className="text-seccion">{mia ? 'Editar mi reseña' : 'Cuenta tu experiencia'}</h3>
 
       <div>
         <label htmlFor="calificacion" className="font-semibold">

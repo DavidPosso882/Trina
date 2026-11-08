@@ -1,7 +1,7 @@
 /** Estados con palabras del usuario (diseño UI §6.1) para pedidos y reservas. */
 
 /**
- * S5 — clave de icono del estado. Las palabras y clases viven acá; el render lo resuelve
+ * S5 — clave de icono del estado. Las palabras y clases viven aquí; el render lo resuelve
  * cada pantalla con un Heroicon vía `components/Icono`.
  */
 export type ClaveIconoEstado =

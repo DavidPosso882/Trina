@@ -114,11 +114,11 @@ export function Campana() {
           {lista.isError && (
             <p role="alert" className="mt-2 flex items-start gap-2 text-sm text-error">
               <Icono icono={ExclamationTriangleIcon} tamano="chico" className="mt-0.5" />
-              <span>No se pudieron cargar. Probá de nuevo en un momento.</span>
+              <span>No se pudieron cargar. Prueba de nuevo en un momento.</span>
             </p>
           )}
           {lista.data && recientes.length === 0 && (
-            <p className="mt-2 text-sm text-texto-suave">No tenés notificaciones todavía.</p>
+            <p className="mt-2 text-sm text-texto-suave">No tienes notificaciones todavía.</p>
           )}
           <ul className="mt-2 divide-y">
             {recientes.map((n) => (

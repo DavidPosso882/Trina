@@ -17,16 +17,16 @@ public final class ReservaDto {
    * ALOJAMIENTO necesita {@code inicio} (entrada) y {@code fin} (salida).
    */
   public record CrearReservaRequest(
-      @NotNull(message = "Indicá el negocio") Long negocioId,
-      @NotNull(message = "Indicá cuándo empieza la reserva") Instant inicio,
+      @NotNull(message = "Indica el negocio") Long negocioId,
+      @NotNull(message = "Indica cuándo empieza la reserva") Instant inicio,
       Instant fin,
-      @NotNull(message = "Indicá cuántas personas")
+      @NotNull(message = "Indica cuántas personas")
           @Positive(message = "Tiene que ser al menos una persona")
           Integer personas,
       String nota) {}
 
   public record AccionRequest(
-      @NotBlank(message = "Indicá la acción")
+      @NotBlank(message = "Indica la acción")
           @Pattern(
               regexp = "CONFIRMAR|RECHAZAR|COMPLETAR|CANCELAR",
               message = "Esa acción no existe")

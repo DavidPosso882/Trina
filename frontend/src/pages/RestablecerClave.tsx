@@ -60,7 +60,7 @@ export default function RestablecerClave() {
       <main className="mx-auto max-w-md px-4 pb-20 pt-6">
         <h1 className="font-display text-titulo">Restablecer contraseña</h1>
         <p className="mt-1 text-texto-suave">
-          El enlace del correo trae el token. Si lo abriste en otro dispositivo, pegalo acá.
+          El enlace del correo trae el token. Si lo abriste en otro dispositivo, pégalo aquí.
         </p>
         <div className="mt-4 space-y-4">
           <div>
@@ -70,7 +70,7 @@ export default function RestablecerClave() {
             <input
               id="token"
               className="campo mt-1"
-              placeholder="Pegá el enlace o el token"
+              placeholder="Pega el enlace o el token"
               value={tokenManual}
               onChange={(e) => setTokenManual(e.target.value)}
             />
@@ -100,7 +100,7 @@ export default function RestablecerClave() {
           <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" /> Contraseña nueva lista
         </h1>
         <p className="mt-2">
-          Ya podés ingresar con tu correo y la contraseña nueva. Por seguridad, cerramos las sesiones
+          Ya puedes ingresar con tu correo y la contraseña nueva. Por seguridad, cerramos las sesiones
           que estaban abiertas.
         </p>
         <Link to="/ingresar" className="btn-principal mt-4 inline-block px-6 py-3">
@@ -112,7 +112,7 @@ export default function RestablecerClave() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
-      <h1 className="font-display text-titulo">Creá tu contraseña nueva</h1>
+      <h1 className="font-display text-titulo">Crea tu contraseña nueva</h1>
       <p className="mt-1 text-texto-suave">Mínimo 8 caracteres, con letras y números.</p>
       <form className="mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
         <div>

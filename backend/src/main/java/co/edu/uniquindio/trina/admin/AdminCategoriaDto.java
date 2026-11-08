@@ -9,10 +9,10 @@ public final class AdminCategoriaDto {
   private AdminCategoriaDto() {}
 
   public record CategoriaRequest(
-      @NotBlank(message = "Escribí el nombre") String nombre, String icono, Integer orden) {}
+      @NotBlank(message = "Escribe el nombre") String nombre, String icono, Integer orden) {}
 
   public record EstadoRequest(
-      @NotNull(message = "Indicá si la categoría queda activa.") Boolean activa) {}
+      @NotNull(message = "Indica si la categoría queda activa.") Boolean activa) {}
 
   public record CategoriaRespuesta(
       Long id, String nombre, String icono, Integer orden, boolean activa) {}

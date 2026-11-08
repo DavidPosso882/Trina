@@ -7,7 +7,7 @@ public final class AdminParametroDto {
 
   private AdminParametroDto() {}
 
-  public record ParametroRequest(@NotBlank(message = "Escribí el valor") String valor) {}
+  public record ParametroRequest(@NotBlank(message = "Escribe el valor") String valor) {}
 
   public record ParametroRespuesta(String clave, String valor, String descripcion) {}
 }

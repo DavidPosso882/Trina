@@ -23,7 +23,7 @@ import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
 
 const esquema = z.object({
-  nombre: z.string().trim().min(2, 'Escribí el nombre (mínimo 2 letras).'),
+  nombre: z.string().trim().min(2, 'Escribe el nombre (mínimo 2 letras).'),
   icono: z.string(),
   orden: z.string().refine((v) => v.trim() === '' || /^\d+$/.test(v.trim()), 'El orden tiene que ser un número entero.')
 });
@@ -97,7 +97,7 @@ export default function CategoriasAdmin() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Categorías</h1>
-      <p className="mt-1 text-texto-suave">Ordená cómo se agrupan los negocios en el directorio.</p>
+      <p className="mt-1 text-texto-suave">Ordena cómo se agrupan los negocios en el directorio.</p>
 
       {aviso && (
         <div className="mt-3">
@@ -171,7 +171,7 @@ export default function CategoriasAdmin() {
         <ErrorRecargar mensaje={mensajeDeApi(categorias.error)} onReintentar={() => categorias.refetch()} />
       )}
       {categorias.data && categorias.data.length === 0 && (
-        <Vacio>Todavía no hay categorías. Creá la primera con el formulario de arriba.</Vacio>
+        <Vacio>Todavía no hay categorías. Crea la primera con el formulario de arriba.</Vacio>
       )}
       {categorias.data && categorias.data.length > 0 && (
         <div className="mt-4 overflow-x-auto border-y border-tinta-cafe/10">
