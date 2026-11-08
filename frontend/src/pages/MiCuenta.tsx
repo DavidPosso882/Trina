@@ -56,34 +56,34 @@ export default function MiCuenta() {
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
+    <main className="mx-auto max-w-xl px-4 pb-28 pt-6">
       <h1 className="font-display text-titulo">Mi cuenta</h1>
       <p className="mt-1 text-texto-suave">Desde aquí manejas tus datos personales.</p>
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Link
           to="/pedidos"
-          className="inline-flex min-h-boton items-center gap-2 rounded-campo bg-primario-claro px-3 py-2 text-primario"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
         >
           <Icono icono={ReceiptPercentIcon} tamano="chico" /> Mis pedidos
         </Link>
         <Link
           to="/reservas"
-          className="inline-flex min-h-boton items-center gap-2 rounded-campo bg-primario-claro px-3 py-2 text-primario"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
         >
           <Icono icono={CalendarDaysIcon} tamano="chico" /> Mis reservas
         </Link>
         <Link
           to="/notificaciones"
-          className="inline-flex min-h-boton items-center gap-2 rounded-campo bg-primario-claro px-3 py-2 text-primario"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
         >
           <Icono icono={BellIcon} tamano="chico" /> Notificaciones
         </Link>
         <Link
           to="/privacidad"
-          className="inline-flex min-h-boton items-center gap-2 rounded-campo bg-primario-claro px-3 py-2 text-primario"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primario-claro px-3 text-sm font-semibold text-primario"
         >
-          <Icono icono={LockClosedIcon} tamano="chico" /> Política de privacidad
+          <Icono icono={LockClosedIcon} tamano="chico" /> Privacidad
         </Link>
       </div>
 
@@ -146,40 +146,44 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
 
   return (
     <form
-      className="mt-4 space-y-4 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4"
+      className="tarjeta-form mt-4 space-y-4"
       onSubmit={handleSubmit(enviar)}
       noValidate
     >
-      <h2 className="text-seccion">Tus datos</h2>
-      <p className="text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
       <div>
-        <label htmlFor="nombre" className="font-semibold">
-          Nombre
-        </label>
-        <input id="nombre" className="campo mt-1" autoComplete="name" {...register('nombre')} />
-        <ErrorCampo mensaje={formState.errors.nombre?.message} />
+        <h2 className="text-seccion">Tus datos</h2>
+        <p className="mt-1 text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
       </div>
-      <div>
-        <label htmlFor="telefono" className="font-semibold">
-          Teléfono
-        </label>
-        <input
-          id="telefono"
-          className="campo mt-1"
-          inputMode="tel"
-          autoComplete="tel"
-          placeholder="300 123 4567"
-          aria-describedby="telefono-ayuda"
-          {...register('telefono')}
-        />
-        <p id="telefono-ayuda" className="mt-1 text-sm text-texto-suave">
-          Lo usamos para avisarte de tus pedidos y reservas.
-        </p>
-        <ErrorCampo mensaje={formState.errors.telefono?.message} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label htmlFor="nombre" className="mb-1 block text-sm font-semibold">
+            Nombre
+          </label>
+          <input id="nombre" className="campo" autoComplete="name" {...register('nombre')} />
+          <ErrorCampo mensaje={formState.errors.nombre?.message} />
+        </div>
+        <div className="min-w-0">
+          <label htmlFor="telefono" className="mb-1 block text-sm font-semibold">
+            Teléfono
+          </label>
+          <input
+            id="telefono"
+            className="campo"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="300 123 4567"
+            aria-describedby="telefono-ayuda"
+            {...register('telefono')}
+          />
+          <p id="telefono-ayuda" className="mt-1 text-sm text-texto-suave">
+            Lo usamos para avisarte de tus pedidos y reservas.
+          </p>
+          <ErrorCampo mensaje={formState.errors.telefono?.message} />
+        </div>
       </div>
       {error && <Aviso tipo="error">{error}</Aviso>}
       {aviso && <Aviso tipo="exito">{aviso}</Aviso>}
-      <button type="submit" className="btn-principal px-6 py-3" disabled={formState.isSubmitting}>
+      <button type="submit" className="btn-principal-md" disabled={formState.isSubmitting}>
         {formState.isSubmitting ? 'Guardando…' : 'Guardar cambios'}
       </button>
     </form>
@@ -228,56 +232,58 @@ function FormularioClave() {
 
   return (
     <form
-      className="mt-4 space-y-4 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4"
+      className="tarjeta-form mt-4 space-y-4"
       onSubmit={handleSubmit(enviar)}
       noValidate
     >
       <h2 className="text-seccion">Cambiar contraseña</h2>
-      <div>
-        <label htmlFor="actual" className="font-semibold">
+      <div className="min-w-0">
+        <label htmlFor="actual" className="mb-1 block text-sm font-semibold">
           Contraseña actual
         </label>
         <input
           id="actual"
           type="password"
-          className="campo mt-1"
+          className="campo"
           autoComplete="current-password"
           {...register('actual')}
         />
         <ErrorCampo mensaje={formState.errors.actual?.message} />
       </div>
-      <div>
-        <label htmlFor="nueva" className="font-semibold">
-          Contraseña nueva
-        </label>
-        <input
-          id="nueva"
-          type="password"
-          className="campo mt-1"
-          autoComplete="new-password"
-          aria-describedby="nueva-ayuda"
-          {...register('nueva')}
-        />
-        <p id="nueva-ayuda" className="mt-1 text-sm text-texto-suave">
-          Mínimo 8 caracteres, con letras y números.
-        </p>
-        <ErrorCampo mensaje={formState.errors.nueva?.message} />
-      </div>
-      <div>
-        <label htmlFor="repetir" className="font-semibold">
-          Repetir la contraseña nueva
-        </label>
-        <input
-          id="repetir"
-          type="password"
-          className="campo mt-1"
-          autoComplete="new-password"
-          {...register('repetir')}
-        />
-        <ErrorCampo mensaje={formState.errors.repetir?.message} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label htmlFor="nueva" className="mb-1 block text-sm font-semibold">
+            Contraseña nueva
+          </label>
+          <input
+            id="nueva"
+            type="password"
+            className="campo"
+            autoComplete="new-password"
+            aria-describedby="nueva-ayuda"
+            {...register('nueva')}
+          />
+          <p id="nueva-ayuda" className="mt-1 text-sm text-texto-suave">
+            Mínimo 8 caracteres, con letras y números.
+          </p>
+          <ErrorCampo mensaje={formState.errors.nueva?.message} />
+        </div>
+        <div className="min-w-0">
+          <label htmlFor="repetir" className="mb-1 block text-sm font-semibold">
+            Repetir la contraseña nueva
+          </label>
+          <input
+            id="repetir"
+            type="password"
+            className="campo"
+            autoComplete="new-password"
+            {...register('repetir')}
+          />
+          <ErrorCampo mensaje={formState.errors.repetir?.message} />
+        </div>
       </div>
       {error && <Aviso tipo="error">{error}</Aviso>}
-      <button type="submit" className="btn-principal px-6 py-3" disabled={formState.isSubmitting}>
+      <button type="submit" className="btn-principal-md" disabled={formState.isSubmitting}>
         {formState.isSubmitting ? 'Cambiando…' : 'Cambiar contraseña'}
       </button>
     </form>
@@ -306,7 +312,7 @@ function DescargarDatos({ datos }: { datos: MisDatos }) {
   };
 
   return (
-    <section className="mt-6 border-t border-tinta-cafe/10 pt-4">
+    <section className="tarjeta-form mt-4">
       <h2 className="text-seccion">Mis datos</h2>
       <p className="mt-1 text-texto-suave">
         Descarga una copia de tus datos personales y tu actividad en TRINA (pedidos y reservas).
@@ -314,7 +320,7 @@ function DescargarDatos({ datos }: { datos: MisDatos }) {
       {error && <Aviso tipo="error">{error}</Aviso>}
       <button
         type="button"
-        className="btn-secundario mt-3 inline-flex items-center gap-2 px-6 py-3"
+        className="btn-secundario-md"
         onClick={descargar}
       >
         <Icono icono={ArrowDownTrayIcon} tamano="chico" /> Descargar mis datos (JSON)
@@ -351,7 +357,7 @@ function ZonaPeligrosa({ onEliminar }: { onEliminar: () => void }) {
         deshacer.
       </p>
       {error && <Aviso tipo="error">{error}</Aviso>}
-      <button type="button" className="btn-peligro mt-3 px-6 py-3" onClick={() => setDialogo(true)}>
+      <button type="button" className="btn-peligro-md mt-3" onClick={() => setDialogo(true)}>
         Eliminar mi cuenta
       </button>
 
@@ -361,10 +367,10 @@ function ZonaPeligrosa({ onEliminar }: { onEliminar: () => void }) {
           pedidos y reservas. Si tienes un negocio, queda oculto del directorio.
         </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-          <button type="button" className="btn-peligro px-4 py-3" disabled={eliminando} onClick={eliminar}>
+          <button type="button" className="btn-peligro-md" disabled={eliminando} onClick={eliminar}>
             {eliminando ? 'Eliminando…' : 'Sí, eliminar mi cuenta'}
           </button>
-          <button type="button" className="btn-secundario px-4 py-3" onClick={() => setDialogo(false)}>
+          <button type="button" className="btn-secundario-md" onClick={() => setDialogo(false)}>
             Volver
           </button>
         </div>

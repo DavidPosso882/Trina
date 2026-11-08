@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
   BuildingStorefrontIcon,
   ExclamationTriangleIcon,
   ShoppingBagIcon
@@ -86,7 +88,7 @@ export default function Registro() {
         </div>
       )}
 
-      <form className="mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
+      <form className="tarjeta-form mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
         <div>
           <label htmlFor="nombre" className="font-semibold">
             Nombre
@@ -159,7 +161,7 @@ export default function Registro() {
                   <Icono icono={ShoppingBagIcon} tamano="chico" /> Quiero comprar
                 </span>
                 <span className="block text-sm text-texto-suave">
-                  Descubre negocios, pide productos, reserva y calificá.
+                  Descubre negocios, pide productos, reserva y califica.
                 </span>
               </span>
             </label>
@@ -187,7 +189,7 @@ export default function Registro() {
           <label htmlFor="esResidente" className="font-semibold">
             ¿Eres residente del municipio? <span className="font-normal text-texto-suave">(opcional)</span>
           </label>
-          <select id="esResidente" className="campo mt-1" {...register('esResidente')}>
+          <select id="esResidente" className="desplegable mt-1" {...register('esResidente')}>
             <option value="">Prefiero no decirlo</option>
             <option value="si">Sí, vivo en el municipio</option>
             <option value="no">No</option>
@@ -225,17 +227,24 @@ export default function Registro() {
           </p>
         )}
 
-        <button type="submit" className="btn-principal px-6 py-3" disabled={formState.isSubmitting}>
-          {formState.isSubmitting ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
-        </button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/ingresar"
+            className="inline-flex min-h-boton items-center gap-1.5 font-semibold text-lima-oscura"
+          >
+            <Icono icono={ArrowLeftIcon} tamano="chico" />
+            Ya tengo cuenta
+          </Link>
+          <button
+            type="submit"
+            className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            disabled={formState.isSubmitting}
+          >
+            {formState.isSubmitting ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
+            <Icono icono={ArrowRightIcon} tamano="chico" className="text-white" />
+          </button>
+        </div>
       </form>
-
-      <p className="mt-4 text-center">
-        ¿Ya tienes cuenta?{' '}
-        <Link to="/ingresar" className="font-semibold text-primario underline">
-          Ingresar
-        </Link>
-      </p>
     </main>
   );
 }

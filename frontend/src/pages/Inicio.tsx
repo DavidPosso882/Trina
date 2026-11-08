@@ -87,6 +87,7 @@ export default function Inicio() {
   };
 
   return (
+    <div className="fondo-limpio">
     <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
       <section
         aria-labelledby="portada"
@@ -243,6 +244,7 @@ export default function Inicio() {
         </Link>
       </section>
     </main>
+    </div>
   );
 }
 

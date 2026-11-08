@@ -43,6 +43,8 @@ public class SecurityConfig {
             .permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/negocios/**")
             .permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/media/**")
+            .permitAll()
             .anyRequest()
             .authenticated())
         .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)

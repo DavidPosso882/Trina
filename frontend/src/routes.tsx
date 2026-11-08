@@ -70,6 +70,25 @@ function NoPermiso() {
   );
 }
 
+function NoEncontrada() {
+  return (
+    <main className="mx-auto max-w-md px-4 pb-24 pt-10 text-center">
+      <h1 className="font-display text-titulo">Página no encontrada</h1>
+      <p className="mt-2 text-texto-suave">
+        La dirección no existe o cambió. Vuelve al inicio o sigue explorando los comercios.
+      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+        <a href="/" className="btn-lima px-6 text-sm">
+          Volver al inicio
+        </a>
+        <a href="/explorar" className="btn-secundario-md">
+          Explorar comercios
+        </a>
+      </div>
+    </main>
+  );
+}
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -96,7 +115,8 @@ export const router = createBrowserRouter([
       { path: 'notificaciones', element: conCarga(<SoloLogueado><Notificaciones /></SoloLogueado>) },
       { path: 'panel/*', element: <SoloComerciante>{conCarga(<Panel />)}</SoloComerciante> }, // PM-01…PM-11
       { path: 'admin/*', element: <SoloAdmin>{conCarga(<Admin />)}</SoloAdmin> }, // PA-01…PA-07
-      { path: 'sin-permiso', element: <NoPermiso /> }
+      { path: 'sin-permiso', element: <NoPermiso /> },
+      { path: '*', element: <NoEncontrada /> }
     ]
   }
 ]);

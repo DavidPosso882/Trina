@@ -13,7 +13,7 @@
   --color-oliva: #1b2117;
   --color-lima: #94b839;
   --color-lima-oscura: #5a8a0a;
-  --color-crema: #edefe7;
+  --color-crema: #f8f9fa;
   --color-dorado: #d4c04d;
   --color-marron: #3d1a11;
 }
@@ -23,7 +23,7 @@ html {
   font-size: 16px;
 }
 body {
-  background: var(--color-crema);
+  background-color: var(--color-crema);
   color: var(--color-oliva);
   line-height: 1.5;
 }
@@ -77,10 +77,44 @@ h3 {
     @apply w-full sm:w-auto min-h-boton rounded-tarjeta bg-error px-6 font-bold text-white disabled:opacity-60;
     min-height: 48px;
   }
+  .btn-principal-md {
+    @apply inline-flex items-center justify-center gap-2 rounded-tarjeta bg-primario px-5 text-sm font-bold text-white disabled:opacity-60;
+    min-height: 44px;
+  }
+  .btn-secundario-md {
+    @apply inline-flex items-center justify-center gap-2 rounded-tarjeta border-2 border-primario px-5 text-sm font-semibold text-primario;
+    min-height: 44px;
+  }
+  .btn-peligro-md {
+    @apply inline-flex items-center justify-center gap-2 rounded-tarjeta bg-error px-5 text-sm font-bold text-white disabled:opacity-60;
+    min-height: 44px;
+  }
+  .campo-moderno {
+    @apply w-full rounded-xl border border-oliva/15 bg-white px-4 text-[15px] shadow-sm transition placeholder:text-texto-suave/70 focus:border-lima focus:outline-none focus:ring-2 focus:ring-lima/40;
+    min-height: 44px;
+  }
   .campo {
-    @apply w-full rounded-campo border-2 bg-superficie px-4 py-3;
+    @apply w-full rounded-xl border bg-white px-4 py-3 text-texto placeholder:italic placeholder:text-texto-suave focus:border-lima focus:outline-none focus:ring-2 focus:ring-lima/40;
+    border-width: 1px;
     border-color: #8a8f98;
     min-height: 48px;
+  }
+  .tarjeta-form {
+    @apply bg-white p-6 sm:p-8;
+    border-radius: 20px;
+    box-shadow: 12px 18px 40px -18px rgba(27, 33, 23, 0.28);
+  }
+  .desplegable {
+    @apply w-auto rounded-xl border bg-white py-3 pl-4 pr-10 text-texto focus:border-lima focus:outline-none focus:ring-2 focus:ring-lima/40;
+    border-width: 1px;
+    border-color: #8a8f98;
+    min-height: 48px;
+    min-width: 12rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.5' stroke='%236A6259'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 1rem 1rem;
   }
   .tarjeta-negocio {
     @apply rounded-tarjeta bg-superficie p-4 shadow;
@@ -89,6 +123,22 @@ h3 {
     @apply rounded-tarjeta bg-superficie p-4 shadow;
     border: 2px solid var(--color-lima);
   }
+}
+
+/* Ventanas con fondo blanco limpio a todo el ancho (Inicio, Explorar). */
+.fondo-limpio {
+  position: relative;
+}
+.fondo-limpio::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: #ffffff;
+  z-index: -1;
 }
 
 /* Etiqueta con el nombre encima del pin cuando hay zoom en la zona. */

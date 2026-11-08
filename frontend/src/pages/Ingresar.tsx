@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ApiError, mensajeAmable } from '../lib/api';
 import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
@@ -57,7 +57,7 @@ export default function Ingresar() {
           <Aviso tipo="exito">{estado.mensaje}</Aviso>
         </div>
       )}
-      <form className="mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
+      <form className="tarjeta-form mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
         <div>
           <label htmlFor="email" className="font-semibold">
             Correo
@@ -105,20 +105,28 @@ export default function Ingresar() {
             <span>{error}</span>
           </p>
         )}
-        <button className="btn-principal px-6 py-3" type="submit" disabled={formState.isSubmitting}>
-          {formState.isSubmitting ? 'Entrando…' : 'Entrar'}
-        </button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/registro"
+            className="inline-flex min-h-boton items-center gap-1.5 font-semibold text-lima-oscura"
+          >
+            <Icono icono={ArrowLeftIcon} tamano="chico" />
+            Crear cuenta
+          </Link>
+          <button
+            className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            type="submit"
+            disabled={formState.isSubmitting}
+          >
+            {formState.isSubmitting ? 'Entrando…' : 'Entrar'}
+            <Icono icono={ArrowRightIcon} tamano="chico" className="text-white" />
+          </button>
+        </div>
       </form>
 
-      <p className="mt-4">
+      <p className="mt-4 text-center">
         <Link to="/recuperar-clave" className="font-semibold text-primario underline">
           ¿Olvidaste tu contraseña?
-        </Link>
-      </p>
-      <p className="mt-2">
-        ¿No tienes cuenta?{' '}
-        <Link to="/registro" className="font-semibold text-primario underline">
-          Crear cuenta
         </Link>
       </p>
     </main>

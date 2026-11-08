@@ -203,6 +203,7 @@ export default function Explorar() {
   const { ids: favoritos, alternar: alternarFav } = useFavoritos();
 
   return (
+    <div className="fondo-limpio">
     <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16">
       <h1 className="font-display text-titulo font-extrabold tracking-tight">
         Descubre comercios locales
@@ -312,7 +313,7 @@ export default function Explorar() {
             </label>
             <select
               id="filtro-precio"
-              className="campo mt-1"
+              className="desplegable mt-1"
               value={nivelPrecio ?? ''}
               onChange={(e) => setNivelPrecio(e.target.value ? Number(e.target.value) : null)}
             >
@@ -478,6 +479,7 @@ export default function Explorar() {
         </section>
       </div>
     </main>
+    </div>
   );
 }
 

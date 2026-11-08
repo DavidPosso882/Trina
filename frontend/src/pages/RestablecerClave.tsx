@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { mensajeDeApi, restablecerClave } from '../lib/api';
 import { Icono } from '../components/Icono';
@@ -62,7 +62,7 @@ export default function RestablecerClave() {
         <p className="mt-1 text-texto-suave">
           El enlace del correo trae el token. Si lo abriste en otro dispositivo, pégalo aquí.
         </p>
-        <div className="mt-4 space-y-4">
+        <div className="tarjeta-form mt-4 space-y-4">
           <div>
             <label htmlFor="token" className="font-semibold">
               Enlace o token
@@ -75,19 +75,24 @@ export default function RestablecerClave() {
               onChange={(e) => setTokenManual(e.target.value)}
             />
           </div>
-          <button
-            type="button"
-            className="btn-principal px-6 py-3"
-            disabled={tokenManual.trim().length < 10}
-            onClick={() => setParametros({ token: extraerToken(tokenManual) })}
-          >
-            Continuar
-          </button>
-          <p>
-            <Link to="/recuperar-clave" className="font-semibold text-primario underline">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Link
+              to="/recuperar-clave"
+              className="inline-flex min-h-boton items-center gap-1.5 font-semibold text-lima-oscura"
+            >
+              <Icono icono={ArrowLeftIcon} tamano="chico" />
               Pedir un enlace nuevo
             </Link>
-          </p>
+            <button
+              type="button"
+              className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+              disabled={tokenManual.trim().length < 10}
+              onClick={() => setParametros({ token: extraerToken(tokenManual) })}
+            >
+              Continuar
+              <Icono icono={ArrowRightIcon} tamano="chico" className="text-white" />
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -99,13 +104,21 @@ export default function RestablecerClave() {
         <h1 className="flex items-center gap-2 font-display text-titulo">
           <Icono icono={CheckBadgeIcon} tamano="grande" className="text-primario" /> Contraseña nueva lista
         </h1>
-        <p className="mt-2">
-          Ya puedes ingresar con tu correo y la contraseña nueva. Por seguridad, cerramos las sesiones
-          que estaban abiertas.
-        </p>
-        <Link to="/ingresar" className="btn-principal mt-4 inline-block px-6 py-3">
-          Ingresar
-        </Link>
+        <div className="tarjeta-form mt-4 space-y-4">
+          <p>
+            Ya puedes ingresar con tu correo y la contraseña nueva. Por seguridad, cerramos las sesiones
+            que estaban abiertas.
+          </p>
+          <div className="flex sm:items-center sm:justify-end">
+            <Link
+              to="/ingresar"
+              className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            >
+              Ingresar
+              <Icono icono={ArrowRightIcon} tamano="chico" className="text-white" />
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }
@@ -114,7 +127,7 @@ export default function RestablecerClave() {
     <main className="mx-auto max-w-md px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Crea tu contraseña nueva</h1>
       <p className="mt-1 text-texto-suave">Mínimo 8 caracteres, con letras y números.</p>
-      <form className="mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
+      <form className="tarjeta-form mt-4 space-y-4" onSubmit={handleSubmit(enviar)} noValidate>
         <div>
           <label htmlFor="nueva" className="font-semibold">
             Contraseña nueva
@@ -154,19 +167,28 @@ export default function RestablecerClave() {
           )}
         </div>
         {error && (
-          <div className="space-y-2">
-            <p role="alert" aria-live="assertive" className="flex items-start gap-1 rounded-campo bg-error/10 p-3 text-error">
-              <Icono icono={ExclamationTriangleIcon} className="mt-0.5" />
-              <span>{error}</span>
-            </p>
-            <Link to="/recuperar-clave" className="font-semibold text-primario underline">
-              Pedir un enlace nuevo
-            </Link>
-          </div>
+          <p role="alert" aria-live="assertive" className="flex items-start gap-1 rounded-campo bg-error/10 p-3 text-error">
+            <Icono icono={ExclamationTriangleIcon} className="mt-0.5" />
+            <span>{error}</span>
+          </p>
         )}
-        <button type="submit" className="btn-principal px-6 py-3" disabled={formState.isSubmitting}>
-          {formState.isSubmitting ? 'Guardando…' : 'Guardar contraseña nueva'}
-        </button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/recuperar-clave"
+            className="inline-flex min-h-boton items-center gap-1.5 font-semibold text-lima-oscura"
+          >
+            <Icono icono={ArrowLeftIcon} tamano="chico" />
+            Pedir un enlace nuevo
+          </Link>
+          <button
+            type="submit"
+            className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            disabled={formState.isSubmitting}
+          >
+            {formState.isSubmitting ? 'Guardando…' : 'Guardar contraseña nueva'}
+            <Icono icono={ArrowRightIcon} tamano="chico" className="text-white" />
+          </button>
+        </div>
       </form>
     </main>
   );

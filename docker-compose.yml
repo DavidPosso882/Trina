@@ -72,6 +72,9 @@ services:
       SWAGGER_ENABLED: 'true'
     ports:
       - '8080:8080'
+    volumes:
+      # Persiste las fotos del almacenamiento local entre reconstrucciones.
+      - mediadata:/tmp/trina-media
     networks: [trina]
     restart: unless-stopped
 
@@ -110,6 +113,7 @@ services:
 
 volumes:
   pgdata:
+  mediadata:
   miniodata:
 
 networks:

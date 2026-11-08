@@ -86,7 +86,7 @@ export default function UsuariosAdmin() {
   return (
     <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
       <h1 className="font-display text-titulo">Usuarios</h1>
-      <p className="mt-1 text-texto-suave">Buscá, cambia de rol y activa o desactiva cuentas.</p>
+      <p className="mt-1 text-texto-suave">Busca, cambia de rol y activa o desactiva cuentas.</p>
 
       {aviso && (
         <div className="mt-3">

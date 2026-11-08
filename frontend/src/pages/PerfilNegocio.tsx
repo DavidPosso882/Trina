@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -91,29 +91,23 @@ export default function PerfilNegocio() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-40 pt-4">
-      <Encabezado
+    <main className="mx-auto max-w-4xl px-4 pb-40 pt-4 md:pt-6">
+      <div className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-24px_rgba(27,33,23,0.35)]">
+      <TarjetaPortada
         id={id}
         nombre={negocio.data.nombre}
         categoria={negocio.data.categoria}
         estadoAbierto={negocio.data.abiertoAhora}
-        destacado={negocio.data.destacado}
-        insignia={negocio.data.insignia ?? null}
         nivelPrecio={negocio.data.nivelPrecio ?? null}
         distanciaKm={negocio.data.distanciaKm ?? null}
-      />
-      <Acciones
-        id={id}
-        nombre={negocio.data.nombre}
         telefono={negocio.data.telefono ?? null}
         whatsapp={negocio.data.whatsapp ?? null}
         aprobado={negocio.data.estado === 'APROBADO'}
-        onIrACatalogo={() => setSeccion('catalogo')}
       />
-      <Galeria id={id} nombre={negocio.data.nombre} />
       <Navegacion seccion={seccion} onCambiar={setSeccion} />
 
       {seccion === 'informacion' && (
+        <div className="px-4 pb-6 md:px-6">
         <Informacion
           id={id}
           descripcion={negocio.data.descripcion ?? null}
@@ -121,185 +115,49 @@ export default function PerfilNegocio() {
           latitud={negocio.data.latitud ?? null}
           longitud={negocio.data.longitud ?? null}
         />
+        </div>
       )}
-      {seccion === 'catalogo' && <Catalogo id={id} nombre={negocio.data.nombre} />}
-      {seccion === 'resenas' && <Resenas id={id} />}
+      <div className="px-4 pb-6 md:px-6">
+        {seccion === 'catalogo' && <Catalogo id={id} nombre={negocio.data.nombre} />}
+        {seccion === 'resenas' && <Resenas id={id} />}
+      </div>
+      </div>
     </main>
   );
 }
 
-function Encabezado({
+/** PU-03 Tarjeta del negocio: carrusel glass con badge, favorito, nombre y barra de acciones. */
+function TarjetaPortada({
   id,
   nombre,
   categoria,
   estadoAbierto,
-  destacado,
-  insignia,
   nivelPrecio,
-  distanciaKm
+  distanciaKm,
+  telefono,
+  whatsapp,
+  aprobado
 }: {
   id: number;
   nombre: string;
   categoria: string | null;
   estadoAbierto?: boolean;
-  destacado?: boolean;
-  insignia: string | null;
   nivelPrecio: number | null;
   distanciaKm: number | null;
-}) {
-  const resenas = useQuery({ queryKey: ['resenas', id], queryFn: () => getResenas(id), retry: false });
-  const promedio = resenas.data?.promedio;
-  const { ids: favoritos, alternar: alternarFav } = useFavoritos();
-  const esFavorito = favoritos.includes(id);
-  return (
-    <header className="mt-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="font-display text-titulo">{nombre}</h1>
-        <button
-          type="button"
-          onClick={() => alternarFav(id)}
-          aria-pressed={esFavorito}
-          aria-label={esFavorito ? `Quitar ${nombre} de favoritos` : `Guardar ${nombre} en favoritos`}
-          className={`flex h-10 w-10 items-center justify-center rounded-full border ${
-            esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
-          }`}
-        >
-          <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
-        </button>
-        {destacado && (
-          <span className="inline-flex items-center gap-1 rounded-campo bg-dorado/20 px-2 py-1 text-sm font-semibold text-oliva">
-            <Icono icono={StarIcon} tamano="chico" className="text-dorado" />
-            {insignia ?? 'Destacado'}
-          </span>
-        )}
-      </div>
-
-      {estadoAbierto !== undefined && (
-        <p className="mt-2 flex items-center gap-2 font-semibold">
-          <span
-            aria-hidden="true"
-            className={`h-2.5 w-2.5 shrink-0 rounded-full ${estadoAbierto ? 'bg-exito' : 'bg-error'}`}
-          />
-          {estadoAbierto ? 'Abierto ahora' : 'Cerrado ahora'}
-        </p>
-      )}
-
-      <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
-        <div>
-          <dt className="text-xs text-texto-suave">Categoría</dt>
-          <dd className="text-sm font-semibold">{categoria ?? 'Negocio local'}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-texto-suave">Calificación</dt>
-          <dd className="flex items-baseline gap-1">
-            {promedio != null ? (
-              <>
-                <span className="font-display text-cifra-menor" aria-hidden="true">
-                  {promedio.toFixed(1).replace('.', ',')}
-                </span>
-                <Icono
-                  icono={StarIcon}
-                  tamano="chico"
-                  className="text-dorado"
-                  etiqueta={`${promedio.toFixed(1).replace('.', ',')} de 5 estrellas`}
-                />
-                <span className="text-sm text-texto-suave">({resenas.data?.cantidad ?? 0})</span>
-              </>
-            ) : (
-              <span className="text-sm text-texto-suave">Sin dato</span>
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs text-texto-suave">Precio</dt>
-          <dd className={nivelPrecio ? 'font-display text-cifra-menor' : 'text-sm text-texto-suave'}>
-            {nivelPrecioTexto(nivelPrecio)}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs text-texto-suave">Distancia</dt>
-          <dd className={distanciaKm != null ? 'font-display text-cifra-menor' : 'text-sm text-texto-suave'}>
-            {distanciaTexto(distanciaKm)}
-          </dd>
-        </div>
-      </dl>
-    </header>
-  );
-}
-
-function Acciones({
-  id,
-  nombre,
-  telefono,
-  whatsapp,
-  aprobado,
-  onIrACatalogo
-}: {
-  id: number;
-  nombre: string;
   telefono: string | null;
   whatsapp: string | null;
   aprobado: boolean;
-  onIrACatalogo: () => void;
 }) {
   const { sesion } = useSesion();
   const esCliente = !sesion || sesion.rol === 'CLIENTE';
-  const enlaceWa = whatsapp
-    ? `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(
-        `Hola, te escribo desde TRINA por ${nombre}. ¿Me puedes dar más información?`
-      )}`
-    : null;
-  return (
-    <section className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap" aria-label="Acciones del negocio">
-      {telefono && (
-        <a className="btn-secundario inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3" href={`tel:${telefono}`}>
-          <Icono icono={PhoneIcon} /> <span className="truncate">Llamar</span>
-        </a>
-      )}
-      {enlaceWa && (
-        <a
-          className="btn-secundario col-span-2 inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3 text-center sm:col-span-1"
-          href={enlaceWa}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Icono icono={ChatBubbleLeftRightIcon} /> <span className="truncate">Escribir por WhatsApp</span>
-        </a>
-      )}
-      {aprobado && esCliente && (
-        <>
-          <button
-            type="button"
-            className="btn-principal inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3"
-            onClick={onIrACatalogo}
-          >
-            <Icono icono={ShoppingCartIcon} /> <span className="truncate">Agregar</span>
-          </button>
-          <Link
-            className="btn-secundario inline-flex min-w-0 items-center justify-center gap-2 truncate px-4 py-3 text-center"
-            to={`/reservar/${id}`}
-          >
-            <Icono icono={CalendarDaysIcon} /> <span className="truncate">Reservar</span>
-          </Link>
-        </>
-      )}
-      {aprobado && !esCliente && (
-        <div className="col-span-2 sm:w-full">
-          <Aviso tipo="info">Para agregar productos o reservar necesitas una cuenta de cliente.</Aviso>
-        </div>
-      )}
-      {!telefono && !whatsapp && (
-        <div className="col-span-2 sm:w-full">
-          <Aviso tipo="info">Este negocio todavía no cargó teléfono ni WhatsApp.</Aviso>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function Galeria({ id, nombre }: { id: number; nombre: string }) {
+  const { ids: favoritos, alternar: alternarFav } = useFavoritos();
+  const esFavorito = favoritos.includes(id);
+  const resenas = useQuery({ queryKey: ['resenas', id], queryFn: () => getResenas(id), retry: false });
+  const promedio = resenas.data?.promedio;
+  const cantidad = resenas.data?.cantidad ?? 0;
   const imagenes = useQuery({ queryKey: ['imagenes', id], queryFn: () => listarImagenes(id), retry: false });
   const [activa, setActiva] = useState(0);
+  const carrusel = useRef<HTMLDivElement | null>(null);
   const ordenadas = useMemo(
     () =>
       [...(imagenes.data ?? [])].sort(
@@ -307,58 +165,173 @@ function Galeria({ id, nombre }: { id: number; nombre: string }) {
       ),
     [imagenes.data]
   );
-
-  if (imagenes.isLoading) return <Cargando texto="Cargando las fotos…" />;
-  if (imagenes.isError) {
-    return (
-      <div className="mt-4">
-        <ErrorRecargar mensaje="No se pudieron cargar las fotos." onReintentar={() => imagenes.refetch()} />
-      </div>
-    );
-  }
-  if (ordenadas.length === 0) {
-    return (
-      <div
-        className="mt-4 flex h-40 flex-col items-center justify-center gap-2 rounded-tarjeta bg-primario-claro text-texto-suave"
-        role="img"
-        aria-label={`${nombre} todavía no tiene fotos`}
-      >
-        <Icono icono={PhotoIcon} tamano="grande" />
-        <span>Este negocio todavía no subió fotos.</span>
-      </div>
-    );
-  }
-
-  const seleccionada = ordenadas[Math.min(activa, ordenadas.length - 1)];
+  const irA = (indice: number) => {
+    setActiva(indice);
+    const el = carrusel.current;
+    if (el) el.scrollTo({ left: indice * el.clientWidth, behavior: 'smooth' });
+  };
+  useEffect(() => {
+    if (ordenadas.length < 2) return;
+    const temporizador = setTimeout(() => {
+      const siguiente = (activa + 1) % ordenadas.length;
+      setActiva(siguiente);
+      const el = carrusel.current;
+      if (el) el.scrollTo({ left: siguiente * el.clientWidth, behavior: 'smooth' });
+    }, 5000);
+    return () => clearTimeout(temporizador);
+  }, [activa, ordenadas.length]);
+  const alDeslizar = () => {
+    const el = carrusel.current;
+    if (!el || ordenadas.length === 0) return;
+    setActiva(Math.round(el.scrollLeft / el.clientWidth));
+  };
+  const enlaceWa = whatsapp
+    ? `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(
+        `Hola, te escribo desde TRINA por ${nombre}. ¿Me puedes dar más información?`
+      )}`
+    : null;
+  const abierto = estadoAbierto ?? false;
+  const hayAcciones = Boolean(telefono || enlaceWa || (aprobado && esCliente));
   return (
-    <div className="mt-4">
-      <img
-        src={seleccionada.url}
-        alt={`Foto de ${nombre}`}
-        className="h-56 w-full rounded-tarjeta bg-primario-claro object-cover"
-      />
-      {ordenadas.length > 1 && (
-        <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
-          {ordenadas.map((imagen, indice) => (
-            <button
-              key={imagen.id}
-              type="button"
-              className={`shrink-0 rounded-campo border-2 ${indice === activa ? 'border-primario' : 'border-transparent'}`}
-              aria-label={`Ver foto ${indice + 1} de ${nombre}`}
-              aria-pressed={indice === activa}
-              onClick={() => setActiva(indice)}
-            >
+    <section aria-label={nombre}>
+      <div className="relative">
+        {ordenadas.length > 0 ? (
+          <div
+            ref={carrusel}
+            onScroll={alDeslizar}
+            className="flex h-80 snap-x snap-mandatory overflow-x-auto md:h-[26rem] lg:h-[30rem]"
+          >
+            {ordenadas.map((imagen, indice) => (
               <img
-                src={imagen.urlMiniatura}
-                alt=""
-                loading="lazy"
-                className="h-16 w-16 rounded-campo object-cover"
+                key={imagen.id}
+                src={imagen.url}
+                alt={`Foto ${indice + 1} de ${nombre}`}
+                loading={indice === 0 ? 'eager' : 'lazy'}
+                className="h-full w-full shrink-0 snap-center object-cover"
               />
-            </button>
-          ))}
+            ))}
+          </div>
+        ) : (
+          <div
+            className="flex h-80 flex-col items-center justify-center gap-2 bg-gradient-to-br from-primario to-lima-oscura text-white/80 md:h-[26rem] lg:h-[30rem]"
+            role="img"
+            aria-label={`${nombre} todavía no tiene fotos`}
+          >
+            <Icono icono={PhotoIcon} tamano="grande" />
+            <span className="text-sm font-semibold">Este negocio todavía no subió fotos.</span>
+          </div>
+        )}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"
+        />
+        {ordenadas.length > 1 && (
+          <div className="absolute inset-x-0 top-3 flex justify-center gap-1.5">
+            {ordenadas.map((imagen, indice) => (
+              <button
+                key={imagen.id}
+                type="button"
+                onClick={() => irA(indice)}
+                aria-label={`Ver foto ${indice + 1}`}
+                aria-current={indice === activa}
+                className={`h-2 rounded-full transition-all ${
+                  indice === activa ? 'w-6 bg-white' : 'w-2 bg-white/60'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+        <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-sm font-semibold backdrop-blur-md">
+          <span aria-hidden="true" className="relative flex h-2.5 w-2.5">
+            <span
+              className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
+                abierto ? 'bg-lima' : 'bg-error'
+              }`}
+            />
+            <span
+              className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                abierto ? 'bg-lima' : 'bg-error'
+              }`}
+            />
+          </span>
+          <span className={abierto ? 'text-exito' : 'text-error'}>
+            {abierto ? 'Abierto ahora' : 'Cerrado ahora'}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => alternarFav(id)}
+          aria-pressed={esFavorito}
+          aria-label={esFavorito ? `Quitar ${nombre} de favoritos` : `Guardar ${nombre} en favoritos`}
+          className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/70 backdrop-blur-md transition hover:bg-white/90 ${
+            esFavorito ? 'text-error' : 'text-oliva/70'
+          }`}
+        >
+          <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
+        </button>
+        <div className="absolute inset-x-5 bottom-24">
+          <h1 className="font-display text-2xl font-bold text-white md:text-4xl">{nombre}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
+            {promedio != null ? (
+              <span className="inline-flex items-center gap-1 font-semibold text-white">
+                <Icono icono={StarIcon} tamano="chico" className="text-dorado" />
+                {promedio.toFixed(1).replace('.', ',')} ({cantidad})
+              </span>
+            ) : (
+              <span>Sin calificar</span>
+            )}
+            <span aria-hidden="true">·</span>
+            <span>{categoria ?? 'Negocio local'}</span>
+            <span aria-hidden="true">·</span>
+            <span>{nivelPrecioTexto(nivelPrecio)}</span>
+            {distanciaKm != null && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{distanciaTexto(distanciaKm)}</span>
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+      {hayAcciones && (
+        <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-white/60 bg-white/80 p-3 shadow-lg backdrop-blur-xl">
+          <div className="mx-auto flex w-full max-w-2xl gap-2">
+            {telefono && (
+              <a
+                href={`tel:${telefono}`}
+                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+              >
+                <Icono icono={PhoneIcon} tamano="chico" /> Llamar
+              </a>
+            )}
+            {enlaceWa && (
+              <a
+                href={enlaceWa}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+              >
+                <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
+              </a>
+            )}
+            {aprobado && esCliente && (
+              <Link
+                to={`/reservar/${id}`}
+                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+              >
+                <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
+              </Link>
+            )}
+          </div>
+          {aprobado && !esCliente && (
+            <p className="mt-2 text-center text-xs text-texto-suave">
+              Para reservar necesitas una cuenta de cliente.
+            </p>
+          )}
         </div>
       )}
-    </div>
+      <div className="h-4" />
+    </section>
   );
 }
 
@@ -370,7 +343,7 @@ function Navegacion({ seccion, onCambiar }: { seccion: Seccion; onCambiar: (s: S
   ];
   return (
     <nav
-      className="sticky top-0 z-10 -mx-4 mt-4 flex gap-1 border-b border-tinta-cafe/10 bg-fondo px-4"
+      className="sticky top-0 z-10 mt-2 flex gap-1 border-b border-tinta-cafe/10 bg-white/95 px-4 backdrop-blur md:px-6"
       aria-label="Secciones del negocio"
     >
       {botones.map((b) => (
@@ -415,7 +388,8 @@ function Informacion({
     : null;
 
   return (
-    <section className="mt-4 border-t border-tinta-cafe/10">
+    <section className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="min-w-0">
       {descripcion && (
         <div className="border-b border-tinta-cafe/10 py-5">
           <h2 className="text-seccion">Sobre el negocio</h2>
@@ -423,7 +397,7 @@ function Informacion({
         </div>
       )}
 
-      <div className="border-b border-tinta-cafe/10 py-5">
+      <div className="py-5">
         <h2 className="text-seccion">Dirección</h2>
         <p className="mt-2">{direccion ?? 'Todavía no cargó la dirección.'}</p>
         {embed && (
@@ -446,7 +420,8 @@ function Informacion({
         )}
       </div>
 
-      <div className="py-5">
+      </div>
+      <aside className="h-fit rounded-2xl bg-fondo p-4 md:p-5 lg:sticky lg:top-16">
         <h2 className="text-seccion">Horarios</h2>
         {horarios.isLoading && (
           <p role="status" className="mt-2 flex items-center gap-2 text-texto-suave">
@@ -476,7 +451,7 @@ function Informacion({
             })}
           </ul>
         )}
-      </div>
+      </aside>
     </section>
   );
 }

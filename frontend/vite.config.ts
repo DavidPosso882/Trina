@@ -8,7 +8,8 @@ export default defineConfig({
     // En compose el proxy apunta al servicio `api`; en host, al localhost.
     proxy: {
       '/api': process.env.VITE_API_PROXY ?? 'http://localhost:8080',
-      '/media': process.env.VITE_MEDIA_PROXY ?? 'http://localhost:9000'
+      // En dev el API sirve /media desde el almacenamiento local; en demo lo sirve Caddy/MinIO.
+      '/media': process.env.VITE_MEDIA_PROXY ?? 'http://localhost:8080'
     }
   },
   build: {
