@@ -370,6 +370,7 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
           <FormularioItem
             item={itemDialogo.item}
             negocioId={negocio.id}
+            esHospedaje={negocio.tipoReserva === 'ALOJAMIENTO'}
             categorias={categorias.data ?? []}
             onGuardar={async (datos, archivos) => {
               await guardarItem.mutateAsync({ item: itemDialogo.item, datos, archivos });
@@ -488,12 +489,14 @@ type ValoresItem = z.infer<typeof esquemaItem>;
 function FormularioItem({
   item,
   negocioId,
+  esHospedaje,
   categorias,
   onGuardar,
   onCancelar
 }: {
   item: ItemCatalogo | null;
   negocioId: number;
+  esHospedaje: boolean;
   categorias: CategoriaCatalogo[];
   onGuardar: (datos: DatosItemCatalogo, archivos: File[]) => Promise<void>;
   onCancelar: () => void;
@@ -502,6 +505,7 @@ function FormularioItem({
   const [error, setError] = useState<string | null>(null);
   const [pendientes, setPendientes] = useState<{ archivo: File; vista: string }[]>([]);
   const [subiendo, setSubiendo] = useState(false);
+  const maxFotos = esHospedaje ? 5 : 1;
   const { register, handleSubmit, formState } = useForm<ValoresItem>({
     resolver: zodResolver(esquemaItem),
     defaultValues: {
@@ -535,10 +539,10 @@ function FormularioItem({
   const agregarFotos = async (elegidos: FileList | null) => {
     setError(null);
     if (!elegidos || elegidos.length === 0) return;
-    const cupo = Math.max(0, 5 - totalFotos);
+    const cupo = Math.max(0, maxFotos - totalFotos);
     const nuevos = [...elegidos].slice(0, cupo);
     if (nuevos.length === 0) {
-      setError('Cada producto admite hasta 5 fotos.');
+      setError(`Cada producto admite hasta ${maxFotos} ${maxFotos === 1 ? 'foto' : 'fotos'}.`);
       return;
     }
     if (item == null) {
@@ -563,7 +567,7 @@ function FormularioItem({
           setError(problema);
           break;
         }
-        if (fotosActuales.length === 0) {
+        if (!esHospedaje || fotosActuales.length === 0) {
           await subirImagenItemCatalogo(negocioId, item.id, archivo);
         } else {
           await agregarImagenItemCatalogo(negocioId, item.id, archivo);
@@ -596,6 +600,27 @@ function FormularioItem({
       if (sacado) URL.revokeObjectURL(sacado.vista);
       return prev.filter((x) => x.vista !== vista);
     });
+  };
+
+  const cambiarPortada = async (elegidos: FileList | null) => {
+    setError(null);
+    if (item == null || !elegidos || elegidos.length === 0) return;
+    const archivo = elegidos[0];
+    const problema = validarArchivo(archivo);
+    if (problema) {
+      setError(problema);
+      return;
+    }
+    setSubiendo(true);
+    try {
+      await subirImagenItemCatalogo(negocioId, item.id, archivo);
+      await cliente.invalidateQueries({ queryKey: ['galeria-item', negocioId, item.id] });
+      await cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocioId] });
+    } catch (e) {
+      setError(mensajeDeApi(e));
+    } finally {
+      setSubiendo(false);
+    }
   };
 
   const enviar = async (v: ValoresItem) => {
@@ -686,7 +711,7 @@ function FormularioItem({
         <label htmlFor="item-foto" className="font-semibold">
           Fotos del producto{' '}
           <span className="font-normal text-texto-suave">
-            ({totalFotos}/5 · JPG, PNG o WebP, hasta 5 MB cada una)
+            ({totalFotos}/{maxFotos} · JPG, PNG o WebP, hasta 5 MB cada una)
           </span>
         </label>
         {(fotosActuales.length > 0 || pendientes.length > 0) && (
@@ -733,12 +758,12 @@ function FormularioItem({
             ))}
           </ul>
         )}
-        {totalFotos < 5 ? (
+        {totalFotos < maxFotos ? (
           <input
             id="item-foto"
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            multiple={item != null}
+            multiple={item != null && esHospedaje}
             disabled={subiendo}
             onChange={(e) => {
               void agregarFotos(e.target.files);
@@ -747,7 +772,25 @@ function FormularioItem({
             className="mt-2 block w-full min-w-0 text-sm text-texto-suave file:mr-3 file:min-h-[44px] file:rounded-full file:border file:border-oliva/15 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-oliva disabled:opacity-60"
           />
         ) : (
-          <p className="mt-2 text-sm text-texto-suave">Ya tienes las 5 fotos de este producto.</p>
+          <p className="mt-2 text-sm text-texto-suave">Ya tienes {maxFotos === 1 ? 'la foto de' : `las ${maxFotos} fotos de`} este producto. Igual puedes cambiar la portada abajo.</p>
+        )}
+        {item != null && (
+          <div className="mt-2">
+            <label htmlFor="item-portada" className="text-sm font-semibold text-oliva">
+              Cambiar foto del producto
+            </label>
+            <input
+              id="item-portada"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              disabled={subiendo}
+              onChange={(e) => {
+                void cambiarPortada(e.target.files);
+                e.target.value = '';
+              }}
+              className="mt-1 block w-full min-w-0 text-sm text-texto-suave file:mr-3 file:min-h-[44px] file:rounded-full file:border file:border-oliva/15 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-oliva disabled:opacity-60"
+            />
+          </div>
         )}
         <p className="mt-1 text-sm text-texto-suave">
           La primera foto es la portada que se ve en la carta. En productos ya creados las fotos se

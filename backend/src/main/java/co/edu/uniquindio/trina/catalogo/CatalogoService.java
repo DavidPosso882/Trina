@@ -171,11 +171,14 @@ public class CatalogoService {
         .toList();
   }
 
-  /** Suma una foto a la galería (máximo 5 entre principal y adicionales). */
+  /** Suma una foto a la galería (máximo 5 entre principal y adicionales; solo hospedaje). */
   @Transactional
   public CatalogoDto.ItemRespuesta agregarImagenItem(
       Long propietarioId, Long negocioId, Long itemId, byte[] datos, String tipoContenido) {
-    propio(propietarioId, negocioId);
+    var negocio = propio(propietarioId, negocioId);
+    if (!"ALOJAMIENTO".equals(negocio.getTipoReserva())) {
+      throw new ImagenInvalidaException("Solo los hospedajes pueden tener varias fotos por producto.");
+    }
     var item = itemDe(negocioId, itemId);
     exigirActivo(item);
     long actuales =

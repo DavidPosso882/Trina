@@ -109,6 +109,8 @@ export default function PerfilNegocio() {
         telefono={negocio.data.telefono ?? null}
         whatsapp={negocio.data.whatsapp ?? null}
         aprobado={negocio.data.estado === 'APROBADO'}
+        esHospedaje={negocio.data.tipoReserva === 'ALOJAMIENTO'}
+        onIrACatalogo={() => setSeccion('catalogo')}
       />
       <Navegacion seccion={seccion} onCambiar={setSeccion} />
 
@@ -142,7 +144,9 @@ function TarjetaPortada({
   distanciaKm,
   telefono,
   whatsapp,
-  aprobado
+  aprobado,
+  esHospedaje,
+  onIrACatalogo
 }: {
   id: number;
   nombre: string;
@@ -153,6 +157,8 @@ function TarjetaPortada({
   telefono: string | null;
   whatsapp: string | null;
   aprobado: boolean;
+  esHospedaje?: boolean;
+  onIrACatalogo: () => void;
 }) {
   const { sesion } = useSesion();
   const navigate = useNavigate();
@@ -219,9 +225,10 @@ function TarjetaPortada({
       )}`
     : null;
   const abierto = estadoAbierto ?? false;
-  const { cantidadTotal } = useCarrito();
-  const hayItems = cantidadTotal > 0;
-  const hayAcciones = Boolean(telefono || enlaceWa || aprobado);
+  const { carrito, cantidadTotal } = useCarrito();
+  const mostrarPedido = !esHospedaje && (!carrito || carrito.negocioId === id);
+  const hayItems = mostrarPedido && cantidadTotal > 0;
+  const hayAcciones = Boolean(telefono || enlaceWa || (aprobado && esCliente) || mostrarPedido);
   return (
     <section aria-label={nombre}>
       <div className="relative">
@@ -369,7 +376,7 @@ function TarjetaPortada({
                 <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
               </a>
             )}
-            {aprobado && esCliente && (
+            {aprobado && esCliente && !esHospedaje && (
               <Link
                 to={`/reservar/${id}`}
                 className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
@@ -377,8 +384,18 @@ function TarjetaPortada({
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
             )}
-            <Link
-              to="/carrito"
+            {aprobado && esCliente && esHospedaje && (
+              <button
+                type="button"
+                onClick={onIrACatalogo}
+                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+              >
+                <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
+              </button>
+            )}
+            {mostrarPedido && (
+              <Link
+                to="/carrito"
               aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
               className={`relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border px-3 text-sm shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
             >
@@ -392,6 +409,7 @@ function TarjetaPortada({
                 </span>
               )}
             </Link>
+            )}
           </div>
           {aprobado && !esCliente && (
             <p className="mt-2 text-center text-xs text-texto-suave">
