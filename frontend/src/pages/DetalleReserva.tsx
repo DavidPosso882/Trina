@@ -68,9 +68,6 @@ export default function DetalleReserva() {
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-      <Link to="/reservas" className="text-sm font-semibold text-primario">
-        ← Mis reservas
-      </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo={<>Reserva #{r.id}</>} />
         <EtiquetaReserva estado={r.estado} />

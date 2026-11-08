@@ -368,7 +368,7 @@ export default function AsistenteNegocio() {
             etiqueta="Dirección"
             registro={register('direccion')}
             error={formState.errors.direccion?.message}
-            ayuda="Escribila como se la darías a un domiciliario. Ej.: Calle 5 # 10-20, Salento"
+            ayuda="Escríbela como se la darías a un domiciliario. Ej.: Calle 5 # 10-20, Salento"
             autoComplete="street-address"
           />
           <SelectorUbicacion

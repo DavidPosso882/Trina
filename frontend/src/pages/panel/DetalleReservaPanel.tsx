@@ -90,9 +90,6 @@ export default function DetalleReservaPanel() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
-      <Link to="/panel/reservas" className="text-sm font-semibold text-primario">
-        ← Reservas
-      </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo={<>Reserva #{r.id}</>} />
         <EtiquetaReservaComercio estado={r.estado} />

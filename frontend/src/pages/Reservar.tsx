@@ -99,13 +99,9 @@ export default function Reservar() {
     );
   }
 
-  const nombre = negocio.data?.nombre ?? 'este negocio';
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-      <Link to={`/negocios/${id}`} className="text-sm font-semibold text-primario">
-        ← {nombre}
-      </Link>
       <TituloAtras
         titulo={
           disponibilidad.data.tipoReserva === 'ALOJAMIENTO'

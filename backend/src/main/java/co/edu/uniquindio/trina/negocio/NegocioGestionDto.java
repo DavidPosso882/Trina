@@ -1,6 +1,9 @@
 package co.edu.uniquindio.trina.negocio;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 
 /** DTOs de gestión del negocio propio (RF-06/RF-11). */
@@ -19,7 +22,17 @@ public final class NegocioGestionDto {
       BigDecimal latitud,
       BigDecimal longitud,
       String telefono,
-      String whatsapp) {}
+      String whatsapp,
+      @Pattern(
+              regexp = "FRANJA|ALOJAMIENTO|NINGUNA",
+              message = "El tipo de reserva tiene que ser FRANJA, ALOJAMIENTO o NINGUNA")
+          String tipoReserva,
+      @Min(value = 1, message = "La capacidad tiene que ser al menos 1 persona")
+          @Max(value = 500, message = "La capacidad no puede superar 500 personas")
+          Integer capacidadReservas,
+      @Min(value = 15, message = "La duración mínima es 15 minutos")
+          @Max(value = 720, message = "La duración máxima es 720 minutos")
+          Integer duracionReservaMin) {}
 
   public record Respuesta(
       Long id,
@@ -32,7 +45,11 @@ public final class NegocioGestionDto {
       BigDecimal latitud,
       BigDecimal longitud,
       String telefono,
-      String whatsapp) {
+      String whatsapp,
+      String tipoReserva,
+      int capacidadReservas,
+      int duracionReservaMin,
+      boolean aceptaReservas) {
     static Respuesta de(Negocio n) {
       return new Respuesta(
           n.getId(),
@@ -45,7 +62,11 @@ public final class NegocioGestionDto {
           n.getLatitud(),
           n.getLongitud(),
           n.getTelefono(),
-          n.getWhatsapp());
+          n.getWhatsapp(),
+          n.getTipoReserva(),
+          n.getCapacidadReservas(),
+          n.getDuracionReservaMin(),
+          n.isAceptaReservas());
     }
   }
 }

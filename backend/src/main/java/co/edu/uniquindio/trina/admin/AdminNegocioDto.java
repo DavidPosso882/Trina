@@ -26,7 +26,17 @@ public final class AdminNegocioDto {
       BigDecimal longitud,
       String telefono,
       String whatsapp,
-      @NotNull(message = "Elige el estado inicial") EstadoInicial estadoInicial) {}
+      @NotNull(message = "Elige el estado inicial") EstadoInicial estadoInicial,
+      @jakarta.validation.constraints.Pattern(
+              regexp = "FRANJA|ALOJAMIENTO",
+              message = "El tipo de reserva tiene que ser FRANJA o ALOJAMIENTO")
+          String tipoReserva,
+      @jakarta.validation.constraints.Min(value = 1, message = "La capacidad tiene que ser al menos 1 persona")
+          @jakarta.validation.constraints.Max(value = 500, message = "La capacidad no puede superar 500 personas")
+          Integer capacidadReservas,
+      @jakarta.validation.constraints.Min(value = 15, message = "La duración mínima es 15 minutos")
+          @jakarta.validation.constraints.Max(value = 720, message = "La duración máxima es 720 minutos")
+          Integer duracionReservaMin) {}
 
   public record Respuesta(
       Long id,

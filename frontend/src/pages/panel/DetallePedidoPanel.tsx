@@ -94,9 +94,6 @@ export default function DetallePedidoPanel() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
-      <Link to="/panel/pedidos" className="text-sm font-semibold text-primario">
-        ← Pedidos
-      </Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo={<>Pedido #{p.id}</>} />
         <EtiquetaPedidoComercio estado={p.estado} />

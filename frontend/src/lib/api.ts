@@ -90,6 +90,10 @@ export type Negocio = {
   longitud: number | null;
   telefono: string | null;
   whatsapp: string | null;
+  tipoReserva?: string | null;
+  capacidadReservas?: number | null;
+  duracionReservaMin?: number | null;
+  aceptaReservas?: boolean;
 };
 
 /** Categoría pública de negocio (GET /categorias, RF-44). */
@@ -123,6 +127,9 @@ export type DatosNegocio = {
   longitud?: number;
   telefono?: string;
   whatsapp?: string;
+  tipoReserva?: 'FRANJA' | 'ALOJAMIENTO' | 'NINGUNA' | null;
+  capacidadReservas?: number;
+  duracionReservaMin?: number;
 };
 
 export const crearNegocio = (datos: { nombre: string; categoriaId: number | null }) =>

@@ -57,6 +57,9 @@ public class NegocioGestionService {
         req.longitud(),
         req.telefono(),
         req.whatsapp());
+    if (req.tipoReserva() != null) {
+      n.configurarReservas(req.tipoReserva(), req.capacidadReservas(), req.duracionReservaMin());
+    }
     return n;
   }
 

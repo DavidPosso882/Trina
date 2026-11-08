@@ -126,6 +126,35 @@ public class Negocio {
     this.tipoReserva = tipoReserva;
   }
 
+  /**
+   * Configura cómo recibe reservas: FRANJA (mesas/servicios por horario) o ALOJAMIENTO (por
+   * noches). NINGUNA las desactiva. Un tipo nulo no toca nada (PUT parcial).
+   */
+  public void configurarReservas(String tipo, Integer capacidad, Integer duracionMin) {
+    if (tipo == null) {
+      return;
+    }
+    if ("NINGUNA".equals(tipo)) {
+      this.aceptaReservas = false;
+      return;
+    }
+    if (!"FRANJA".equals(tipo) && !"ALOJAMIENTO".equals(tipo)) {
+      throw new IllegalArgumentException("El tipo de reserva tiene que ser FRANJA o ALOJAMIENTO.");
+    }
+    int cap = capacidad == null ? 10 : capacidad;
+    int dur = duracionMin == null ? 60 : duracionMin;
+    if (cap < 1 || cap > 500) {
+      throw new IllegalArgumentException("La capacidad tiene que estar entre 1 y 500 personas.");
+    }
+    if (dur < 15 || dur > 720) {
+      throw new IllegalArgumentException("La duración tiene que estar entre 15 y 720 minutos.");
+    }
+    this.tipoReserva = tipo;
+    this.capacidadReservas = cap;
+    this.duracionReservaMin = dur;
+    this.aceptaReservas = true;
+  }
+
   public int getCapacidadReservas() {
     return capacidadReservas;
   }
@@ -190,7 +219,7 @@ public class Negocio {
       String whatsapp) {
     if ("APROBADO".equals(estado) && nombre != null && !nombre.equals(this.nombre)) {
       throw new IllegalArgumentException(
-          "Para cambiar el nombre de tu negocio, escribinos y lo actualizamos.");
+          "Para cambiar el nombre de tu negocio, escríbenos y lo actualizamos.");
     }
     if (nombre != null) {
       this.nombre = nombre;

@@ -10,7 +10,24 @@ export const esquemaNegocio = z
     latitud: z.string(),
     longitud: z.string(),
     telefono: z.string(),
-    whatsapp: z.string()
+    whatsapp: z.string(),
+    tipoReserva: z.enum(['', 'NINGUNA', 'FRANJA', 'ALOJAMIENTO']).optional(),
+    capacidadReservas: z
+      .string()
+      .trim()
+      .refine(
+        (v) => v === undefined || v === '' || (/^\d+$/.test(v) && Number(v) >= 1 && Number(v) <= 500),
+        'La capacidad tiene que ser un número entre 1 y 500.'
+      )
+      .optional(),
+    duracionReservaMin: z
+      .string()
+      .trim()
+      .refine(
+        (v) => v === undefined || v === '' || (/^\d+$/.test(v) && Number(v) >= 15 && Number(v) <= 720),
+        'La duración tiene que estar entre 15 y 720 minutos.'
+      )
+      .optional()
   })
   .superRefine((v, ctx) => {
     const revisar = (valor: string, campo: 'latitud' | 'longitud', limite: number, ejemplo: string) => {

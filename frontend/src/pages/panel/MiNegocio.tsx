@@ -112,7 +112,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
     negocio.estado === 'CORRECCION_SOLICITADA';
   const categoriaActual = categorias.find((c) => c.nombre === negocio.categoria);
 
-  const { register, handleSubmit, formState } = useForm<ValoresNegocio>({
+  const { register, handleSubmit, formState, watch } = useForm<ValoresNegocio>({
     resolver: zodResolver(esquemaNegocio),
     mode: 'onTouched',
     defaultValues: {
@@ -123,9 +123,13 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
       latitud: negocio.latitud === null ? '' : String(negocio.latitud),
       longitud: negocio.longitud === null ? '' : String(negocio.longitud),
       telefono: negocio.telefono ?? '',
-      whatsapp: negocio.whatsapp ?? ''
+      whatsapp: negocio.whatsapp ?? '',
+      tipoReserva: negocio.aceptaReservas ? (negocio.tipoReserva as 'FRANJA' | 'ALOJAMIENTO') : 'NINGUNA',
+      capacidadReservas: negocio.capacidadReservas != null ? String(negocio.capacidadReservas) : '',
+      duracionReservaMin: negocio.duracionReservaMin != null ? String(negocio.duracionReservaMin) : ''
     }
   });
+  const tipoReservaElegido = watch('tipoReserva');
 
   const persistir = async (v: ValoresNegocio): Promise<boolean> => {
     try {
@@ -140,6 +144,15 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
       if (!bloqueado) {
         datos.nombre = v.nombre.trim();
         datos.categoriaId = Number(v.categoriaId);
+      }
+      if (v.tipoReserva) {
+        datos.tipoReserva = v.tipoReserva;
+        if (v.capacidadReservas && v.capacidadReservas.trim() !== '') {
+          datos.capacidadReservas = Number(v.capacidadReservas);
+        }
+        if (v.duracionReservaMin && v.duracionReservaMin.trim() !== '') {
+          datos.duracionReservaMin = Number(v.duracionReservaMin);
+        }
       }
       const actualizado = await actualizarNegocio(negocio.id, datos);
       qc.setQueryData(['mi-negocio'], actualizado);
@@ -198,7 +211,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           error={formState.errors.nombre?.message}
           ayuda={
             bloqueado
-              ? 'Para cambiar el nombre de tu negocio, escribinos y lo actualizamos.'
+              ? 'Para cambiar el nombre de tu negocio, escríbenos y lo actualizamos.'
               : 'Así lo van a ver tus clientes. Ej.: Café Plaza'
           }
           disabled={bloqueado}
@@ -210,7 +223,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           error={formState.errors.categoriaId?.message}
           ayuda={
             bloqueado
-              ? 'Para cambiar la categoría, escribinos y lo actualizamos.'
+              ? 'Para cambiar la categoría, escríbenos y lo actualizamos.'
               : 'Elige la que mejor lo describe.'
           }
           disabled={bloqueado}
@@ -237,7 +250,7 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           etiqueta="Dirección"
           registro={register('direccion')}
           error={formState.errors.direccion?.message}
-          ayuda="Escribila como se la darías a un domiciliario. Ej.: Calle 5 # 10-20, Salento"
+          ayuda="Escríbela como se la darías a un domiciliario. Ej.: Calle 5 # 10-20, Salento"
           autoComplete="street-address"
         />
         <div className="grid grid-cols-2 gap-3">
@@ -276,6 +289,39 @@ function FormularioCargado({ negocio, categorias }: { negocio: Negocio; categori
           type="tel"
           autoComplete="tel"
         />
+        <fieldset className="rounded-tarjeta border border-oliva/15 p-4">
+          <legend className="px-1 font-semibold">Reservas</legend>
+          <CampoSelect
+            etiqueta="¿Cómo recibes reservas?"
+            registro={register('tipoReserva')}
+            error={formState.errors.tipoReserva?.message}
+            ayuda="Elige NINGUNA para no recibir reservas."
+          >
+            <option value="NINGUNA">No recibo reservas</option>
+            <option value="FRANJA">Por franja horaria (mesas o servicios)</option>
+            <option value="ALOJAMIENTO">Por noches (hospedaje)</option>
+          </CampoSelect>
+          {(tipoReservaElegido === 'FRANJA' || tipoReservaElegido === 'ALOJAMIENTO') && (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <CampoTexto
+                etiqueta="Capacidad"
+                registro={register('capacidadReservas')}
+                error={formState.errors.capacidadReservas?.message}
+                ayuda="Personas por franja o noche. Ej.: 10"
+                type="number"
+                inputMode="numeric"
+              />
+              <CampoTexto
+                etiqueta="Duración (min)"
+                registro={register('duracionReservaMin')}
+                error={formState.errors.duracionReservaMin?.message}
+                ayuda="Duración por defecto. Ej.: 60"
+                type="number"
+                inputMode="numeric"
+              />
+            </div>
+          )}
+        </fieldset>
 
         {error && <Aviso tipo="error">{error}</Aviso>}
         {enlaceFaltante && (

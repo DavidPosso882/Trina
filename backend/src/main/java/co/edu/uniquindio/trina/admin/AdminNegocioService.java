@@ -74,6 +74,9 @@ public class AdminNegocioService {
         req.longitud(),
         req.telefono(),
         req.whatsapp());
+    if (req.tipoReserva() != null) {
+      negocio.configurarReservas(req.tipoReserva(), req.capacidadReservas(), req.duracionReservaMin());
+    }
     negocios.save(negocio);
 
     if (req.estadoInicial() == AdminNegocioDto.EstadoInicial.PENDIENTE) {

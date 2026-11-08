@@ -35,7 +35,7 @@ export default function MisReservas() {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
+    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Mis reservas" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
@@ -54,7 +54,7 @@ export default function MisReservas() {
               key={estado}
               type="button"
               aria-pressed={filtro === estado}
-              className={`inline-flex items-center gap-2 inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+              className={`inline-flex min-h-[44px] items-center gap-2 rounded-campo px-3 py-1 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
               onClick={() => setFiltro(estado)}
             >
               <Icono icono={ICONOS[info.icono] ?? InformationCircleIcon} tamano="chico" />
@@ -76,34 +76,34 @@ export default function MisReservas() {
         </Vacio>
       )}
       {reservas.data && reservas.data.length > 0 && (
-        <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
+        <ul className="mt-4 grid items-start gap-4">
           {reservas.data.map((r) => (
-            <li key={r.id} className="py-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-bold">{r.negocio}</p>
-                <EtiquetaReserva estado={r.estado} />
+            <li key={r.id} className="rounded-2xl border border-oliva/10 bg-white p-5 shadow-sm md:p-6">
+              <div className="flex items-center gap-3">
+                <p className="min-w-0 flex-1 truncate font-display text-lg font-bold leading-snug">{r.negocio}</p>
+                <span className="shrink-0"><EtiquetaReserva estado={r.estado} /></span>
               </div>
-              <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
+              <dl className="mt-4 grid grid-cols-2 items-start gap-x-8 gap-y-4 sm:grid-cols-3">
                 <div>
-                  <dt className="text-xs text-texto-suave">
+                  <dt className="mb-1 text-xs text-texto-suave">
                     {r.tipoReserva === 'ALOJAMIENTO' ? 'Entrada' : 'Fecha'}
                   </dt>
-                  <dd className="text-sm font-semibold">{fecha(r.inicio)}</dd>
+                  <dd className="text-sm font-semibold leading-relaxed">{fecha(r.inicio)}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-texto-suave">
+                  <dt className="mb-1 text-xs text-texto-suave">
                     {r.tipoReserva === 'ALOJAMIENTO' ? 'Salida' : 'Horario'}
                   </dt>
-                  <dd className="text-sm font-semibold">
+                  <dd className="text-sm font-semibold leading-relaxed">
                     {r.tipoReserva === 'FRANJA' ? `${hora(r.inicio)} a ${hora(r.fin)}` : fecha(r.fin)}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-texto-suave">Personas</dt>
-                  <dd className="text-sm font-semibold">{r.personas}</dd>
+                  <dt className="mb-1 text-xs text-texto-suave">Personas</dt>
+                  <dd className="text-sm font-semibold leading-relaxed">{r.personas}</dd>
                 </div>
               </dl>
-              <Link to={`/reservas/${r.id}`} className="mt-2 inline-block font-semibold text-primario">
+              <Link to={`/reservas/${r.id}`} className="mt-3 inline-flex min-h-[44px] items-center font-semibold text-primario">
                 Ver detalle →
               </Link>
             </li>

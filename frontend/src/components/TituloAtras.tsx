@@ -15,7 +15,7 @@ export function BotonAtras({ etiqueta = 'Volver a la pantalla anterior' }: { eti
       type="button"
       onClick={volver}
       aria-label={etiqueta}
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-oliva/15 bg-white text-oliva hover:bg-fondo"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-oliva/50 transition-colors hover:bg-oliva/10 hover:text-oliva"
     >
       <Icono icono={ArrowLeftIcon} />
     </button>
