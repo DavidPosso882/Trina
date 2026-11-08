@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useCarrito } from '../lib/carrito';
+import { useQuery } from '@tanstack/react-query';
+import { getCatalogo } from '../lib/api';
 import { precio } from '../lib/formato';
 import { Dialogo } from '../components/Dialogo';
 import { Icono } from '../components/Icono';
@@ -12,6 +14,25 @@ import { TituloAtras } from '../components/TituloAtras';
 export default function Carrito() {
   const { carrito, totalCop, cantidadTotal, cambiarCantidad, quitar, vaciar } = useCarrito();
   const [confirmarVaciado, setConfirmarVaciado] = useState(false);
+  const catalogo = useQuery({
+    queryKey: ['catalogo-carrito', carrito?.negocioId],
+    queryFn: () => getCatalogo(carrito!.negocioId),
+    enabled: !!carrito,
+    retry: false,
+    staleTime: 5 * 60_000
+  });
+  const fotos = useMemo(() => {
+    const mapa = new Map<number, string>();
+    catalogo.data?.categorias.forEach((g) =>
+      g.items.forEach((i) => {
+        if (i.imagenUrl) mapa.set(i.id, i.imagenUrl);
+      })
+    );
+    catalogo.data?.sinCategoria.forEach((i) => {
+      if (i.imagenUrl) mapa.set(i.id, i.imagenUrl);
+    });
+    return mapa;
+  }, [catalogo.data]);
 
   if (!carrito || carrito.items.length === 0) {
     return (
@@ -26,7 +47,7 @@ export default function Carrito() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 pb-40 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-40 pt-6">
       <TituloAtras
         titulo={<>Tu pedido en {carrito.negocioNombre}</>}
         subtitulo="Revisa las cantidades. Vas a pagar al confirmar."
@@ -37,11 +58,13 @@ export default function Carrito() {
         className="mt-4 rounded-3xl bg-white p-4 shadow-[0_24px_60px_-24px_rgba(27,33,23,0.25)] md:p-6"
       >
         <ul className="divide-y divide-oliva/10">
-          {carrito.items.map((item) => (
+          {carrito.items.map((item) => {
+            const foto = item.imagenUrl ?? fotos.get(item.itemId) ?? null;
+            return (
             <li key={item.itemId} className="flex gap-3 py-4 first:pt-0 last:pb-0">
-              {item.imagenUrl ? (
+              {foto ? (
                 <img
-                  src={item.imagenUrl}
+                  src={foto}
                   alt=""
                   loading="lazy"
                   className="h-20 w-20 shrink-0 rounded-2xl bg-[#F0FDF4] object-cover"
@@ -95,7 +118,8 @@ export default function Carrito() {
                 </div>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
         <div className="mt-4 border-t border-oliva/10 pt-4">

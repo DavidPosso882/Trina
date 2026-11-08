@@ -42,7 +42,7 @@ export default function MisPedidos() {
   });
 
   return (
-    <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
+    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Mis pedidos" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
@@ -61,7 +61,7 @@ export default function MisPedidos() {
               key={estado}
               type="button"
               aria-pressed={filtro === estado}
-              className={`inline-flex items-center gap-2 inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+              className={`inline-flex min-h-[44px] items-center gap-2 rounded-campo px-3 py-1 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
               onClick={() => setFiltro(estado)}
             >
               <Icono icono={ICONOS[info.icono]} tamano="chico" />
@@ -83,9 +83,9 @@ export default function MisPedidos() {
         </Vacio>
       )}
       {pedidos.data && pedidos.data.length > 0 && (
-        <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
+        <ul className="mt-4 grid items-start gap-3 md:grid-cols-2">
           {pedidos.data.map((p) => (
-            <li key={p.id} className="py-4">
+            <li key={p.id} className="rounded-2xl border border-oliva/10 bg-white p-4 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="font-bold">{p.negocio}</p>
                 <EtiquetaPedido estado={p.estado} />
