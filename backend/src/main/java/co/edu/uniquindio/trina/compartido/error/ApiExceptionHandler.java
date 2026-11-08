@@ -77,10 +77,13 @@ public class ApiExceptionHandler {
       org.springframework.web.server.ResponseStatusException ex) {
     int estado = ex.getStatusCode().value();
     String codigo = estado == 404 ? "NO_ENCONTRADO" : estado == 403 ? "AUTORIZACION" : "INTERNO";
+    String razon = ex.getReason();
     String mensaje =
-        estado == 404
-            ? "Ese negocio no está publicado."
-            : estado == 403 ? "Ese negocio no es tuyo." : ex.getReason();
+        razon != null && !razon.isBlank()
+            ? razon
+            : estado == 404
+                ? "Ese negocio no está publicado."
+                : estado == 403 ? "Ese negocio no es tuyo." : "Algo salió mal. Intenta de nuevo.";
     return body((org.springframework.http.HttpStatus) ex.getStatusCode(), codigo, mensaje);
   }
 

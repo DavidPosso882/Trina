@@ -2,6 +2,8 @@ package co.edu.uniquindio.trina.reserva;
 
 import co.edu.uniquindio.trina.negocio.HorarioService;
 import co.edu.uniquindio.trina.negocio.Negocio;
+import co.edu.uniquindio.trina.catalogo.CatalogoItem;
+import co.edu.uniquindio.trina.catalogo.CatalogoItemRepository;
 import co.edu.uniquindio.trina.negocio.NegocioRepository;
 import co.edu.uniquindio.trina.notificacion.NotificacionService;
 import co.edu.uniquindio.trina.usuario.UsuarioRepository;
@@ -48,6 +50,7 @@ public class ReservaService {
   private final UsuarioRepository usuarios;
   private final NotificacionService notificaciones;
   private final HorarioService horarios;
+  private final CatalogoItemRepository items;
   private final ZoneId zona;
 
   public ReservaService(
@@ -56,12 +59,14 @@ public class ReservaService {
       UsuarioRepository usuarios,
       NotificacionService notificaciones,
       HorarioService horarios,
+      CatalogoItemRepository items,
       @Value("${app.zona-horaria:America/Bogota}") String zonaHoraria) {
     this.reservas = reservas;
     this.negocios = negocios;
     this.usuarios = usuarios;
     this.notificaciones = notificaciones;
     this.horarios = horarios;
+    this.items = items;
     this.zona = ZoneId.of(zonaHoraria);
   }
 
@@ -98,9 +103,24 @@ public class ReservaService {
         >= negocio.getCapacidadReservas()) {
       throw new IllegalStateException("No hay cupo para ese horario. Prueba con otra franja.");
     }
+    CatalogoItem item = null;
+    if (req.itemId() != null) {
+      item =
+          items
+              .findById(req.itemId())
+              .orElseThrow(
+                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ítem no encontrado."));
+      if (!item.getNegocio().getId().equals(negocio.getId()) || !item.isActivo()) {
+        throw new IllegalArgumentException("Ese ítem no pertenece a este negocio.");
+      }
+      if (!reservas.findSuperpuestasDeItem(negocio.getId(), item.getId(), req.inicio(), fin).isEmpty()) {
+        throw new IllegalStateException(
+            "Esas fechas ya están reservadas para esta habitación. Elige otras fechas.");
+      }
+    }
     var reserva =
         reservas.save(
-            Reserva.crear(cliente, negocio, req.inicio(), fin, req.personas(), req.nota()));
+            Reserva.crear(cliente, negocio, item, req.inicio(), fin, req.personas(), req.nota()));
     notificaciones.notificar(negocio.getPropietario().getId(), "RESERVA_CREADA", "Tienes una reserva nueva de " + cliente.getNombre() + ".", "RESERVA", reserva.getId());
     return ReservaDto.ReservaRespuesta.de(reserva);
   }
@@ -215,6 +235,40 @@ public class ReservaService {
         negocio.getCapacidadReservas(),
         negocio.getDuracionReservaMin(),
         franjas);
+  }
+
+  /** Días ocupados de una habitación en un rango (hasta 93 días): evita la doble reserva. */
+  @Transactional(readOnly = true)
+  public java.util.List<ReservaDto.OcupacionRespuesta> ocupacionItem(
+      Long negocioId, Long itemId, LocalDate desde, LocalDate hasta) {
+    var negocio =
+        negocios
+            .findByIdAndEstado(negocioId, APROBADO)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Negocio no publicado."));
+    var item =
+        items
+            .findById(itemId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ítem no encontrado."));
+    if (!item.getNegocio().getId().equals(negocio.getId()) || !item.isActivo()) {
+      throw new IllegalArgumentException("Ese ítem no pertenece a este negocio.");
+    }
+    if (desde == null
+        || hasta == null
+        || !hasta.isAfter(desde)
+        || ChronoUnit.DAYS.between(desde, hasta) > 93) {
+      throw new IllegalArgumentException("Indica un rango válido de hasta 93 días.");
+    }
+    var inicio = desde.atStartOfDay(zona).toInstant();
+    var fin = hasta.plusDays(1).atStartOfDay(zona).toInstant();
+    return reservas.findSuperpuestasDeItem(negocioId, itemId, inicio, fin).stream()
+        .map(
+            r ->
+                new ReservaDto.OcupacionRespuesta(
+                    r.getInicio().atZone(zona).toLocalDate().toString(),
+                    r.getFin().atZone(zona).toLocalDate().toString()))
+        .toList();
   }
 
   /** RF-26 E5: cada 15 minutos cancela las PENDIENTE_CONFIRMACION con más de 24 horas. */

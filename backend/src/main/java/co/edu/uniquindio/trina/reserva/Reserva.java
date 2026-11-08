@@ -1,5 +1,6 @@
 package co.edu.uniquindio.trina.reserva;
 
+import co.edu.uniquindio.trina.catalogo.CatalogoItem;
 import co.edu.uniquindio.trina.negocio.Negocio;
 import co.edu.uniquindio.trina.usuario.Usuario;
 import jakarta.persistence.*;
@@ -34,6 +35,10 @@ public class Reserva {
   @JoinColumn(name = "negocio_id", nullable = false)
   private Negocio negocio;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "item_id")
+  private CatalogoItem item;
+
   @Column(nullable = false)
   private String estado;
 
@@ -63,6 +68,17 @@ public class Reserva {
    */
   public static Reserva crear(
       Usuario cliente, Negocio negocio, Instant inicio, Instant fin, int personas, String nota) {
+    return crear(cliente, negocio, null, inicio, fin, personas, nota);
+  }
+
+  public static Reserva crear(
+      Usuario cliente,
+      Negocio negocio,
+      CatalogoItem item,
+      Instant inicio,
+      Instant fin,
+      int personas,
+      String nota) {
     if (inicio == null || fin == null) {
       throw new IllegalArgumentException("Indica el inicio y el fin de la reserva.");
     }
@@ -75,6 +91,7 @@ public class Reserva {
     var reserva = new Reserva();
     reserva.cliente = cliente;
     reserva.negocio = negocio;
+    reserva.item = item;
     reserva.inicio = inicio;
     reserva.fin = fin;
     reserva.personas = personas;
@@ -162,6 +179,10 @@ public class Reserva {
 
   public Negocio getNegocio() {
     return negocio;
+  }
+
+  public CatalogoItem getItem() {
+    return item;
   }
 
   public String getEstado() {

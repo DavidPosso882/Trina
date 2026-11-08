@@ -15,6 +15,9 @@ import {
   getCatalogoPropio,
   listarCategoriasCatalogo,
   mensajeDeApi,
+  agregarImagenItemCatalogo,
+  eliminarImagenItemCatalogo,
+  listarImagenesItemCatalogo,
   subirImagenItemCatalogo,
   type CategoriaCatalogo,
   type DatosItemCatalogo,
@@ -79,15 +82,20 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
   };
 
   const guardarItem = useMutation({
-    mutationFn: (entrada: { item: ItemCatalogo | null; datos: DatosItemCatalogo; archivo?: File | null }) =>
+    mutationFn: (entrada: { item: ItemCatalogo | null; datos: DatosItemCatalogo; archivos?: File[] }) =>
       (entrada.item
         ? actualizarItemCatalogo(negocio.id, entrada.item.id, entrada.datos)
         : crearItemCatalogo(negocio.id, entrada.datos)
       ).then(async (guardado) => {
-        if (entrada.archivo) {
-          return subirImagenItemCatalogo(negocio.id, guardado.id, entrada.archivo);
+        const pendientes = entrada.archivos ?? [];
+        let actual = guardado;
+        for (const [i, archivo] of pendientes.entries()) {
+          actual =
+            i === 0 && !guardado.imagenUrl
+              ? await subirImagenItemCatalogo(negocio.id, guardado.id, archivo)
+              : await agregarImagenItemCatalogo(negocio.id, guardado.id, archivo);
         }
-        return guardado;
+        return actual;
       }),
     onSuccess: (_dato, entrada) => {
       invalidar();
@@ -361,9 +369,10 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
         {itemDialogo && (
           <FormularioItem
             item={itemDialogo.item}
+            negocioId={negocio.id}
             categorias={categorias.data ?? []}
-            onGuardar={async (datos, archivo) => {
-              await guardarItem.mutateAsync({ item: itemDialogo.item, datos, archivo });
+            onGuardar={async (datos, archivos) => {
+              await guardarItem.mutateAsync({ item: itemDialogo.item, datos, archivos });
             }}
             onCancelar={() => setItemDialogo(null)}
           />
@@ -463,25 +472,36 @@ const esquemaItem = z.object({
     ),
   descripcion: z.string().trim(),
   tipo: z.enum(['producto', 'servicio']),
-  categoriaId: z.string()
+  categoriaId: z.string(),
+  capacidad: z
+    .string()
+    .trim()
+    .refine(
+      (v) => v === undefined || v === '' || (/^\d+$/.test(v) && Number(v) >= 1 && Number(v) <= 500),
+      'La capacidad tiene que ser un número entre 1 y 500.'
+    )
+    .optional()
 });
 
 type ValoresItem = z.infer<typeof esquemaItem>;
 
 function FormularioItem({
   item,
+  negocioId,
   categorias,
   onGuardar,
   onCancelar
 }: {
   item: ItemCatalogo | null;
+  negocioId: number;
   categorias: CategoriaCatalogo[];
-  onGuardar: (datos: DatosItemCatalogo, archivo?: File | null) => Promise<void>;
+  onGuardar: (datos: DatosItemCatalogo, archivos: File[]) => Promise<void>;
   onCancelar: () => void;
 }) {
+  const cliente = useQueryClient();
   const [error, setError] = useState<string | null>(null);
-  const [archivo, setArchivo] = useState<File | null>(null);
-  const [vistaPrevia, setVistaPrevia] = useState<string | null>(item?.imagenUrl ?? null);
+  const [pendientes, setPendientes] = useState<{ archivo: File; vista: string }[]>([]);
+  const [subiendo, setSubiendo] = useState(false);
   const { register, handleSubmit, formState } = useForm<ValoresItem>({
     resolver: zodResolver(esquemaItem),
     defaultValues: {
@@ -489,33 +509,99 @@ function FormularioItem({
       precio: item ? String(item.precioCop) : '',
       descripcion: item?.descripcion ?? '',
       tipo: item?.tipo === 'servicio' ? 'servicio' : 'producto',
-      categoriaId: item?.categoriaId ? String(item.categoriaId) : ''
+      categoriaId: item?.categoriaId ? String(item.categoriaId) : '',
+    capacidad: item?.capacidad != null ? String(item.capacidad) : ''
     }
   });
 
-  const elegirFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const elegido = e.target.files?.[0] ?? null;
-    if (vistaPrevia?.startsWith('blob:')) URL.revokeObjectURL(vistaPrevia);
-    if (!elegido) {
-      setArchivo(null);
-      setVistaPrevia(item?.imagenUrl ?? null);
-      return;
-    }
-    if (!/^image\/(jpeg|png|webp)$/.test(elegido.type)) {
-      setError('Usa una imagen JPG, PNG o WebP.');
-      return;
-    }
-    if (elegido.size > 5 * 1024 * 1024) {
-      setError('La foto no puede superar los 5 MB.');
-      return;
-    }
+  const galeria = useQuery({
+    queryKey: ['galeria-item', negocioId, item?.id],
+    queryFn: () => listarImagenesItemCatalogo(negocioId, item!.id),
+    enabled: item != null,
+    retry: false
+  });
+  const fotosActuales = [
+    ...(item?.imagenUrl ? [{ id: null as number | null, url: item.imagenUrl, principal: true }] : []),
+    ...(galeria.data ?? []).map((g) => ({ id: g.id as number | null, url: g.url, principal: false }))
+  ];
+  const totalFotos = fotosActuales.length + pendientes.length;
+
+  const validarArchivo = (elegido: File): string | null => {
+    if (!/^image\/(jpeg|png|webp)$/.test(elegido.type)) return 'Usa una imagen JPG, PNG o WebP.';
+    if (elegido.size > 5 * 1024 * 1024) return 'La foto no puede superar los 5 MB.';
+    return null;
+  };
+
+  const agregarFotos = async (elegidos: FileList | null) => {
     setError(null);
-    setArchivo(elegido);
-    setVistaPrevia(URL.createObjectURL(elegido));
+    if (!elegidos || elegidos.length === 0) return;
+    const cupo = Math.max(0, 5 - totalFotos);
+    const nuevos = [...elegidos].slice(0, cupo);
+    if (nuevos.length === 0) {
+      setError('Cada producto admite hasta 5 fotos.');
+      return;
+    }
+    if (item == null) {
+      for (const archivo of nuevos) {
+        const problema = validarArchivo(archivo);
+        if (problema) {
+          setError(problema);
+          return;
+        }
+      }
+      setPendientes((prev) => [
+        ...prev,
+        ...nuevos.map((archivo) => ({ archivo, vista: URL.createObjectURL(archivo) }))
+      ]);
+      return;
+    }
+    setSubiendo(true);
+    try {
+      for (const archivo of nuevos) {
+        const problema = validarArchivo(archivo);
+        if (problema) {
+          setError(problema);
+          break;
+        }
+        if (fotosActuales.length === 0) {
+          await subirImagenItemCatalogo(negocioId, item.id, archivo);
+        } else {
+          await agregarImagenItemCatalogo(negocioId, item.id, archivo);
+        }
+      }
+      await cliente.invalidateQueries({ queryKey: ['galeria-item', negocioId, item.id] });
+      await cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocioId] });
+    } catch (e) {
+      setError(mensajeDeApi(e));
+    } finally {
+      setSubiendo(false);
+    }
+  };
+
+  const quitarFoto = async (fotoId: number | null) => {
+    if (item == null || fotoId == null) return;
+    setError(null);
+    try {
+      await eliminarImagenItemCatalogo(negocioId, item.id, fotoId);
+      await cliente.invalidateQueries({ queryKey: ['galeria-item', negocioId, item.id] });
+      await cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocioId] });
+    } catch (e) {
+      setError(mensajeDeApi(e));
+    }
+  };
+
+  const quitarPendiente = (vista: string) => {
+    setPendientes((prev) => {
+      const sacado = prev.find((x) => x.vista === vista);
+      if (sacado) URL.revokeObjectURL(sacado.vista);
+      return prev.filter((x) => x.vista !== vista);
+    });
   };
 
   const enviar = async (v: ValoresItem) => {
     setError(null);
+    const capacidad =
+      v.capacidad != null && v.capacidad.trim() !== '' ? Number(v.capacidad) : undefined;
     try {
       await onGuardar(
         {
@@ -523,9 +609,10 @@ function FormularioItem({
           precioCop: Number(v.precio),
           descripcion: v.descripcion.trim() || undefined,
           tipo: v.tipo,
-          categoriaId: v.categoriaId ? Number(v.categoriaId) : null
+          categoriaId: v.categoriaId ? Number(v.categoriaId) : null,
+          capacidad
         },
-        archivo
+        pendientes.map((x) => x.archivo)
       );
     } catch (e) {
       setError(mensajeDeApi(e));
@@ -597,31 +684,93 @@ function FormularioItem({
       </div>
       <div>
         <label htmlFor="item-foto" className="font-semibold">
-          Foto del producto <span className="font-normal text-texto-suave">(opcional, JPG/PNG/WebP hasta 5 MB)</span>
+          Fotos del producto{' '}
+          <span className="font-normal text-texto-suave">
+            ({totalFotos}/5 · JPG, PNG o WebP, hasta 5 MB cada una)
+          </span>
         </label>
-        <div className="mt-1 flex items-center gap-3">
-          {vistaPrevia ? (
-            <img
-              src={vistaPrevia}
-              alt=""
-              className="h-16 w-16 shrink-0 rounded-campo bg-crema object-cover"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-campo bg-crema text-xl font-extrabold text-oliva/50"
-            >
-              {(item?.nombre ?? '·').trim().charAt(0).toUpperCase() || '·'}
-            </span>
-          )}
+        {(fotosActuales.length > 0 || pendientes.length > 0) && (
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {fotosActuales.map((f, i) => (
+              <li key={f.id ?? `actual-${i}`} className="relative">
+                <img
+                  src={f.url}
+                  alt=""
+                  className="h-16 w-16 rounded-campo bg-crema object-cover"
+                />
+                {f.principal ? (
+                  <span className="absolute inset-x-0 bottom-0 rounded-b-campo bg-oliva/80 px-1 py-0.5 text-center text-[11px] font-bold text-white">
+                    Portada
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => quitarFoto(f.id)}
+                    aria-label="Quitar esta foto"
+                    className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-error text-xs font-bold text-white shadow"
+                  >
+                    ✕
+                  </button>
+                )}
+              </li>
+            ))}
+            {pendientes.map((x) => (
+              <li key={x.vista} className="relative">
+                <img
+                  src={x.vista}
+                  alt=""
+                  className="h-16 w-16 rounded-campo bg-crema object-cover opacity-80"
+                />
+                <button
+                  type="button"
+                  onClick={() => quitarPendiente(x.vista)}
+                  aria-label="Quitar esta foto"
+                  className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-error text-xs font-bold text-white shadow"
+                >
+                  ✕
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {totalFotos < 5 ? (
           <input
             id="item-foto"
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            onChange={elegirFoto}
-            className="block w-full min-w-0 text-sm text-texto-suave file:mr-3 file:min-h-[44px] file:rounded-full file:border file:border-oliva/15 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-oliva"
+            multiple={item != null}
+            disabled={subiendo}
+            onChange={(e) => {
+              void agregarFotos(e.target.files);
+              e.target.value = '';
+            }}
+            className="mt-2 block w-full min-w-0 text-sm text-texto-suave file:mr-3 file:min-h-[44px] file:rounded-full file:border file:border-oliva/15 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-oliva disabled:opacity-60"
           />
-        </div>
+        ) : (
+          <p className="mt-2 text-sm text-texto-suave">Ya tienes las 5 fotos de este producto.</p>
+        )}
+        <p className="mt-1 text-sm text-texto-suave">
+          La primera foto es la portada que se ve en la carta. En productos ya creados las fotos se
+          suben al momento.
+        </p>
+      </div>
+      <div>
+        <label htmlFor="item-capacidad" className="font-semibold">
+          Capacidad (personas) <span className="font-normal text-texto-suave">(opcional)</span>
+        </label>
+        <input
+          id="item-capacidad"
+          className="campo mt-1"
+          inputMode="numeric"
+          placeholder="Ej.: 4"
+          {...register('capacidad')}
+        />
+        {formState.errors.capacidad && (
+          <p role="alert" className="mt-1 flex items-start gap-1 font-semibold text-error">
+            <Icono icono={ExclamationTriangleIcon} tamano="chico" className="mt-0.5" />
+            <span>{formState.errors.capacidad.message as string}</span>
+          </p>
+        )}
       </div>
       <div>
         <label htmlFor="item-descripcion" className="font-semibold">

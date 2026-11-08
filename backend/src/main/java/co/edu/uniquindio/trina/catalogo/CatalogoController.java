@@ -86,6 +86,39 @@ public class CatalogoController {
     }
   }
 
+  @GetMapping("/items/{itemId}/imagenes")
+  @PreAuthorize("hasRole('COMERCIANTE')")
+  public java.util.List<CatalogoDto.ImagenItem> listarImagenesItem(@PathVariable Long id, @PathVariable Long itemId) {
+    return servicio.listarImagenesItem(sesionId(), id, itemId);
+  }
+
+  @PostMapping("/items/{itemId}/imagenes")
+  @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasRole('COMERCIANTE')")
+  public CatalogoDto.ItemRespuesta agregarImagenItem(
+      @PathVariable Long id,
+      @PathVariable Long itemId,
+      @RequestParam(value = "file", required = false) MultipartFile file) {
+    if (file == null || file.isEmpty()) {
+      throw new co.edu.uniquindio.trina.negocio.ImagenInvalidaException(
+          "Sube una foto en JPG, PNG o WebP.");
+    }
+    try {
+      return servicio.agregarImagenItem(sesionId(), id, itemId, file.getBytes(), file.getContentType());
+    } catch (java.io.IOException e) {
+      throw new co.edu.uniquindio.trina.negocio.ImagenInvalidaException(
+          "No pudimos leer el archivo; prueba de nuevo.");
+    }
+  }
+
+  @DeleteMapping("/items/{itemId}/imagenes/{imagenId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasRole('COMERCIANTE')")
+  public void eliminarImagenItem(
+      @PathVariable Long id, @PathVariable Long itemId, @PathVariable Long imagenId) {
+    servicio.eliminarImagenItem(sesionId(), id, itemId, imagenId);
+  }
+
   @PatchMapping("/items/{itemId}/disponibilidad")
   @PreAuthorize("hasRole('COMERCIANTE')")
   public CatalogoDto.ItemRespuesta disponibilidad(

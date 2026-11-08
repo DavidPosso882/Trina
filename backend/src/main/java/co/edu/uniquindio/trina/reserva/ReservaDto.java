@@ -1,5 +1,6 @@
 package co.edu.uniquindio.trina.reserva;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,8 @@ public final class ReservaDto {
       @NotNull(message = "Indica cuántas personas")
           @Positive(message = "Tiene que ser al menos una persona")
           Integer personas,
-      String nota) {}
+      String nota,
+      Long itemId) {}
 
   public record AccionRequest(
       @NotBlank(message = "Indica la acción")
@@ -45,7 +47,9 @@ public final class ReservaDto {
       int personas,
       String nota,
       String motivo,
-      Instant creadoEn) {
+      Instant creadoEn,
+      @JsonInclude(JsonInclude.Include.NON_NULL) Long itemId,
+      @JsonInclude(JsonInclude.Include.NON_NULL) String itemNombre) {
     static ReservaRespuesta de(Reserva r) {
       return new ReservaRespuesta(
           r.getId(),
@@ -59,13 +63,18 @@ public final class ReservaDto {
           r.getPersonas(),
           r.getNota(),
           r.getMotivo(),
-          r.getCreadoEn());
+          r.getCreadoEn(),
+          r.getItem() == null ? null : r.getItem().getId(),
+          r.getItem() == null ? null : r.getItem().getNombre());
     }
   }
 
   /** Franja de una hora de la grilla pública 8:00–20:00 (simplificación documentada). */
   public record FranjaRespuesta(
       String hora, String inicio, String fin, long ocupadas, long libres, boolean disponible) {}
+
+  /** Días ocupados de una habitación en un rango (fechas ISO de la zona del negocio). */
+  public record OcupacionRespuesta(String inicio, String fin) {}
 
   public record DisponibilidadRespuesta(
       Long negocioId,

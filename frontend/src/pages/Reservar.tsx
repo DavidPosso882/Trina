@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -7,15 +7,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   crearReserva,
+  getCatalogo,
   getDisponibilidad,
   getNegocio,
+  getOcupacionItem,
   mensajeDeApi,
   type Disponibilidad,
-  type FranjaDisponible
+  type FranjaDisponible,
+  type ItemCatalogo
 } from '../lib/api';
-import { fechaDeHoy, horaDeFranja } from '../lib/formato';
+import { fechaDeHoy, horaDeFranja, precio } from '../lib/formato';
 import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
+import { CalendarioOcupacion } from '../components/CalendarioOcupacion';
 import { Icono } from '../components/Icono';
 import { Cargando, ErrorRecargar } from '../components/Estados';
 import { TituloAtras } from '../components/TituloAtras';
@@ -44,6 +48,24 @@ export default function Reservar() {
     queryFn: () => getNegocio(id),
     enabled: valido
   });
+  const [parametros] = useSearchParams();
+  const itemIdParam = Number(parametros.get('item'));
+  const pideItem = Number.isFinite(itemIdParam) && itemIdParam > 0;
+  const catalogoItem = useQuery({
+    queryKey: ['catalogo-reserva', id],
+    queryFn: () => getCatalogo(id),
+    enabled: valido && pideItem,
+    retry: false,
+    staleTime: 5 * 60_000
+  });
+  const itemElegido: ItemCatalogo | null = (() => {
+    if (!pideItem || !catalogoItem.data) return null;
+    const todos = [
+      ...catalogoItem.data.categorias.flatMap((g) => g.items),
+      ...catalogoItem.data.sinCategoria
+    ];
+    return todos.find((i) => i.id === itemIdParam && i.activo !== false && i.disponible !== false) ?? null;
+  })();
   const disponibilidad = useQuery({
     queryKey: ['disponibilidad', id, fecha],
     queryFn: () => getDisponibilidad(id, fecha),
@@ -111,14 +133,45 @@ export default function Reservar() {
         subtitulo="Paso único: cuéntanos cuándo y cuántas personas. Después el negocio confirma."
       />
 
+      {pideItem && catalogoItem.isLoading && <Cargando texto="Cargando la habitación…" />}
+      {pideItem && !catalogoItem.isLoading && itemElegido == null && (
+        <Aviso tipo="info">
+          Esa habitación ya no está disponible. Puedes reservar en general o elegir otra.
+        </Aviso>
+      )}
+      {itemElegido != null && (
+        <section aria-label="Habitación elegida" className="mt-4 flex items-center gap-3 rounded-2xl border border-oliva/10 bg-white p-3 shadow-sm">
+          {(itemElegido.imagenUrl ?? itemElegido.imagenes?.[0]) ? (
+            <img
+              src={itemElegido.imagenUrl ?? itemElegido.imagenes![0]}
+              alt=""
+              className="h-16 w-16 shrink-0 rounded-xl bg-crema object-cover"
+            />
+          ) : (
+            <span aria-hidden="true" className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-crema font-display text-2xl font-extrabold text-oliva/60">
+              {itemElegido.nombre.trim().charAt(0).toUpperCase()}
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="truncate font-display text-lg font-bold">{itemElegido.nombre}</p>
+            <p className="text-sm text-texto-suave">
+              {precio(itemElegido.precioCop)}
+              {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? ' /noche' : ''}
+              {itemElegido.capacidad != null ? ` · Hasta ${itemElegido.capacidad} ${itemElegido.capacidad === 1 ? 'persona' : 'personas'}` : ''}
+            </p>
+          </div>
+        </section>
+      )}
+
       {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? (
-        <FormularioAlojamiento id={id} />
+        <FormularioAlojamiento id={id} item={itemElegido} />
       ) : (
         <FormularioFranja
           id={id}
           fecha={fecha}
           onFecha={setFecha}
           disponibilidad={disponibilidad.data}
+          item={itemElegido}
         />
       )}
     </main>
@@ -138,19 +191,22 @@ function FormularioFranja({
   id,
   fecha,
   onFecha,
-  disponibilidad
+  disponibilidad,
+  item
 }: {
   id: number;
   fecha: string;
   onFecha: (fecha: string) => void;
   disponibilidad: Disponibilidad;
+  item: ItemCatalogo | null;
 }) {
   const navegar = useNavigate();
   const [franja, setFranja] = useState<FranjaDisponible | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const personasPorDefecto = item?.capacidad != null && item.capacidad > 0 ? Math.min(item.capacidad, 50) : 2;
   const { register, handleSubmit, formState } = useForm<z.infer<typeof esquemaBase>>({
     resolver: zodResolver(esquemaBase),
-    defaultValues: { personas: 2, nota: '' }
+    defaultValues: { personas: personasPorDefecto, nota: '' }
   });
 
   const enviar = async (v: z.infer<typeof esquemaBase>) => {
@@ -164,7 +220,8 @@ function FormularioFranja({
         negocioId: id,
         inicio: franja.inicio,
         personas: v.personas,
-        nota: v.nota?.trim() ? v.nota.trim() : undefined
+        nota: v.nota?.trim() ? v.nota.trim() : undefined,
+        itemId: item?.id
       });
       navegar(`/reservas/${reserva.id}`, {
         state: { mensaje: 'Reserva enviada. Esperando confirmación.', tipo: 'exito' }
@@ -235,7 +292,7 @@ function FormularioFranja({
           type="number"
           inputMode="numeric"
           min={1}
-          max={50}
+          max={item?.capacidad ?? 50}
           className="campo mt-1"
           {...register('personas', { valueAsNumber: true })}
         />
@@ -277,17 +334,58 @@ const esquemaAlojamiento = esquemaBase
 
 type ValoresAlojamiento = z.infer<typeof esquemaAlojamiento>;
 
-function FormularioAlojamiento({ id }: { id: number }) {
+function FormularioAlojamiento({ id, item }: { id: number; item: ItemCatalogo | null }) {
   const navegar = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState, watch } = useForm<ValoresAlojamiento>({
     resolver: zodResolver(esquemaAlojamiento),
-    defaultValues: { entrada: fechaDeHoy(), salida: '', personas: 2, nota: '' }
+    defaultValues: { entrada: fechaDeHoy(), salida: '', personas: item?.capacidad != null && item.capacidad > 0 ? Math.min(item.capacidad, 50) : 2, nota: '' }
   });
   const entrada = watch('entrada');
+  const [mesManual, setMesManual] = useState<{ anio: number; mes: number } | null>(null);
+  const mesBase = useMemo(() => {
+    const [y, m] = (entrada || fechaDeHoy()).split('-').map(Number);
+    return { anio: y, mes: m - 1 };
+  }, [entrada]);
+  useEffect(() => {
+    setMesManual(null);
+  }, [entrada]);
+  const mes = mesManual ?? mesBase;
+  const primerDia = `${mes.anio}-${String(mes.mes + 1).padStart(2, '0')}-01`;
+  const ultimoDia = new Date(mes.anio, mes.mes + 1, 0);
+  const ultimoISO = `${mes.anio}-${String(mes.mes + 1).padStart(2, '0')}-${String(ultimoDia.getDate()).padStart(2, '0')}`;
+  const ocupacion = useQuery({
+    queryKey: ['ocupacion', id, item?.id, mes.anio, mes.mes],
+    queryFn: () => getOcupacionItem(id, item!.id, primerDia, ultimoISO),
+    enabled: item != null,
+    retry: false,
+    staleTime: 60_000
+  });
+  const ocupadas = useMemo(() => {
+    const dias = new Set<string>();
+    for (const r of ocupacion.data ?? []) {
+      const ini = new Date(r.inicio + 'T00:00:00');
+      const fin = new Date(r.fin + 'T00:00:00');
+      for (let d = new Date(ini); d < fin; d.setDate(d.getDate() + 1)) {
+        dias.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+      }
+    }
+    return dias;
+  }, [ocupacion.data]);
 
   const enviar = async (v: ValoresAlojamiento) => {
     setError(null);
+    if (item != null) {
+      const ini = new Date(v.entrada + 'T00:00:00');
+      const fin = new Date(v.salida + 'T00:00:00');
+      for (let d = new Date(ini); d < fin; d.setDate(d.getDate() + 1)) {
+        const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (ocupadas.has(iso)) {
+          setError('Esas fechas ya están reservadas para esta habitación. Elige otras fechas.');
+          return;
+        }
+      }
+    }
     try {
       const reserva = await crearReserva({
         negocioId: id,
@@ -295,7 +393,8 @@ function FormularioAlojamiento({ id }: { id: number }) {
         inicio: `${v.entrada}T15:00:00-05:00`,
         fin: `${v.salida}T12:00:00-05:00`,
         personas: v.personas,
-        nota: v.nota?.trim() ? v.nota.trim() : undefined
+        nota: v.nota?.trim() ? v.nota.trim() : undefined,
+        itemId: item?.id
       });
       navegar(`/reservas/${reserva.id}`, {
         state: { mensaje: 'Reserva enviada. Esperando confirmación.', tipo: 'exito' }
@@ -336,6 +435,25 @@ function FormularioAlojamiento({ id }: { id: number }) {
         </div>
       </div>
 
+      {item != null && (
+        <div>
+          <p className="mb-2 font-semibold">Disponibilidad de la habitación</p>
+          {ocupacion.isLoading ? (
+            <p className="text-sm text-texto-suave">Cargando el calendario…</p>
+          ) : ocupacion.isError ? (
+            <p className="text-sm text-error">No pudimos cargar los días ocupados. Igual puedes intentar reservar.</p>
+          ) : (
+            <CalendarioOcupacion
+              ocupadas={ocupadas}
+              anio={mes.anio}
+              mes={mes.mes}
+              minISO={fechaDeHoy()}
+              onMes={(a, m) => setMesManual({ anio: a, mes: m })}
+            />
+          )}
+        </div>
+      )}
+
       <div>
         <label htmlFor="personas" className="font-semibold">
           ¿Cuántas personas?
@@ -345,7 +463,7 @@ function FormularioAlojamiento({ id }: { id: number }) {
           type="number"
           inputMode="numeric"
           min={1}
-          max={50}
+          max={item?.capacidad ?? 50}
           className="campo mt-1"
           {...register('personas', { valueAsNumber: true })}
         />

@@ -146,8 +146,8 @@ public class Negocio {
     if (cap < 1 || cap > 500) {
       throw new IllegalArgumentException("La capacidad tiene que estar entre 1 y 500 personas.");
     }
-    if (dur < 15 || dur > 720) {
-      throw new IllegalArgumentException("La duración tiene que estar entre 15 y 720 minutos.");
+    if (dur < 15 || dur > 1440) {
+      throw new IllegalArgumentException("La duración tiene que estar entre 15 minutos y 24 horas.");
     }
     this.tipoReserva = tipo;
     this.capacidadReservas = cap;

@@ -31,7 +31,7 @@ public final class NegocioGestionDto {
           @Max(value = 500, message = "La capacidad no puede superar 500 personas")
           Integer capacidadReservas,
       @Min(value = 15, message = "La duración mínima es 15 minutos")
-          @Max(value = 720, message = "La duración máxima es 720 minutos")
+          @Max(value = 1440, message = "La duración máxima es 24 horas")
           Integer duracionReservaMin) {}
 
   public record Respuesta(

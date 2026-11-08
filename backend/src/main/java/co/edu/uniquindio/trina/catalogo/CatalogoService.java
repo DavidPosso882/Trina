@@ -27,6 +27,7 @@ public class CatalogoService {
   private final CatalogoCategoriaRepository categorias;
   private final EstadisticaService estadisticas;
   private final StoragePort almacenamiento;
+  private final ImagenCatalogoItemRepository imagenesItems;
   private final String baseMedia;
 
   public CatalogoService(
@@ -35,6 +36,7 @@ public class CatalogoService {
       CatalogoCategoriaRepository categorias,
       EstadisticaService estadisticas,
       StoragePort almacenamiento,
+      ImagenCatalogoItemRepository imagenesItems,
       @org.springframework.beans.factory.annotation.Value("${app.minio.base-media:/media}")
           String baseMedia) {
     this.negocios = negocios;
@@ -42,6 +44,7 @@ public class CatalogoService {
     this.categorias = categorias;
     this.estadisticas = estadisticas;
     this.almacenamiento = almacenamiento;
+    this.imagenesItems = imagenesItems;
     this.baseMedia = baseMedia;
   }
 
@@ -99,7 +102,8 @@ public class CatalogoService {
             limpiar(req.descripcion()),
             req.precioCop(),
             limpiar(req.claveImagen()));
-    return CatalogoDto.ItemRespuesta.de(items.save(item), baseMedia);
+    item.setCapacidad(req.capacidad());
+    return CatalogoDto.ItemRespuesta.de(items.save(item), baseMedia, portadasItem(item.getId()));
   }
 
   @Transactional
@@ -115,7 +119,8 @@ public class CatalogoService {
         limpiar(req.descripcion()),
         req.precioCop(),
         limpiar(req.claveImagen()));
-    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
+    item.setCapacidad(req.capacidad());
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia, portadasItem(item.getId()));
   }
 
   @Transactional
@@ -125,7 +130,7 @@ public class CatalogoService {
     var item = itemDe(negocioId, itemId);
     exigirActivo(item);
     item.cambiarDisponibilidad(disponible);
-    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia, portadasItem(item.getId()));
   }
 
   /**
@@ -152,7 +157,71 @@ public class CatalogoService {
         "catalogo/" + negocioId + "/" + java.util.UUID.randomUUID() + "." + extension;
     almacenamiento.guardar(clave, datos, tipoContenido);
     item.asignarImagen(clave);
-    return CatalogoDto.ItemRespuesta.de(item, baseMedia);
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia, portadasItem(item.getId()));
+  }
+
+  /** Galería adicional del producto (la principal viaja en el ítem). */
+  @Transactional(readOnly = true)
+  public java.util.List<CatalogoDto.ImagenItem> listarImagenesItem(Long propietarioId, Long negocioId, Long itemId) {
+    propio(propietarioId, negocioId);
+    var item = itemDe(negocioId, itemId);
+    exigirActivo(item);
+    return imagenesItems.findByItem_IdOrderByOrdenAscIdAsc(itemId).stream()
+        .map(g -> new CatalogoDto.ImagenItem(g.getId(), baseMedia + "/" + g.getClave()))
+        .toList();
+  }
+
+  /** Suma una foto a la galería (máximo 5 entre principal y adicionales). */
+  @Transactional
+  public CatalogoDto.ItemRespuesta agregarImagenItem(
+      Long propietarioId, Long negocioId, Long itemId, byte[] datos, String tipoContenido) {
+    propio(propietarioId, negocioId);
+    var item = itemDe(negocioId, itemId);
+    exigirActivo(item);
+    long actuales =
+        (item.getClaveImagen() == null ? 0 : 1) + imagenesItems.countByItem_Id(itemId);
+    if (actuales >= 5) {
+      throw new ImagenInvalidaException("Cada producto admite hasta 5 fotos.");
+    }
+    String extension =
+        switch (tipoContenido == null ? "" : tipoContenido.toLowerCase()) {
+          case "image/jpeg" -> "jpg";
+          case "image/png" -> "png";
+          case "image/webp" -> "webp";
+          default -> throw new ImagenInvalidaException("Usa una imagen JPG, PNG o WebP.");
+        };
+    if (datos == null || datos.length == 0 || datos.length > 5 * 1024 * 1024) {
+      throw new ImagenInvalidaException("La foto no puede superar los 5 MB.");
+    }
+    int orden = (int) imagenesItems.countByItem_Id(itemId);
+    String clave = "catalogo/" + negocioId + "/" + itemId + "/" + java.util.UUID.randomUUID() + "." + extension;
+    almacenamiento.guardar(clave, datos, tipoContenido);
+    imagenesItems.save(ImagenCatalogoItem.nueva(item, clave, orden));
+    return CatalogoDto.ItemRespuesta.de(item, baseMedia, portadasItem(itemId));
+  }
+
+  /** Quita una foto adicional de la galería (la principal se cambia subiendo otra). */
+  @Transactional
+  public void eliminarImagenItem(Long propietarioId, Long negocioId, Long itemId, Long imagenId) {
+    propio(propietarioId, negocioId);
+    var item = itemDe(negocioId, itemId);
+    exigirActivo(item);
+    var img =
+        imagenesItems
+            .findByIdAndItem_Id(imagenId, itemId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Foto no encontrada."));
+    try {
+      almacenamiento.eliminar(img.getClave());
+    } catch (RuntimeException ignored) {
+      // Si el archivo ya no está, igual se borra el registro.
+    }
+    imagenesItems.delete(img);
+  }
+
+  private java.util.List<String> portadasItem(Long itemId) {
+    return imagenesItems.findByItem_IdOrderByOrdenAscIdAsc(itemId).stream()
+        .map(g -> baseMedia + "/" + g.getClave())
+        .toList();
   }
 
   /** Baja lógica: el ítem queda inactivo y desaparece del catálogo público (RF-16 E2). */
@@ -201,7 +270,7 @@ public class CatalogoService {
       var suyos =
           visibles.stream()
               .filter(i -> i.getCategoria() != null && i.getCategoria().getId().equals(cat.getId()))
-              .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia))
+              .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia, portadasItem(i.getId())))
               .toList();
       if (!suyos.isEmpty()) {
         grupos.add(new CatalogoDto.GrupoCategoria(CatalogoDto.CategoriaRespuesta.de(cat), suyos));
@@ -210,7 +279,7 @@ public class CatalogoService {
     var sinCategoria =
         visibles.stream()
             .filter(i -> i.getCategoria() == null)
-            .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia))
+            .map(i -> CatalogoDto.ItemRespuesta.de(i, baseMedia, portadasItem(i.getId())))
             .toList();
     return new CatalogoDto.CatalogoPublico(
         negocio.getId(), negocio.getNombre(), grupos, sinCategoria);

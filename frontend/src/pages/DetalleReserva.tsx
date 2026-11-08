@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { NoSymbolIcon } from '@heroicons/react/24/outline';
+import { NoSymbolIcon, TagIcon } from '@heroicons/react/24/outline';
 import { cancelarReserva, getReserva, mensajeDeApi } from '../lib/api';
 import { puedeCancelarReserva } from '../lib/estados';
 import { fecha, hora } from '../lib/formato';
@@ -73,6 +73,11 @@ export default function DetalleReserva() {
         <EtiquetaReserva estado={r.estado} />
       </div>
       <p className="mt-1 text-texto-suave">{r.negocio}</p>
+      {r.itemNombre != null && (
+        <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-primario">
+          <Icono icono={TagIcon} tamano="chico" /> Habitación / producto: {r.itemNombre}
+        </p>
+      )}
 
       {mensajeInicial && (
         <div className="mt-3">

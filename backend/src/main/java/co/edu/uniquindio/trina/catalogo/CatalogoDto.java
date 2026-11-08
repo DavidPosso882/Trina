@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 
@@ -21,7 +23,10 @@ public final class CatalogoDto {
       @Pattern(regexp = "producto|servicio", message = "El tipo tiene que ser producto o servicio")
           String tipo,
       Long categoriaId,
-      String claveImagen) {}
+      String claveImagen,
+      @Min(value = 1, message = "La capacidad tiene que ser al menos 1 persona")
+          @Max(value = 500, message = "La capacidad no puede superar 500 personas")
+          Integer capacidad) {}
 
   public record CategoriaRequest(
       @NotBlank(message = "Ponle un nombre a la categoría") String nombre, Integer orden) {}
@@ -38,10 +43,16 @@ public final class CatalogoDto {
       int precioCop,
       String claveImagen,
       @JsonInclude(JsonInclude.Include.NON_NULL) String imagenUrl,
+      @JsonInclude(JsonInclude.Include.NON_NULL) java.util.List<String> imagenes,
+      Integer capacidad,
       boolean disponible,
       boolean destacado,
       boolean activo) {
     static ItemRespuesta de(CatalogoItem i, String baseMedia) {
+      return de(i, baseMedia, null);
+    }
+
+    static ItemRespuesta de(CatalogoItem i, String baseMedia, java.util.List<String> imagenes) {
       return new ItemRespuesta(
           i.getId(),
           i.getCategoria() == null ? null : i.getCategoria().getId(),
@@ -51,11 +62,16 @@ public final class CatalogoDto {
           i.getPrecioCop(),
           i.getClaveImagen(),
           i.getClaveImagen() == null ? null : baseMedia + "/" + i.getClaveImagen(),
+          imagenes == null || imagenes.isEmpty() ? null : imagenes,
+          i.getCapacidad(),
           i.isDisponible(),
           i.isDestacado(),
           i.isActivo());
     }
   }
+
+  /** Foto adicional de la galería con su id para poder quitarla. */
+  public record ImagenItem(Long id, String url) {}
 
   public record CategoriaRespuesta(Long id, String nombre, int orden) {
     static CategoriaRespuesta de(CatalogoCategoria c) {

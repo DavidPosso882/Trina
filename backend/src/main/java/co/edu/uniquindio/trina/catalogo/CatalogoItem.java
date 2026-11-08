@@ -41,6 +41,9 @@ public class CatalogoItem {
   @Column(name = "clave_imagen")
   private String claveImagen;
 
+  @Column(name = "capacidad")
+  private Integer capacidad;
+
   @Column(nullable = false)
   private boolean disponible = true;
 
@@ -96,6 +99,14 @@ public class CatalogoItem {
 
   public void asignarImagen(String claveImagen) {
     this.claveImagen = claveImagen;
+  }
+
+  public Integer getCapacidad() {
+    return capacidad;
+  }
+
+  public void setCapacidad(Integer capacidad) {
+    this.capacidad = capacidad;
   }
 
   public void quitarCategoria() {

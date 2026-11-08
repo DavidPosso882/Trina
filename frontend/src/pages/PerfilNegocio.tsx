@@ -36,6 +36,7 @@ import { useFavoritos } from '../lib/favoritos';
 import { diaDeSemana, fecha, precio } from '../lib/formato';
 import { Aviso } from '../components/negocio/Aviso';
 import { Dialogo } from '../components/Dialogo';
+import { Lightbox } from '../components/Lightbox';
 import { Cargando, ErrorRecargar, Vacio } from '../components/Estados';
 import { Icono } from '../components/Icono';
 import { BotonAtras } from '../components/TituloAtras';
@@ -123,7 +124,7 @@ export default function PerfilNegocio() {
         </div>
       )}
       <div className="px-4 pb-6 md:px-6">
-        {seccion === 'catalogo' && <Catalogo id={id} nombre={negocio.data.nombre} />}
+        {seccion === 'catalogo' && <Catalogo id={id} nombre={negocio.data.nombre} esHospedaje={negocio.data.tipoReserva === 'ALOJAMIENTO'} />}
         {seccion === 'resenas' && <Resenas id={id} />}
       </div>
       </div>
@@ -525,11 +526,12 @@ function Informacion({
   );
 }
 
-function Catalogo({ id, nombre }: { id: number; nombre: string }) {
+function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esHospedaje?: boolean }) {
   const catalogo = useQuery({ queryKey: ['catalogo', id], queryFn: () => getCatalogo(id), retry: false });
   const { carrito, esDeOtroNegocio, agregar } = useCarrito();
   const [itemPendiente, setItemPendiente] = useState<ItemCatalogo | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const [visor, setVisor] = useState<{ fotos: string[]; indice: number; titulo: string } | null>(null);
 
   if (catalogo.isLoading) return <Cargando texto="Cargando el catálogo…" />;
   if (catalogo.isError) {
@@ -574,18 +576,44 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
             {grupo.items.map((item) => (
               <li key={item.id} className="flex items-start justify-between gap-3 py-4">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
-                  {item.imagenUrl && (
-                    <img
-                      src={item.imagenUrl}
-                      alt=""
-                      loading="lazy"
-                      className="h-16 w-16 shrink-0 rounded-campo bg-crema object-cover"
-                    />
+                  {(item.imagenUrl || (item.imagenes?.length ?? 0) > 0) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const fotos = [
+                          ...(item.imagenUrl ? [item.imagenUrl] : []),
+                          ...(item.imagenes ?? [])
+                        ];
+                        if (fotos.length > 0) setVisor({ fotos, indice: 0, titulo: item.nombre });
+                      }}
+                      aria-label={`Ver fotos de ${item.nombre}`}
+                      className="relative block h-16 w-16 shrink-0 rounded-campo"
+                    >
+                      <img
+                        src={item.imagenUrl ?? item.imagenes![0]}
+                        alt=""
+                        loading="lazy"
+                        className="h-16 w-16 rounded-campo bg-crema object-cover"
+                      />
+                      {(item.imagenes?.length ?? 0) > 0 && (
+                        <span className="absolute -bottom-1 -right-1 rounded-full bg-oliva px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
+                          +{item.imagenes!.length}
+                        </span>
+                      )}
+                    </button>
                   )}
                   <div className="min-w-0">
                   <p className="font-semibold">{item.nombre}</p>
                   {item.descripcion && <p className="text-sm text-texto-suave">{item.descripcion}</p>}
-                  <p className="mt-1 font-display text-cifra-menor">{precio(item.precioCop)}</p>
+                  <p className="mt-1 font-display text-cifra-menor">
+                    {precio(item.precioCop)}
+                    {esHospedaje && <span className="text-sm font-semibold text-texto-suave"> /noche</span>}
+                  </p>
+                  {item.capacidad != null && (
+                    <p className="mt-0.5 text-xs font-semibold text-texto-suave">
+                      Hasta {item.capacidad} {item.capacidad === 1 ? 'persona' : 'personas'}
+                    </p>
+                  )}
                   {!item.disponible && (
                     <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-advertencia">
                       <Icono icono={ExclamationTriangleIcon} tamano="chico" />
@@ -594,14 +622,27 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
                   )}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="btn-secundario inline-flex shrink-0 items-center gap-2 px-4 py-2"
-                  disabled={!item.disponible}
-                  onClick={() => pedirAgregar(item)}
-                >
-                  <Icono icono={PlusIcon} /> Agregar
-                </button>
+                {esHospedaje ? (
+                  <Link
+                    to={`/reservar/${id}?item=${item.id}`}
+                    aria-disabled={!item.disponible}
+                    onClick={(e) => {
+                      if (!item.disponible) e.preventDefault();
+                    }}
+                    className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${item.disponible ? 'bg-[#1A2218] text-white shadow' : 'cursor-not-allowed bg-oliva/10 text-texto-suave'}`}
+                  >
+                    <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-secundario inline-flex shrink-0 items-center gap-2 px-4 py-2"
+                    disabled={!item.disponible}
+                    onClick={() => pedirAgregar(item)}
+                  >
+                    <Icono icono={PlusIcon} /> Agregar
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -648,6 +689,15 @@ function Catalogo({ id, nombre }: { id: number; nombre: string }) {
             </Link>
           </div>
         </div>
+      )}
+      {visor != null && (
+        <Lightbox
+          fotos={visor.fotos}
+          indice={visor.indice}
+          titulo={visor.titulo}
+          onCambiar={(i) => setVisor({ ...visor, indice: i })}
+          onCerrar={() => setVisor(null)}
+        />
       )}
     </section>
   );

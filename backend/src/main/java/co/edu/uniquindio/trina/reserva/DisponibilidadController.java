@@ -25,4 +25,13 @@ public class DisponibilidadController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
     return servicio.disponibilidad(id, fecha);
   }
+
+  @GetMapping("/{id}/catalogo/items/{itemId}/ocupacion")
+  public java.util.List<ReservaDto.OcupacionRespuesta> ocupacionItem(
+      @PathVariable Long id,
+      @PathVariable Long itemId,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    return servicio.ocupacionItem(id, itemId, desde, hasta);
+  }
 }

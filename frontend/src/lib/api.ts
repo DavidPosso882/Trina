@@ -267,6 +267,8 @@ export type ItemCatalogo = {
   destacado?: boolean;
   activo?: boolean;
   imagenUrl?: string | null;
+  imagenes?: string[] | null;
+  capacidad?: number | null;
 };
 
 export type GrupoCatalogo = {
@@ -300,6 +302,7 @@ export type DatosItemCatalogo = {
   descripcion?: string;
   tipo?: 'producto' | 'servicio';
   categoriaId?: number | null;
+  capacidad?: number;
 };
 
 export const listarCategoriasCatalogo = (negocioId: number) =>
@@ -344,6 +347,27 @@ export const subirImagenItemCatalogo = (negocioId: number, itemId: number, archi
     body: datos
   });
 };
+
+/** Foto de la galería: id para quitarla y URL pública. */
+export type ImagenItemCatalogo = { id: number; url: string };
+
+/** Galería adicional del producto (la principal viaja en `imagenUrl`). */
+export const listarImagenesItemCatalogo = (negocioId: number, itemId: number) =>
+  pedir<ImagenItemCatalogo[]>(`/negocios/${negocioId}/catalogo/items/${itemId}/imagenes`);
+
+export const agregarImagenItemCatalogo = (negocioId: number, itemId: number, archivo: File) => {
+  const datos = new FormData();
+  datos.append('file', archivo);
+  return pedir<ItemCatalogo>(`/negocios/${negocioId}/catalogo/items/${itemId}/imagenes`, {
+    method: 'POST',
+    body: datos
+  });
+};
+
+export const eliminarImagenItemCatalogo = (negocioId: number, itemId: number, indice: number) =>
+  pedir<void>(`/negocios/${negocioId}/catalogo/items/${itemId}/imagenes/${indice}`, {
+    method: 'DELETE'
+  });
 
 export const crearCategoriaCatalogo = (negocioId: number, datos: { nombre: string; orden?: number }) =>
   pedir<CategoriaCatalogo>(`/negocios/${negocioId}/catalogo/categorias`, {
@@ -482,6 +506,11 @@ export type Disponibilidad = {
 export const getDisponibilidad = (negocioId: number, fecha: string) =>
   pedir<Disponibilidad>(`/negocios/${negocioId}/disponibilidad?fecha=${fecha}`);
 
+/** Días ocupados de una habitación en un rango (para no reservar dos veces el mismo día). */
+export type OcupacionItem = { inicio: string; fin: string };
+export const getOcupacionItem = (negocioId: number, itemId: number, desde: string, hasta: string) =>
+  pedir<OcupacionItem[]>(`/negocios/${negocioId}/catalogo/items/${itemId}/ocupacion?desde=${desde}&hasta=${hasta}`);
+
 export type Reserva = {
   id: number;
   clienteId: number;
@@ -495,6 +524,8 @@ export type Reserva = {
   nota: string | null;
   motivo: string | null;
   creadoEn: string;
+  itemId?: number | null;
+  itemNombre?: string | null;
 };
 
 export const crearReserva = (datos: {
@@ -503,6 +534,7 @@ export const crearReserva = (datos: {
   fin?: string;
   personas: number;
   nota?: string;
+  itemId?: number;
 }) => pedir<Reserva>('/reservas', { method: 'POST', body: JSON.stringify(datos) });
 
 export const listarReservas = (estado?: string) =>

@@ -35,7 +35,7 @@ public final class AdminNegocioDto {
           @jakarta.validation.constraints.Max(value = 500, message = "La capacidad no puede superar 500 personas")
           Integer capacidadReservas,
       @jakarta.validation.constraints.Min(value = 15, message = "La duración mínima es 15 minutos")
-          @jakarta.validation.constraints.Max(value = 720, message = "La duración máxima es 720 minutos")
+          @jakarta.validation.constraints.Max(value = 1440, message = "La duración máxima es 24 horas")
           Integer duracionReservaMin) {}
 
   public record Respuesta(

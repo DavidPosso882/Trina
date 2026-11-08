@@ -419,7 +419,7 @@ class CuentaControllerTest {
                     json.writeValueAsString(Map.of("token", token, "nuevaClave", "otra12345"))))
         .andExpect(status().isUnprocessableEntity())
         .andExpect(jsonPath("$.codigo").value("REGLA_NEGOCIO"))
-        .andExpect(content().string(containsString("Ped")));
+        .andExpect(content().string(containsString("Pide")));
   }
 
   @Test
@@ -441,7 +441,7 @@ class CuentaControllerTest {
                     json.writeValueAsString(Map.of("token", token, "nuevaClave", CLAVE_NUEVA))))
         .andExpect(status().isUnprocessableEntity())
         .andExpect(jsonPath("$.codigo").value("REGLA_NEGOCIO"))
-        .andExpect(content().string(containsString("Ped")));
+        .andExpect(content().string(containsString("Pide")));
   }
 
   @Test

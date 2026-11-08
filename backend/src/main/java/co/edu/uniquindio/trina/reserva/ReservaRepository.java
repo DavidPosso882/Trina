@@ -49,6 +49,17 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
       """)
   long contarSuperpuestasActivas(Long negocioId, Instant inicio, Instant fin);
 
+  /** Ocupación de una habitación/producto: superpuestas activas de ese ítem en un rango. */
+  @Query(
+      """
+      select r from Reserva r
+      where r.negocio.id = :negocioId and r.item.id = :itemId
+        and r.estado in ('PENDIENTE_CONFIRMACION', 'CONFIRMADA')
+        and r.inicio < :fin and r.fin > :inicio
+      """)
+  List<Reserva> findSuperpuestasDeItem(
+      Long negocioId, Long itemId, java.time.Instant inicio, java.time.Instant fin);
+
   /** Misma superposición que {@link #contarSuperpuestasActivas}, pero devuelve las reservas. */
   @Query(
       """
