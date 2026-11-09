@@ -283,47 +283,53 @@ function FilaDestacada({
     }
     onAlternarFav();
   };
+  const detallePrecio =
+    [nivelPrecioTexto(n.nivelPrecio), n.distanciaKm != null ? distanciaTexto(n.distanciaKm) : null, n.destacado && n.insignia ? n.insignia : null]
+      .filter(Boolean)
+      .join(' • ');
   return (
-    <li
-      className={`rounded-tarjeta bg-white p-3 shadow-sm ${
-        n.destacado ? 'tarjeta-negocio-destacada' : 'border border-oliva/10'
-      }`}
-    >
-      <div className="flex gap-3">
-        <FotoDestacada imagenPrincipal={n.imagenPrincipal} nombre={n.nombre} />
+    <li className="rounded-3xl border border-gray-200/80 bg-white p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-[#94B839] hover:shadow-xl">
+      <div className="flex gap-4">
+        <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm">
+          <FotoDestacada imagenPrincipal={n.imagenPrincipal} nombre={n.nombre} />
+          <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-bold text-[#1A2218] backdrop-blur-md">
+            {n.categoria ?? 'Negocio local'}
+          </span>
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <span className="rounded-full bg-crema px-2 py-0.5 text-xs font-semibold text-oliva/80">
-              {n.categoria ?? 'Negocio local'}
-            </span>
-            <span className={`flex shrink-0 items-center gap-1 text-xs font-semibold ${n.abiertoAhora ? 'text-exito' : 'text-error'}`}>
-              <span aria-hidden="true" className={`h-2 w-2 rounded-full ${n.abiertoAhora ? 'bg-exito' : 'bg-error'}`} />
-              {n.abiertoAhora ? 'Abierto' : 'Cerrado'}
-            </span>
+            <h3 className="line-clamp-2 min-w-0 flex-1 font-display text-lg font-bold text-[#1A2218]">
+              <Link to={`/negocios/${n.id}`} className="hover:text-[#94B839]">{n.nombre}</Link>
+            </h3>
+            {n.abiertoAhora ? (
+              <span className="shrink-0 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                Abierto
+              </span>
+            ) : (
+              <span className="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+                Cerrado
+              </span>
+            )}
           </div>
-          <h3 className="mt-0.5 truncate font-display text-lg font-bold">
-            <Link to={`/negocios/${n.id}`} className="hover:text-primario">{n.nombre}</Link>
-          </h3>
-          <p className="mt-0.5 text-xs text-texto-suave">
-            {nivelPrecioTexto(n.nivelPrecio)}
-            {n.distanciaKm != null ? ` · ${distanciaTexto(n.distanciaKm)}` : ''}
-            {n.destacado && n.insignia ? ` · ${n.insignia}` : ''}
+          <p className="mt-2 inline-flex max-w-full items-center truncate rounded-lg bg-[#94B839]/15 px-2.5 py-1 text-xs font-medium text-[#1A2218]">
+            <span aria-hidden="true" className="mr-1 text-[#94B839]">★</span>
+            <span className="truncate">{detallePrecio}</span>
           </p>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <button
               type="button"
               onClick={alAlternar}
               aria-pressed={esFavorito}
               aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
-                esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                esFavorito ? 'border-error/30 text-error' : 'border-gray-200 text-gray-400 hover:border-[#94B839] hover:text-[#1A2218]'
               }`}
             >
               <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
             </button>
             <Link
               to={`/negocios/${n.id}`}
-              className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-bold ${n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'}`}
+              className="inline-flex min-h-[44px] items-center rounded-full bg-[#1A2218] px-4 text-sm font-bold text-white transition hover:bg-[#94B839] hover:text-[#1A2218]"
             >
               Ver comercio
             </Link>
@@ -348,17 +354,18 @@ function FotoDestacada({
         src={imagenPrincipal}
         alt=""
         loading="lazy"
-        className="h-24 w-24 shrink-0 rounded-xl bg-crema object-cover"
+        className="h-36 w-36 rounded-2xl object-cover"
       />
     );
   }
 
+  void nombre;
   return (
     <div
       aria-hidden="true"
-      className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-crema"
+      className="flex h-36 w-36 items-center justify-center rounded-2xl bg-[#94B839]/5 text-[#1A2218]/40"
     >
-      <span className="font-display text-3xl font-extrabold text-oliva/60">{nombre.trim().charAt(0).toUpperCase()}</span>
+      <TagIcon className="h-8 w-8" aria-hidden="true" />
     </div>
   );
 }
