@@ -547,6 +547,8 @@ function Informacion({
 function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esHospedaje?: boolean }) {
   const catalogo = useQuery({ queryKey: ['catalogo', id], queryFn: () => getCatalogo(id), retry: false });
   const { carrito, esDeOtroNegocio, agregar } = useCarrito();
+  const { sesion } = useSesion();
+  const navegar = useNavigate();
   const [itemPendiente, setItemPendiente] = useState<ItemCatalogo | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [visor, setVisor] = useState<{ fotos: string[]; indice: number; titulo: string } | null>(null);
@@ -569,6 +571,12 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
     setAviso(`${item.nombre} se agregó a tu pedido.`);
   };
   const pedirAgregar = (item: ItemCatalogo) => {
+    if (!sesion) {
+      navegar('/ingresar', {
+        state: { desde: window.location.pathname + window.location.search, mensaje: 'Inicia sesión para hacer tu pedido.' }
+      });
+      return;
+    }
     if (esDeOtroNegocio(id)) setItemPendiente(item);
     else agregarDirecto(item);
   };
@@ -590,75 +598,93 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
       {grupos.map((grupo) => (
         <div key={grupo.titulo} className="mt-6">
           <h3 className="text-seccion">{grupo.titulo}</h3>
-          <ul className="mt-1 divide-y divide-tinta-cafe/10 border-t border-tinta-cafe/10">
-            {grupo.items.map((item) => (
-              <li key={item.id} className="flex items-start justify-between gap-3 py-4">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
-                  {(item.imagenUrl || (item.imagenes?.length ?? 0) > 0) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const fotos = [
-                          ...(item.imagenUrl ? [item.imagenUrl] : []),
-                          ...(item.imagenes ?? [])
-                        ];
-                        if (fotos.length > 0) setVisor({ fotos, indice: 0, titulo: item.nombre });
-                      }}
-                      aria-label={`Ver fotos de ${item.nombre}`}
-                      className="relative block h-16 w-16 shrink-0 rounded-campo"
-                    >
-                      <img
-                        src={item.imagenUrl ?? item.imagenes![0]}
-                        alt=""
-                        loading="lazy"
-                        className="h-16 w-16 rounded-campo bg-crema object-cover"
-                      />
-                      {(item.imagenes?.length ?? 0) > 0 && (
-                        <span className="absolute -bottom-1 -right-1 rounded-full bg-oliva px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
-                          +{item.imagenes!.length}
-                        </span>
-                      )}
-                    </button>
-                  )}
-                  <div className="min-w-0">
-                  <p className="font-semibold">{item.nombre}</p>
-                  {item.descripcion && <p className="text-sm text-texto-suave">{item.descripcion}</p>}
-                  <p className="mt-1 font-display text-cifra-menor">
-                    {precio(item.precioCop)}
-                    {esHospedaje && <span className="text-sm font-semibold text-texto-suave"> /noche</span>}
+          <div className="mt-3 rounded-3xl bg-[#F8F9FA] p-4">
+          <ul className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+            {grupo.items.map((item) => {
+              const fotos = [
+                ...(item.imagenUrl ? [item.imagenUrl] : []),
+                ...(item.imagenes ?? [])
+              ];
+              return (
+              <li
+                key={item.id}
+                className={`flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition hover:shadow-md ${item.disponible ? '' : 'opacity-60'}`}
+              >
+                <div className="p-3 pb-0">
+                  <div className="relative h-40 w-full overflow-hidden rounded-2xl bg-[#94B839]/5">
+                    {fotos.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setVisor({ fotos, indice: 0, titulo: item.nombre })}
+                        aria-label={`Ver fotos de ${item.nombre}`}
+                        className="block h-full w-full"
+                      >
+                        <img
+                          src={fotos[0]}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs font-bold uppercase tracking-widest text-gray-400">
+                        Sin foto
+                      </div>
+                    )}
+                    {(item.imagenes?.length ?? 0) > 0 && (
+                      <span className="absolute right-2 top-2 rounded-full bg-[#1A2218]/80 px-2 py-0.5 text-[11px] font-bold leading-none text-white">
+                        +{item.imagenes!.length}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col p-4 pt-3">
+                  <p className="truncate font-bold text-[#1A2218]">{item.nombre}</p>
+                  <p className="mt-0.5 line-clamp-2 text-sm text-gray-500">
+                    {item.descripcion || grupo.titulo}
                   </p>
+                  <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+                    <div>
+                      <p className="font-extrabold text-[#1A2218]">
+                        {precio(item.precioCop)}
+                        {esHospedaje && <span className="text-xs font-semibold text-gray-500"> /noche</span>}
+                      </p>
+                    </div>
+                    {esHospedaje ? (
+                      <Link
+                        to={`/reservar/${id}?item=${item.id}`}
+                        aria-disabled={!item.disponible}
+                        onClick={(e) => {
+                          if (!item.disponible) e.preventDefault();
+                        }}
+                        className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${item.disponible ? 'bg-[#1A2218] text-white shadow' : 'cursor-not-allowed bg-gray-100 text-gray-400'}`}
+                      >
+                        <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label={`Agregar ${item.nombre}`}
+                        disabled={!item.disponible}
+                        onClick={() => pedirAgregar(item)}
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${item.disponible ? 'bg-[#1A2218] text-white shadow hover:brightness-110' : 'cursor-not-allowed bg-transparent text-gray-300 ring-2 ring-gray-200'}`}
+                      >
+                        <Icono icono={PlusIcon} tamano="chico" />
+                      </button>
+                    )}
+                  </div>
                   {!item.disponible && (
-                    <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-advertencia">
+                    <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-gray-400">
                       <Icono icono={ExclamationTriangleIcon} tamano="chico" />
                       No disponible por ahora
                     </p>
                   )}
-                  </div>
                 </div>
-                {esHospedaje ? (
-                  <Link
-                    to={`/reservar/${id}?item=${item.id}`}
-                    aria-disabled={!item.disponible}
-                    onClick={(e) => {
-                      if (!item.disponible) e.preventDefault();
-                    }}
-                    className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${item.disponible ? 'bg-[#1A2218] text-white shadow' : 'cursor-not-allowed bg-oliva/10 text-texto-suave'}`}
-                  >
-                    <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn-secundario inline-flex shrink-0 items-center gap-2 px-4 py-2"
-                    disabled={!item.disponible}
-                    onClick={() => pedirAgregar(item)}
-                  >
-                    <Icono icono={PlusIcon} /> Agregar
-                  </button>
-                )}
               </li>
-            ))}
+              );
+            })}
           </ul>
+          </div>
         </div>
       ))}
 

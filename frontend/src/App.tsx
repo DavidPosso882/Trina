@@ -41,7 +41,9 @@ function Marco() {
   if (sinMarco) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Outlet />
+        <div key={pathname} className="animar-cambio-ruta flex w-full flex-1 flex-col">
+          <Outlet />
+        </div>
       </div>
     );
   }
@@ -119,7 +121,7 @@ function Marco() {
         </div>
       </header>
 
-      <div className="flex w-full flex-1 flex-col">
+      <div key={pathname} className="animar-cambio-ruta flex w-full flex-1 flex-col">
         <Outlet />
       </div>
 

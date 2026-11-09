@@ -168,3 +168,17 @@ h3 {
 .etiqueta-negocio::before {
   display: none;
 }
+
+/* Transición suave al cambiar de pantalla/pestaña (rutas). */
+@keyframes cambio-ruta {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animar-cambio-ruta {
+  animation: cambio-ruta 0.28s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animar-cambio-ruta {
+    animation: none;
+  }
+}
