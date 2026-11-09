@@ -1,27 +1,31 @@
+import { useState } from 'react';
 import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
+  Bars3Icon,
   BuildingStorefrontIcon,
   HomeIcon,
   MagnifyingGlassIcon,
   HeartIcon,
-  UserIcon
+  ShoppingCartIcon,
+  UserIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { BellIcon } from '@heroicons/react/24/solid';
 import { ProveedorSesion, useSesion } from './lib/auth';
-import { ProveedorCarrito } from './lib/carrito';
+import { ProveedorCarrito, useCarrito } from './lib/carrito';
 import { Icono } from './components/Icono';
 
-function Logo({ compacto = false }: { compacto?: boolean }) {
+function Logo({ compacto = false, sobreClaro = false }: { compacto?: boolean; sobreClaro?: boolean }) {
   return (
     <Link to="/" className="flex items-center gap-2" aria-label="TRINA inicio">
       <span aria-hidden="true" className="flex items-end gap-0.5">
         <span className="inline-block h-4 w-3 rounded-full bg-lima" />
         <span className="inline-block h-3 w-2.5 rounded-full bg-lima/40" />
       </span>
-      <span className={`font-display font-extrabold tracking-tight text-white ${compacto ? 'text-2xl' : 'text-xl'}`}>
+      <span className={`font-display font-extrabold tracking-tight ${sobreClaro ? 'text-[#1A2218]' : 'text-white'} ${compacto ? 'text-2xl' : 'text-xl'}`}>
         Trina
       </span>
-      <span className="rounded-full bg-lima px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-oliva">
+      <span className="rounded-full bg-[#94B839] px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-[#1A2218]">
         Explorar
       </span>
     </Link>
@@ -31,6 +35,8 @@ function Logo({ compacto = false }: { compacto?: boolean }) {
 /** Shell SVG Explorador: header/footer oliva + bottom nav pill en móvil (S1,S3). */
 function Marco() {
   const { sesion, salir } = useSesion();
+  const { cantidadTotal } = useCarrito();
+  const [menuAbierto, setMenuAbierto] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const sinMarco =
@@ -59,7 +65,7 @@ function Marco() {
   const inicial = (sesion?.nombre ?? 'M').trim().charAt(0).toUpperCase() || 'M';
   return (
     <div className="flex min-h-screen flex-col bg-crema text-texto">
-      <header className="bg-oliva text-white">
+      <header className="hidden bg-oliva text-white md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <Logo />
           <nav aria-label="Navegación principal" className="hidden items-center gap-6 text-sm md:flex">
@@ -121,6 +127,68 @@ function Marco() {
         </div>
       </header>
 
+      {/* Navbar superior solo móvil: hamburguesa + logo claro + cuenta/carrito. */}
+      <div className="border-b border-gray-100 bg-white md:hidden">
+        <div className="flex items-center justify-between gap-2 px-4 py-3">
+          <button
+            type="button"
+            aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={menuAbierto}
+            onClick={() => setMenuAbierto((v) => !v)}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+          >
+            {menuAbierto ? (
+              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            )}
+          </button>
+          <Logo sobreClaro />
+          <div className="flex items-center gap-1">
+            <Link
+              to={sesion ? '/cuenta' : '/ingresar'}
+              aria-label="Mi cuenta"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+            >
+              <UserIcon className="h-6 w-6" aria-hidden="true" />
+            </Link>
+            <Link
+              to="/carrito"
+              aria-label={cantidadTotal > 0 ? `Carrito, ${cantidadTotal} productos` : 'Carrito'}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+            >
+              <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
+              {cantidadTotal > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#94B839] px-1 text-[11px] font-extrabold text-[#1A2218]">
+                  {cantidadTotal > 99 ? '99+' : cantidadTotal}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+        {menuAbierto && (
+          <nav aria-label="Menú" className="border-t border-gray-100 px-4 py-2">
+            <ul>
+              {enlacesNav.map((e) => (
+                <li key={e.texto}>
+                  <NavLink
+                    to={e.a}
+                    end={e.fin}
+                    onClick={() => setMenuAbierto(false)}
+                    className={({ isActive }) =>
+                      `flex min-h-boton items-center gap-3 rounded-xl px-3 font-semibold ${isActive ? 'bg-[#F0FDF4] text-[#1A2218]' : 'text-[#1A2218]/70 hover:bg-gray-50'}`
+                    }
+                  >
+                    <Icono icono={e.icono} tamano="chico" />
+                    {e.texto}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </div>
+
       <div key={pathname} className="animar-cambio-ruta flex w-full flex-1 flex-col">
         <Outlet />
       </div>
@@ -136,6 +204,7 @@ function Marco() {
         </div>
       </footer>
 
+      {pathname !== '/explorar' && (
       <nav
         aria-label="Navegación principal"
         className="fixed inset-x-3 bottom-3 z-50 md:hidden"
@@ -158,6 +227,7 @@ function Marco() {
           ))}
         </div>
       </nav>
+      )}
     </div>
   );
 }

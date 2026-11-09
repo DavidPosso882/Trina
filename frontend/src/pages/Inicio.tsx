@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
+  AdjustmentsHorizontalIcon,
   ArrowPathIcon,
   ArrowRightIcon,
   CakeIcon,
@@ -86,18 +87,123 @@ export default function Inicio() {
     navigate(limpio ? `/explorar?q=${encodeURIComponent(limpio)}` : '/explorar');
   };
 
+  const heroFoto = destacados.data?.contenido.find((n) => n.imagenPrincipal)?.imagenPrincipal ?? null;
+
   return (
     <div className="fondo-limpio">
     <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
+      {/* Sección superior solo móvil: buscador cápsula + hero bosque + carrusel menta. */}
+      <div className="md:hidden">
+        <form role="search" onSubmit={buscar} className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <MagnifyingGlassIcon
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-texto-suave"
+            />
+            <label htmlFor="q-movil" className="sr-only">
+              ¿Qué buscas?
+            </label>
+            <input
+              id="q-movil"
+              name="q"
+              className="w-full rounded-full border border-gray-200 bg-gray-100/80 py-3 pl-11 pr-4 shadow-sm placeholder:text-texto-suave"
+              placeholder="¿Qué buscas?"
+              autoComplete="off"
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            aria-label="Filtrar y explorar"
+            onClick={() => navigate('/explorar')}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1A2218] text-white"
+          >
+            <AdjustmentsHorizontalIcon className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </form>
+
+        <section aria-label="Descubre el pueblo" className="mt-4 rounded-3xl bg-[#1A2218] p-6 text-white shadow-lg">
+          <div className="flex items-center gap-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-2xl font-extrabold leading-tight">
+                Descubre lo <span className="text-[#94B839]">mejor</span> del{' '}
+                <span className="text-[#94B839]">pueblo</span>
+              </h1>
+              <Link
+                to="/explorar"
+                className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-[#94B839] px-6 font-extrabold text-[#1A2218]"
+              >
+                Explorar ahora
+              </Link>
+              <div aria-hidden="true" className="mt-4 flex items-center gap-1.5">
+                <span className="h-1.5 w-6 rounded-full bg-[#94B839]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-white/30" />
+                <span className="h-1.5 w-1.5 rounded-full bg-white/30" />
+              </div>
+            </div>
+            {heroFoto ? (
+              <img
+                src={heroFoto}
+                alt=""
+                loading="lazy"
+                className="h-32 w-24 shrink-0 rounded-2xl object-cover"
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="flex h-32 w-24 shrink-0 items-center justify-center rounded-2xl bg-[#F0FDF4] text-[#1A2218]/40"
+              >
+                <TagIcon className="h-8 w-8" aria-hidden="true" />
+              </div>
+            )}
+          </div>
+        </section>
+
+        <nav aria-label="Categorías destacadas" className="mt-5">
+          {categorias.isLoading && <p className="text-sm text-texto-suave">Cargando categorías…</p>}
+          {categorias.isError && (
+            <p role="alert" className="flex items-center gap-2 text-sm text-error">
+              <Icono icono={ExclamationTriangleIcon} tamano="chico" />
+              No pudimos cargar las categorías.
+              <button
+                type="button"
+                className="min-h-boton font-semibold underline"
+                onClick={() => categorias.refetch()}
+              >
+                Intentar de nuevo
+              </button>
+            </p>
+          )}
+          {categorias.data && (
+            <div className="flex gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categorias.data.map((c) => (
+                <Link
+                  key={c.id}
+                  to={`/explorar?categoria=${c.id}`}
+                  className="flex w-16 shrink-0 flex-col items-center gap-2"
+                >
+                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#94B839]/30 bg-[#F0FDF4] text-[#1A2218]">
+                    <Icono icono={iconoCategoria(c.nombre)} tamano="grande" />
+                  </span>
+                  <span className="text-center text-xs font-semibold leading-tight text-[#1A2218]">
+                    {c.nombre}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </nav>
+      </div>
       <section
         aria-labelledby="portada"
-        className="rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:px-6"
+        className="mt-4 rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:mt-0 md:px-6"
       >
-        <h1 id="portada" className="font-display text-titulo">
+        <h1 id="portada" className="hidden font-display text-titulo md:block">
           Descubre lo mejor del pueblo
         </h1>
 
-        <form role="search" className="mt-4 max-w-2xl" onSubmit={buscar}>
+        <form role="search" className="mt-4 hidden max-w-2xl md:block" onSubmit={buscar}>
           <div className="relative">
             <MagnifyingGlassIcon
               aria-hidden="true"
@@ -156,7 +262,7 @@ export default function Inicio() {
           )}
         </div>
 
-        <nav aria-label="Categorías" className="mt-5 overflow-x-auto pb-1">
+        <nav aria-label="Categorías" className="mt-5 hidden overflow-x-auto pb-1 md:block">
           <ul className="flex w-max items-center gap-2">
             {categorias.isLoading && <li className="text-sm text-texto-suave">Cargando categorías…</li>}
             {categorias.isError && (

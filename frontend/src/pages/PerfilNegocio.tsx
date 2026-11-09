@@ -331,8 +331,8 @@ function TarjetaPortada({
             ¡Enlace copiado!
           </p>
         )}
-        <div className="absolute inset-x-5 bottom-24">
-          <h1 className="font-display text-2xl font-bold text-white md:text-4xl">{nombre}</h1>
+        <div className="absolute inset-x-5 bottom-28 sm:bottom-24">
+          <h1 className="line-clamp-2 font-display text-xl font-bold text-white sm:text-2xl md:text-4xl">{nombre}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
             {promedio != null ? (
               <span className="inline-flex items-center gap-1 font-semibold text-white">
@@ -357,11 +357,11 @@ function TarjetaPortada({
       </div>
       {hayAcciones && (
         <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-white/60 bg-white/80 p-3 shadow-lg backdrop-blur-xl">
-          <div className="mx-auto flex w-full max-w-2xl gap-2">
+          <div className="mx-auto flex w-full max-w-2xl flex-wrap gap-2">
             {telefono && (
               <a
                 href={`tel:${telefono}`}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border border-oliva/15 bg-white font-semibold text-[#1A2218]"
               >
                 <Icono icono={PhoneIcon} tamano="chico" /> Llamar
               </a>
@@ -371,7 +371,7 @@ function TarjetaPortada({
                 href={enlaceWa}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border border-oliva/15 bg-white font-semibold text-[#1A2218]"
               >
                 <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
               </a>
@@ -379,7 +379,7 @@ function TarjetaPortada({
             {aprobado && esCliente && !esHospedaje && (
               <Link
                 to={`/reservar/${id}`}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm bg-[#1A2218] font-bold text-white shadow-lg"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
@@ -388,7 +388,7 @@ function TarjetaPortada({
               <button
                 type="button"
                 onClick={onIrACatalogo}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm bg-[#1A2218] font-bold text-white shadow-lg"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </button>
@@ -397,7 +397,7 @@ function TarjetaPortada({
               <Link
                 to="/carrito"
               aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
-              className={`relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border px-3 text-sm shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
+              className={`relative inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
             >
               <Icono icono={ShoppingCartIcon} tamano="chico" /> Pedido
               {hayItems && (
@@ -598,8 +598,8 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
       {grupos.map((grupo) => (
         <div key={grupo.titulo} className="mt-6">
           <h3 className="text-seccion">{grupo.titulo}</h3>
-          <div className="mt-3 rounded-3xl bg-[#F8F9FA] p-4">
-          <ul className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-3 rounded-3xl bg-[#F8F9FA] p-3 sm:p-4">
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {grupo.items.map((item) => {
               const fotos = [
                 ...(item.imagenUrl ? [item.imagenUrl] : []),
@@ -611,7 +611,7 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
                 className={`flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition hover:shadow-md ${item.disponible ? '' : 'opacity-60'}`}
               >
                 <div className="p-3 pb-0">
-                  <div className="relative h-40 w-full overflow-hidden rounded-2xl bg-[#94B839]/5">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-[#94B839]/5">
                     {fotos.length > 0 ? (
                       <button
                         type="button"
@@ -638,14 +638,14 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
                     )}
                   </div>
                 </div>
-                <div className="flex flex-1 flex-col p-4 pt-3">
-                  <p className="truncate font-bold text-[#1A2218]">{item.nombre}</p>
-                  <p className="mt-0.5 line-clamp-2 text-sm text-gray-500">
+                <div className="flex flex-1 flex-col p-3 pt-2 sm:p-4 sm:pt-3">
+                  <p className="truncate text-sm font-bold text-[#1A2218] sm:text-base">{item.nombre}</p>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-gray-500 sm:text-sm">
                     {item.descripcion || grupo.titulo}
                   </p>
                   <div className="mt-auto flex items-end justify-between gap-2 pt-3">
                     <div>
-                      <p className="font-extrabold text-[#1A2218]">
+                      <p className="text-sm font-extrabold text-[#1A2218] sm:text-base">
                         {precio(item.precioCop)}
                         {esHospedaje && <span className="text-xs font-semibold text-gray-500"> /noche</span>}
                       </p>
