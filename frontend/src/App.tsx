@@ -1,4 +1,4 @@
-import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   BuildingStorefrontIcon,
   HomeIcon,
@@ -32,6 +32,19 @@ function Logo({ compacto = false }: { compacto?: boolean }) {
 function Marco() {
   const { sesion, salir } = useSesion();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const sinMarco =
+    pathname === '/ingresar' ||
+    pathname.startsWith('/registro') ||
+    pathname.startsWith('/recuperar-clave') ||
+    pathname.startsWith('/restablecer-clave');
+  if (sinMarco) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Outlet />
+      </div>
+    );
+  }
   const enlacesNav = [
     { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
     { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
