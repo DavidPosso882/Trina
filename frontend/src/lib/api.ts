@@ -268,7 +268,6 @@ export type ItemCatalogo = {
   activo?: boolean;
   imagenUrl?: string | null;
   imagenes?: string[] | null;
-  capacidad?: number | null;
 };
 
 export type GrupoCatalogo = {
@@ -302,7 +301,6 @@ export type DatosItemCatalogo = {
   descripcion?: string;
   tipo?: 'producto' | 'servicio';
   categoriaId?: number | null;
-  capacidad?: number;
 };
 
 export const listarCategoriasCatalogo = (negocioId: number) =>

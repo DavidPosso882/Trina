@@ -627,11 +627,6 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
                     {precio(item.precioCop)}
                     {esHospedaje && <span className="text-sm font-semibold text-texto-suave"> /noche</span>}
                   </p>
-                  {item.capacidad != null && (
-                    <p className="mt-0.5 text-xs font-semibold text-texto-suave">
-                      Hasta {item.capacidad} {item.capacidad === 1 ? 'persona' : 'personas'}
-                    </p>
-                  )}
                   {!item.disponible && (
                     <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-advertencia">
                       <Icono icono={ExclamationTriangleIcon} tamano="chico" />

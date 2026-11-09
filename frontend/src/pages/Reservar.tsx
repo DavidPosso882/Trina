@@ -157,7 +157,6 @@ export default function Reservar() {
             <p className="text-sm text-texto-suave">
               {precio(itemElegido.precioCop)}
               {disponibilidad.data.tipoReserva === 'ALOJAMIENTO' ? ' /noche' : ''}
-              {itemElegido.capacidad != null ? ` · Hasta ${itemElegido.capacidad} ${itemElegido.capacidad === 1 ? 'persona' : 'personas'}` : ''}
             </p>
           </div>
         </section>
@@ -203,7 +202,7 @@ function FormularioFranja({
   const navegar = useNavigate();
   const [franja, setFranja] = useState<FranjaDisponible | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const personasPorDefecto = item?.capacidad != null && item.capacidad > 0 ? Math.min(item.capacidad, 50) : 2;
+  const personasPorDefecto = 2;
   const { register, handleSubmit, formState } = useForm<z.infer<typeof esquemaBase>>({
     resolver: zodResolver(esquemaBase),
     defaultValues: { personas: personasPorDefecto, nota: '' }
@@ -292,7 +291,7 @@ function FormularioFranja({
           type="number"
           inputMode="numeric"
           min={1}
-          max={item?.capacidad ?? 50}
+          max={50}
           className="campo mt-1"
           {...register('personas', { valueAsNumber: true })}
         />
@@ -339,7 +338,7 @@ function FormularioAlojamiento({ id, item }: { id: number; item: ItemCatalogo | 
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState, watch } = useForm<ValoresAlojamiento>({
     resolver: zodResolver(esquemaAlojamiento),
-    defaultValues: { entrada: fechaDeHoy(), salida: '', personas: item?.capacidad != null && item.capacidad > 0 ? Math.min(item.capacidad, 50) : 2, nota: '' }
+    defaultValues: { entrada: fechaDeHoy(), salida: '', personas: 2, nota: '' }
   });
   const entrada = watch('entrada');
   const [mesManual, setMesManual] = useState<{ anio: number; mes: number } | null>(null);
@@ -463,7 +462,7 @@ function FormularioAlojamiento({ id, item }: { id: number; item: ItemCatalogo | 
           type="number"
           inputMode="numeric"
           min={1}
-          max={item?.capacidad ?? 50}
+          max={50}
           className="campo mt-1"
           {...register('personas', { valueAsNumber: true })}
         />

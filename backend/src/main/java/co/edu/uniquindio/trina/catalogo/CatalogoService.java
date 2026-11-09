@@ -102,7 +102,6 @@ public class CatalogoService {
             limpiar(req.descripcion()),
             req.precioCop(),
             limpiar(req.claveImagen()));
-    item.setCapacidad(req.capacidad());
     return CatalogoDto.ItemRespuesta.de(items.save(item), baseMedia, portadasItem(item.getId()));
   }
 
@@ -112,14 +111,14 @@ public class CatalogoService {
     propio(propietarioId, negocioId);
     var item = itemDe(negocioId, itemId);
     exigirActivo(item);
+    String clave = req.claveImagen() == null ? item.getClaveImagen() : limpiar(req.claveImagen());
     item.actualizar(
         categoriaDe(negocioId, req.categoriaId()),
         req.tipo(),
         req.nombre().trim(),
         limpiar(req.descripcion()),
         req.precioCop(),
-        limpiar(req.claveImagen()));
-    item.setCapacidad(req.capacidad());
+        clave);
     return CatalogoDto.ItemRespuesta.de(item, baseMedia, portadasItem(item.getId()));
   }
 

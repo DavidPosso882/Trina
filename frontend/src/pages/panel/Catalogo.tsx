@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -75,6 +75,25 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
   });
 
   const noPublicado = negocio.estado !== 'APROBADO';
+
+  // El diálogo guarda una copia del ítem; al recargar el catálogo (foto/baja) se sincroniza
+  // para no mostrar la portada ni las acciones desactualizadas.
+  useEffect(() => {
+    if (!itemDialogo?.item || !catalogo.data) return;
+    const todos = [
+      ...catalogo.data.categorias.flatMap((g) => g.items),
+      ...catalogo.data.sinCategoria
+    ];
+    const fresco = todos.find((i) => i.id === itemDialogo.item!.id);
+    if (
+      fresco &&
+      (fresco.imagenUrl !== itemDialogo.item.imagenUrl ||
+        fresco.activo !== itemDialogo.item.activo ||
+        fresco.disponible !== itemDialogo.item.disponible)
+    ) {
+      setItemDialogo({ item: fresco });
+    }
+  }, [catalogo.data, itemDialogo, setItemDialogo]);
 
   const invalidar = () => {
     cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocio.id] });
@@ -222,16 +241,23 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
             <ul className="mt-2 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
               {grupo.items.map((item) => (
                 <li key={item.id} className="py-4">
-                  <div className="flex items-start justify-between gap-3">
-                    {item.imagenUrl && (
+                  <div className="flex items-start gap-3">
+                    {item.imagenUrl ? (
                       <img
                         src={item.imagenUrl}
                         alt=""
                         loading="lazy"
                         className="h-14 w-14 shrink-0 rounded-campo bg-crema object-cover"
                       />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-campo border border-tinta-cafe/10 bg-crema px-1 text-center text-[10px] font-bold leading-tight text-texto-suave"
+                      >
+                        Sin foto
+                      </div>
                     )}
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="flex items-center gap-2 font-semibold">
                         <Icono
                           icono={TIPO_ICONO[item.tipo ?? 'producto'] ?? CubeIcon}
@@ -243,41 +269,53 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
                       {item.descripcion && (
                         <p className="text-sm text-texto-suave">{item.descripcion}</p>
                       )}
-                      {!item.disponible && (
+                      {!item.disponible && item.activo !== false && (
                         <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-advertencia">
                           <Icono icono={ExclamationTriangleIcon} tamano="chico" />
                           Pausado: no aparece para pedir.
                         </p>
                       )}
+                      {item.activo === false && (
+                        <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-error">
+                          <Icono icono={ExclamationTriangleIcon} tamano="chico" />
+                          Dado de baja: no aparece en el perfil público.
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className="btn-secundario inline-flex items-center gap-2 px-4 py-2 text-sm"
-                      disabled={alternarDisponibilidad.isPending}
-                      onClick={() => alternarDisponibilidad.mutate(item)}
-                    >
-                      <Icono icono={item.disponible ? PauseIcon : PlayIcon} tamano="chico" />
-                      {item.disponible ? 'Pausar' : 'Activar'}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-secundario inline-flex items-center gap-2 px-4 py-2 text-sm"
-                      onClick={() => setItemDialogo({ item })}
-                    >
-                      <Icono icono={PencilSquareIcon} tamano="chico" /> Editar
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-peligro inline-flex items-center gap-2 px-4 py-2 text-sm"
-                      onClick={() => {
-                        setErrorEliminar(null);
-                        setItemAEliminar(item);
-                      }}
-                    >
-                      <Icono icono={TrashIcon} tamano="chico" /> Dar de baja
-                    </button>
+                  <div className="mt-2 flex flex-wrap gap-2 sm:pl-[68px]">
+                    {item.activo !== false && (
+                      <button
+                        type="button"
+                        className="btn-secundario inline-flex items-center gap-2 px-4 py-2 text-sm"
+                        disabled={alternarDisponibilidad.isPending}
+                        onClick={() => alternarDisponibilidad.mutate(item)}
+                      >
+                        <Icono icono={item.disponible ? PauseIcon : PlayIcon} tamano="chico" />
+                        {item.disponible ? 'Pausar' : 'Activar'}
+                      </button>
+                    )}
+                    {item.activo !== false && (
+                      <button
+                        type="button"
+                        className="btn-secundario inline-flex items-center gap-2 px-4 py-2 text-sm"
+                        onClick={() => setItemDialogo({ item })}
+                      >
+                        <Icono icono={PencilSquareIcon} tamano="chico" /> Editar
+                      </button>
+                    )}
+                    {item.activo !== false && (
+                      <button
+                        type="button"
+                        className="btn-peligro inline-flex items-center gap-2 px-4 py-2 text-sm"
+                        onClick={() => {
+                          setErrorEliminar(null);
+                          setItemAEliminar(item);
+                        }}
+                      >
+                        <Icono icono={TrashIcon} tamano="chico" /> Dar de baja
+                      </button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -473,15 +511,7 @@ const esquemaItem = z.object({
     ),
   descripcion: z.string().trim(),
   tipo: z.enum(['producto', 'servicio']),
-  categoriaId: z.string(),
-  capacidad: z
-    .string()
-    .trim()
-    .refine(
-      (v) => v === undefined || v === '' || (/^\d+$/.test(v) && Number(v) >= 1 && Number(v) <= 500),
-      'La capacidad tiene que ser un número entre 1 y 500.'
-    )
-    .optional()
+  categoriaId: z.string()
 });
 
 type ValoresItem = z.infer<typeof esquemaItem>;
@@ -505,6 +535,7 @@ function FormularioItem({
   const [error, setError] = useState<string | null>(null);
   const [pendientes, setPendientes] = useState<{ archivo: File; vista: string }[]>([]);
   const [subiendo, setSubiendo] = useState(false);
+  const [ok, setOk] = useState<string | null>(null);
   const maxFotos = esHospedaje ? 5 : 1;
   const { register, handleSubmit, formState } = useForm<ValoresItem>({
     resolver: zodResolver(esquemaItem),
@@ -513,8 +544,7 @@ function FormularioItem({
       precio: item ? String(item.precioCop) : '',
       descripcion: item?.descripcion ?? '',
       tipo: item?.tipo === 'servicio' ? 'servicio' : 'producto',
-      categoriaId: item?.categoriaId ? String(item.categoriaId) : '',
-    capacidad: item?.capacidad != null ? String(item.capacidad) : ''
+      categoriaId: item?.categoriaId ? String(item.categoriaId) : ''
     }
   });
 
@@ -538,6 +568,7 @@ function FormularioItem({
 
   const agregarFotos = async (elegidos: FileList | null) => {
     setError(null);
+    setOk(null);
     if (!elegidos || elegidos.length === 0) return;
     const cupo = Math.max(0, maxFotos - totalFotos);
     const nuevos = [...elegidos].slice(0, cupo);
@@ -575,7 +606,9 @@ function FormularioItem({
       }
       await cliente.invalidateQueries({ queryKey: ['galeria-item', negocioId, item.id] });
       await cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocioId] });
+      setOk('Foto cargada.');
     } catch (e) {
+      setOk(null);
       setError(mensajeDeApi(e));
     } finally {
       setSubiendo(false);
@@ -604,6 +637,7 @@ function FormularioItem({
 
   const cambiarPortada = async (elegidos: FileList | null) => {
     setError(null);
+    setOk(null);
     if (item == null || !elegidos || elegidos.length === 0) return;
     const archivo = elegidos[0];
     const problema = validarArchivo(archivo);
@@ -616,7 +650,9 @@ function FormularioItem({
       await subirImagenItemCatalogo(negocioId, item.id, archivo);
       await cliente.invalidateQueries({ queryKey: ['galeria-item', negocioId, item.id] });
       await cliente.invalidateQueries({ queryKey: ['catalogo-propio', negocioId] });
+      setOk('Foto cargada.');
     } catch (e) {
+      setOk(null);
       setError(mensajeDeApi(e));
     } finally {
       setSubiendo(false);
@@ -625,8 +661,6 @@ function FormularioItem({
 
   const enviar = async (v: ValoresItem) => {
     setError(null);
-    const capacidad =
-      v.capacidad != null && v.capacidad.trim() !== '' ? Number(v.capacidad) : undefined;
     try {
       await onGuardar(
         {
@@ -634,8 +668,7 @@ function FormularioItem({
           precioCop: Number(v.precio),
           descripcion: v.descripcion.trim() || undefined,
           tipo: v.tipo,
-          categoriaId: v.categoriaId ? Number(v.categoriaId) : null,
-          capacidad
+          categoriaId: v.categoriaId ? Number(v.categoriaId) : null
         },
         pendientes.map((x) => x.archivo)
       );
@@ -792,28 +825,16 @@ function FormularioItem({
             />
           </div>
         )}
+        {subiendo && <p className="mt-2 text-sm font-semibold text-oliva">Cargando foto…</p>}
+        {ok && !subiendo && (
+          <div className="mt-2">
+            <Aviso tipo="exito">{ok}</Aviso>
+          </div>
+        )}
         <p className="mt-1 text-sm text-texto-suave">
           La primera foto es la portada que se ve en la carta. En productos ya creados las fotos se
           suben al momento.
         </p>
-      </div>
-      <div>
-        <label htmlFor="item-capacidad" className="font-semibold">
-          Capacidad (personas) <span className="font-normal text-texto-suave">(opcional)</span>
-        </label>
-        <input
-          id="item-capacidad"
-          className="campo mt-1"
-          inputMode="numeric"
-          placeholder="Ej.: 4"
-          {...register('capacidad')}
-        />
-        {formState.errors.capacidad && (
-          <p role="alert" className="mt-1 flex items-start gap-1 font-semibold text-error">
-            <Icono icono={ExclamationTriangleIcon} tamano="chico" className="mt-0.5" />
-            <span>{formState.errors.capacidad.message as string}</span>
-          </p>
-        )}
       </div>
       <div>
         <label htmlFor="item-descripcion" className="font-semibold">
