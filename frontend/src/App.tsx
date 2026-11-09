@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
+  ArrowRightOnRectangleIcon,
   Bars3Icon,
   BuildingStorefrontIcon,
   HomeIcon,
@@ -184,6 +185,22 @@ function Marco() {
                   </NavLink>
                 </li>
               ))}
+              {sesion && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      salir();
+                      setMenuAbierto(false);
+                      navigate('/');
+                    }}
+                    className="flex min-h-boton w-full items-center gap-3 rounded-xl px-3 font-semibold text-[#1A2218]/70 hover:bg-gray-50"
+                  >
+                    <Icono icono={ArrowRightOnRectangleIcon} tamano="chico" />
+                    Cerrar sesión
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         )}

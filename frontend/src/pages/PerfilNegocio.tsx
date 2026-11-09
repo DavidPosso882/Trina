@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  ArrowLeftIcon,
   ArrowPathIcon,
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
@@ -94,8 +95,8 @@ export default function PerfilNegocio() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-40 pt-4 md:pt-6">
-      <div className="mb-3">
+    <main className="mx-auto max-w-4xl px-4 pb-40 pt-0 md:pt-6">
+      <div className="mb-3 hidden md:block">
         <BotonAtras />
       </div>
       <div className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-24px_rgba(27,33,23,0.35)]">
@@ -258,10 +259,6 @@ function TarjetaPortada({
             <span className="text-sm font-semibold">Este negocio todavía no subió fotos.</span>
           </div>
         )}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"
-        />
         {ordenadas.length > 1 && (
           <div className="absolute inset-x-0 top-3 flex justify-center gap-1.5">
             {ordenadas.map((imagen, indice) => (
@@ -278,7 +275,15 @@ function TarjetaPortada({
             ))}
           </div>
         )}
-        <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-sm font-semibold backdrop-blur-md">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          aria-label="Volver"
+          className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#1A2218] shadow-md backdrop-blur-md transition hover:bg-white md:hidden"
+        >
+          <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <div className="absolute left-4 top-16 flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-sm font-semibold backdrop-blur-md md:top-4">
           <span aria-hidden="true" className="relative flex h-2.5 w-2.5">
             <span
               className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
@@ -331,9 +336,9 @@ function TarjetaPortada({
             ¡Enlace copiado!
           </p>
         )}
-        <div className="absolute inset-x-5 bottom-28 sm:bottom-24">
-          <h1 className="line-clamp-2 font-display text-xl font-bold text-white sm:text-2xl md:text-4xl">{nombre}</h1>
-          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
+        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/70 via-black/20 to-transparent px-5 pb-14 pt-10 sm:pb-12">
+          <h1 className="line-clamp-2 font-display text-xl font-bold text-white drop-shadow-sm md:text-4xl">{nombre}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/90 drop-shadow-sm md:text-sm">
             {promedio != null ? (
               <span className="inline-flex items-center gap-1 font-semibold text-white">
                 <Icono icono={StarIcon} tamano="chico" className="text-dorado" />
@@ -356,12 +361,12 @@ function TarjetaPortada({
         </div>
       </div>
       {hayAcciones && (
-        <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-white/60 bg-white/80 p-3 shadow-lg backdrop-blur-xl">
-          <div className="mx-auto flex w-full max-w-2xl flex-wrap gap-2">
+        <div className="relative z-20 mx-4 -mt-10 rounded-3xl border border-white/60 bg-white/65 p-3 shadow-xl backdrop-blur-md">
+          <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-2 sm:flex sm:gap-2">
             {telefono && (
               <a
                 href={`tel:${telefono}`}
-                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border border-oliva/15 bg-white font-semibold text-[#1A2218]"
+                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={PhoneIcon} tamano="chico" /> Llamar
               </a>
@@ -371,7 +376,7 @@ function TarjetaPortada({
                 href={enlaceWa}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border border-oliva/15 bg-white font-semibold text-[#1A2218]"
+                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
               </a>
@@ -379,7 +384,7 @@ function TarjetaPortada({
             {aprobado && esCliente && !esHospedaje && (
               <Link
                 to={`/reservar/${id}`}
-                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm bg-[#1A2218] font-bold text-white shadow-lg"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
@@ -388,7 +393,7 @@ function TarjetaPortada({
               <button
                 type="button"
                 onClick={onIrACatalogo}
-                className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm bg-[#1A2218] font-bold text-white shadow-lg"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </button>
@@ -397,7 +402,7 @@ function TarjetaPortada({
               <Link
                 to="/carrito"
               aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
-              className={`relative inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-xs sm:min-h-[44px] sm:gap-2 sm:px-3 sm:text-sm border shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
+              className={`relative flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs shadow-sm transition sm:flex-1 sm:py-2.5 sm:text-sm ${hayItems ? 'animar-carrito bg-lima font-bold text-oliva hover:brightness-105' : 'border border-gray-200/80 bg-white/80 font-semibold text-[#1A2218] hover:border-[#94B839]'}`}
             >
               <Icono icono={ShoppingCartIcon} tamano="chico" /> Pedido
               {hayItems && (
@@ -472,7 +477,7 @@ function Informacion({
       ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(direccion)}`
       : null;
   const embed = hayCoordenadas
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud! - 0.006}%2C${latitud! - 0.004}%2C${longitud! + 0.004}&layer=mapnik&marker=${latitud}%2C${longitud}`
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud! - 0.006}%2C${latitud! - 0.004}%2C${longitud! + 0.006}%2C${latitud! + 0.004}&layer=mapnik&marker=${latitud}%2C${longitud}`
     : null;
 
   return (
