@@ -18,13 +18,13 @@ const LIMITES_ALCALA: [[number, number], [number, number]] = [
 
 // S5 — Leaflet arma los pines con HTML, fuera del árbol de React: los SVG de Heroicons van incrustados.
 const svgPin = (color: string) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" aria-hidden="true" style="width:34px;height:34px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))"><path fill-rule="evenodd" clip-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>`;
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" stroke="#94B839" stroke-width="1" aria-hidden="true" style="width:34px;height:34px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))"><path fill-rule="evenodd" clip-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>`;
 
 const svgRayos = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style="width:18px;height:18px"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.5a.75.75 0 0 1 .75.75V4.5a.75.75 0 0 1-1.5 0V2.25A.75.75 0 0 1 12 1.5ZM5.636 4.136a.75.75 0 0 1 1.06 0l1.592 1.591a.75.75 0 0 1-1.061 1.06l-1.591-1.59a.75.75 0 0 1 0-1.061Zm12.728 0a.75.75 0 0 1 0 1.06l-1.591 1.592a.75.75 0 0 1-1.06-1.061l1.59-1.591a.75.75 0 0 1 1.061 0Zm-6.816 4.496a.75.75 0 0 1 .82.311l5.228 7.917a.75.75 0 0 1-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 0 1-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 0 1-1.247-.606l.569-9.47a.75.75 0 0 1 .554-.68ZM3 10.5a.75.75 0 0 1 .75-.75H6a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10.5Zm14.25 0a.75.75 0 0 1 .75-.75h2.25a.75.75 0 0 1 0 1.5H18a.75.75 0 0 1-.75-.75Zm-8.962 3.712a.75.75 0 0 1 0 1.061l-1.591 1.591a.75.75 0 1 1-1.061-1.06l1.591-1.592a.75.75 0 0 1 1.06 0Z"/></svg>`;
 
 // Leaflet arma los pines con imágenes por ruta; usamos divIcon para no depender de esos assets.
 function iconoPin(destacado: boolean) {
-  const color = destacado ? '#94B839' : '#5A8A0A';
+  const color = destacado ? '#94B839' : '#1A2218';
   return L.divIcon({
     className: '',
     html: svgPin(color),
@@ -37,7 +37,7 @@ function iconoPin(destacado: boolean) {
 function iconoGrupo(cantidad: number) {
   return L.divIcon({
     className: '',
-    html: `<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:9999px;background:#5A8A0A;color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4)">${cantidad}</span>`,
+    html: `<span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:9999px;background:#1A2218;color:#fff;font-weight:700;border:3px solid #94B839;box-shadow:0 1px 6px rgba(0,0,0,.4)">${cantidad}</span>`,
     iconSize: [42, 42],
     iconAnchor: [21, 21]
   });
@@ -286,7 +286,7 @@ export function MapaExplorar({
   const centro: [number, number] = punto ? [punto.lat, punto.lng] : CENTRO_POR_DEFECTO;
 
   return (
-    <div className="relative z-0">
+    <div className="relative z-0 h-full">
       <MapContainer
         center={centro}
         zoom={14}

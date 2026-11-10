@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  ArrowLeftIcon,
   ArrowPathIcon,
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
@@ -94,8 +95,8 @@ export default function PerfilNegocio() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-40 pt-4 md:pt-6">
-      <div className="mb-3">
+    <main className="mx-auto max-w-4xl px-4 pb-40 pt-0 md:pt-6">
+      <div className="mb-3 hidden md:block">
         <BotonAtras />
       </div>
       <div className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-24px_rgba(27,33,23,0.35)]">
@@ -258,10 +259,6 @@ function TarjetaPortada({
             <span className="text-sm font-semibold">Este negocio todavía no subió fotos.</span>
           </div>
         )}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"
-        />
         {ordenadas.length > 1 && (
           <div className="absolute inset-x-0 top-3 flex justify-center gap-1.5">
             {ordenadas.map((imagen, indice) => (
@@ -278,7 +275,15 @@ function TarjetaPortada({
             ))}
           </div>
         )}
-        <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-sm font-semibold backdrop-blur-md">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          aria-label="Volver"
+          className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#1A2218] shadow-md backdrop-blur-md transition hover:bg-white md:hidden"
+        >
+          <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <div className="absolute left-4 top-16 flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 text-sm font-semibold backdrop-blur-md md:top-4">
           <span aria-hidden="true" className="relative flex h-2.5 w-2.5">
             <span
               className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
@@ -331,9 +336,9 @@ function TarjetaPortada({
             ¡Enlace copiado!
           </p>
         )}
-        <div className="absolute inset-x-5 bottom-24">
-          <h1 className="font-display text-2xl font-bold text-white md:text-4xl">{nombre}</h1>
-          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
+        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/70 via-black/20 to-transparent px-5 pb-14 pt-10 sm:pb-12">
+          <h1 className="line-clamp-2 font-display text-xl font-bold text-white drop-shadow-sm md:text-4xl">{nombre}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/90 drop-shadow-sm md:text-sm">
             {promedio != null ? (
               <span className="inline-flex items-center gap-1 font-semibold text-white">
                 <Icono icono={StarIcon} tamano="chico" className="text-dorado" />
@@ -356,12 +361,12 @@ function TarjetaPortada({
         </div>
       </div>
       {hayAcciones && (
-        <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-white/60 bg-white/80 p-3 shadow-lg backdrop-blur-xl">
-          <div className="mx-auto flex w-full max-w-2xl gap-2">
+        <div className="relative z-20 mx-4 -mt-10 rounded-3xl border border-white/60 bg-white/65 p-3 shadow-xl backdrop-blur-md">
+          <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-2 sm:flex sm:gap-2">
             {telefono && (
               <a
                 href={`tel:${telefono}`}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={PhoneIcon} tamano="chico" /> Llamar
               </a>
@@ -371,7 +376,7 @@ function TarjetaPortada({
                 href={enlaceWa}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-oliva/15 bg-white px-3 text-sm font-semibold text-[#1A2218]"
+                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
               </a>
@@ -379,7 +384,7 @@ function TarjetaPortada({
             {aprobado && esCliente && !esHospedaje && (
               <Link
                 to={`/reservar/${id}`}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
@@ -388,7 +393,7 @@ function TarjetaPortada({
               <button
                 type="button"
                 onClick={onIrACatalogo}
-                className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1A2218] px-3 text-sm font-bold text-white shadow-lg"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </button>
@@ -397,7 +402,7 @@ function TarjetaPortada({
               <Link
                 to="/carrito"
               aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
-              className={`relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border px-3 text-sm shadow-lg ${hayItems ? 'animar-carrito border-lima bg-lima font-bold text-oliva' : 'border-oliva/15 bg-white font-semibold text-[#1A2218]'}`}
+              className={`relative flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs shadow-sm transition sm:flex-1 sm:py-2.5 sm:text-sm ${hayItems ? 'animar-carrito bg-lima font-bold text-oliva hover:brightness-105' : 'border border-gray-200/80 bg-white/80 font-semibold text-[#1A2218] hover:border-[#94B839]'}`}
             >
               <Icono icono={ShoppingCartIcon} tamano="chico" /> Pedido
               {hayItems && (
@@ -472,7 +477,7 @@ function Informacion({
       ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(direccion)}`
       : null;
   const embed = hayCoordenadas
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud! - 0.006}%2C${latitud! - 0.004}%2C${longitud! + 0.004}&layer=mapnik&marker=${latitud}%2C${longitud}`
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud! - 0.006}%2C${latitud! - 0.004}%2C${longitud! + 0.006}%2C${latitud! + 0.004}&layer=mapnik&marker=${latitud}%2C${longitud}`
     : null;
 
   return (
@@ -547,6 +552,8 @@ function Informacion({
 function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esHospedaje?: boolean }) {
   const catalogo = useQuery({ queryKey: ['catalogo', id], queryFn: () => getCatalogo(id), retry: false });
   const { carrito, esDeOtroNegocio, agregar } = useCarrito();
+  const { sesion } = useSesion();
+  const navegar = useNavigate();
   const [itemPendiente, setItemPendiente] = useState<ItemCatalogo | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [visor, setVisor] = useState<{ fotos: string[]; indice: number; titulo: string } | null>(null);
@@ -569,6 +576,12 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
     setAviso(`${item.nombre} se agregó a tu pedido.`);
   };
   const pedirAgregar = (item: ItemCatalogo) => {
+    if (!sesion) {
+      navegar('/ingresar', {
+        state: { desde: window.location.pathname + window.location.search, mensaje: 'Inicia sesión para hacer tu pedido.' }
+      });
+      return;
+    }
     if (esDeOtroNegocio(id)) setItemPendiente(item);
     else agregarDirecto(item);
   };
@@ -590,75 +603,93 @@ function Catalogo({ id, nombre, esHospedaje }: { id: number; nombre: string; esH
       {grupos.map((grupo) => (
         <div key={grupo.titulo} className="mt-6">
           <h3 className="text-seccion">{grupo.titulo}</h3>
-          <ul className="mt-1 divide-y divide-tinta-cafe/10 border-t border-tinta-cafe/10">
-            {grupo.items.map((item) => (
-              <li key={item.id} className="flex items-start justify-between gap-3 py-4">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
-                  {(item.imagenUrl || (item.imagenes?.length ?? 0) > 0) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const fotos = [
-                          ...(item.imagenUrl ? [item.imagenUrl] : []),
-                          ...(item.imagenes ?? [])
-                        ];
-                        if (fotos.length > 0) setVisor({ fotos, indice: 0, titulo: item.nombre });
-                      }}
-                      aria-label={`Ver fotos de ${item.nombre}`}
-                      className="relative block h-16 w-16 shrink-0 rounded-campo"
-                    >
-                      <img
-                        src={item.imagenUrl ?? item.imagenes![0]}
-                        alt=""
-                        loading="lazy"
-                        className="h-16 w-16 rounded-campo bg-crema object-cover"
-                      />
-                      {(item.imagenes?.length ?? 0) > 0 && (
-                        <span className="absolute -bottom-1 -right-1 rounded-full bg-oliva px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
-                          +{item.imagenes!.length}
-                        </span>
-                      )}
-                    </button>
-                  )}
-                  <div className="min-w-0">
-                  <p className="font-semibold">{item.nombre}</p>
-                  {item.descripcion && <p className="text-sm text-texto-suave">{item.descripcion}</p>}
-                  <p className="mt-1 font-display text-cifra-menor">
-                    {precio(item.precioCop)}
-                    {esHospedaje && <span className="text-sm font-semibold text-texto-suave"> /noche</span>}
+          <div className="mt-3 rounded-3xl bg-[#F8F9FA] p-3 sm:p-4">
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+            {grupo.items.map((item) => {
+              const fotos = [
+                ...(item.imagenUrl ? [item.imagenUrl] : []),
+                ...(item.imagenes ?? [])
+              ];
+              return (
+              <li
+                key={item.id}
+                className={`flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition hover:shadow-md ${item.disponible ? '' : 'opacity-60'}`}
+              >
+                <div className="p-3 pb-0">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-[#94B839]/5">
+                    {fotos.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setVisor({ fotos, indice: 0, titulo: item.nombre })}
+                        aria-label={`Ver fotos de ${item.nombre}`}
+                        className="block h-full w-full"
+                      >
+                        <img
+                          src={fotos[0]}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs font-bold uppercase tracking-widest text-gray-400">
+                        Sin foto
+                      </div>
+                    )}
+                    {(item.imagenes?.length ?? 0) > 0 && (
+                      <span className="absolute right-2 top-2 rounded-full bg-[#1A2218]/80 px-2 py-0.5 text-[11px] font-bold leading-none text-white">
+                        +{item.imagenes!.length}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col p-3 pt-2 sm:p-4 sm:pt-3">
+                  <p className="truncate text-sm font-bold text-[#1A2218] sm:text-base">{item.nombre}</p>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-gray-500 sm:text-sm">
+                    {item.descripcion || grupo.titulo}
                   </p>
+                  <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+                    <div>
+                      <p className="text-sm font-extrabold text-[#1A2218] sm:text-base">
+                        {precio(item.precioCop)}
+                        {esHospedaje && <span className="text-xs font-semibold text-gray-500"> /noche</span>}
+                      </p>
+                    </div>
+                    {esHospedaje ? (
+                      <Link
+                        to={`/reservar/${id}?item=${item.id}`}
+                        aria-disabled={!item.disponible}
+                        onClick={(e) => {
+                          if (!item.disponible) e.preventDefault();
+                        }}
+                        className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${item.disponible ? 'bg-[#1A2218] text-white shadow' : 'cursor-not-allowed bg-gray-100 text-gray-400'}`}
+                      >
+                        <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label={`Agregar ${item.nombre}`}
+                        disabled={!item.disponible}
+                        onClick={() => pedirAgregar(item)}
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${item.disponible ? 'bg-[#1A2218] text-white shadow hover:brightness-110' : 'cursor-not-allowed bg-transparent text-gray-300 ring-2 ring-gray-200'}`}
+                      >
+                        <Icono icono={PlusIcon} tamano="chico" />
+                      </button>
+                    )}
+                  </div>
                   {!item.disponible && (
-                    <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-advertencia">
+                    <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-gray-400">
                       <Icono icono={ExclamationTriangleIcon} tamano="chico" />
                       No disponible por ahora
                     </p>
                   )}
-                  </div>
                 </div>
-                {esHospedaje ? (
-                  <Link
-                    to={`/reservar/${id}?item=${item.id}`}
-                    aria-disabled={!item.disponible}
-                    onClick={(e) => {
-                      if (!item.disponible) e.preventDefault();
-                    }}
-                    className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${item.disponible ? 'bg-[#1A2218] text-white shadow' : 'cursor-not-allowed bg-oliva/10 text-texto-suave'}`}
-                  >
-                    <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn-secundario inline-flex shrink-0 items-center gap-2 px-4 py-2"
-                    disabled={!item.disponible}
-                    onClick={() => pedirAgregar(item)}
-                  >
-                    <Icono icono={PlusIcon} /> Agregar
-                  </button>
-                )}
               </li>
-            ))}
+              );
+            })}
           </ul>
+          </div>
         </div>
       ))}
 

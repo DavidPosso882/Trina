@@ -77,73 +77,89 @@ export default function Notificaciones() {
     }
   };
 
+  const capsulaFiltro = (activa: boolean) =>
+    `inline-flex min-h-[44px] items-center rounded-full px-5 text-sm font-semibold transition ${
+      activa ? 'bg-[#1A2218] text-white shadow' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+    }`;
+
   return (
-    <main className="mx-auto max-w-xl px-4 pb-24 pt-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <TituloAtras titulo="Notificaciones" />
-        <button
-          type="button"
-          className="btn-secundario inline-flex items-center gap-2 px-4 py-2"
-          disabled={sinLeer === 0 || todas.isPending}
-          onClick={leerTodas}
-        >
-          <Icono icono={CheckIcon} tamano="chico" /> Marcar todas como leídas
-        </button>
-      </div>
-
-      <div className="mt-3 flex gap-2" aria-label="Filtrar notificaciones">
-        <button
-          type="button"
-          aria-pressed={!soloNoLeidas}
-          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${!soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
-          onClick={() => setSoloNoLeidas(false)}
-        >
-          Todas
-        </button>
-        <button
-          type="button"
-          aria-pressed={soloNoLeidas}
-          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-1 ${soloNoLeidas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
-          onClick={() => setSoloNoLeidas(true)}
-        >
-          Sin leer {sinLeer > 0 ? `(${sinLeer})` : ''}
-        </button>
-      </div>
-
-      {error && (
-        <div className="mt-3">
-          <Aviso tipo="error">{error}</Aviso>
+    <div className="bg-[#F8F9FA]">
+      <main className="mx-auto max-w-2xl px-4 pb-24 pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <TituloAtras titulo="Notificaciones" />
+          <button
+            type="button"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-[#1A2218] transition hover:bg-gray-50 disabled:opacity-50"
+            disabled={sinLeer === 0 || todas.isPending}
+            onClick={leerTodas}
+          >
+            <Icono icono={CheckIcon} tamano="chico" /> Marcar todas como leídas
+          </button>
         </div>
-      )}
-      {lista.isLoading && <Cargando texto="Cargando tus notificaciones…" />}
-      {lista.isError && (
-        <ErrorRecargar mensaje={mensajeDeApi(lista.error)} onReintentar={() => lista.refetch()} />
-      )}
-      {lista.data && visibles.length === 0 && (
-        <Vacio>{soloNoLeidas ? 'No tienes notificaciones sin leer.' : 'Todavía no tienes notificaciones.'}</Vacio>
-      )}
-      {visibles.length > 0 && (
-        <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
-          {visibles.map((n) => (
-            <li key={n.id}>
-              <button
-                type="button"
-                className={`flex w-full items-start gap-3 py-4 text-left ${n.leida ? '' : 'bg-primario-claro'}`}
-                onClick={() => abrir(n)}
-              >
-                <Icono icono={ICONOS[iconoNotificacion(n.tipo)]} tamano="grande" />
-                <span className="flex-1">
-                  <span className={n.leida ? 'block' : 'block font-semibold'}>{n.mensaje}</span>
-                  <span className="mt-1 block text-sm text-texto-suave">{fechaHora(n.creadoEn)}</span>
-                </span>
-                {!n.leida && (
-                  <span className="rounded-campo bg-acento px-2 py-0.5 text-xs font-bold text-white">Nueva</span>
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+
+        <div className="mt-4 flex gap-2" role="group" aria-label="Filtrar notificaciones">
+          <button
+            type="button"
+            aria-pressed={!soloNoLeidas}
+            className={capsulaFiltro(!soloNoLeidas)}
+            onClick={() => setSoloNoLeidas(false)}
+          >
+            Todas
+          </button>
+          <button
+            type="button"
+            aria-pressed={soloNoLeidas}
+            className={capsulaFiltro(soloNoLeidas)}
+            onClick={() => setSoloNoLeidas(true)}
+          >
+            Sin leer{sinLeer > 0 ? ` (${sinLeer})` : ''}
+          </button>
+        </div>
+
+        {error && (
+          <div className="mt-3">
+            <Aviso tipo="error">{error}</Aviso>
+          </div>
+        )}
+        {lista.isLoading && <Cargando texto="Cargando tus notificaciones…" />}
+        {lista.isError && (
+          <ErrorRecargar mensaje={mensajeDeApi(lista.error)} onReintentar={() => lista.refetch()} />
+        )}
+        {lista.data && visibles.length === 0 && (
+          <Vacio>{soloNoLeidas ? 'No tienes notificaciones sin leer.' : 'Todavía no tienes notificaciones.'}</Vacio>
+        )}
+        {visibles.length > 0 && (
+          <ul className="mt-4 space-y-3">
+            {visibles.map((n) => (
+              <li key={n.id}>
+                <button
+                  type="button"
+                  onClick={() => abrir(n)}
+                  className="flex w-full items-start gap-3 rounded-2xl border border-gray-100 bg-white p-4 text-left shadow-sm transition hover:shadow-md"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F0FDF4] text-[#1A2218]"
+                  >
+                    <Icono icono={ICONOS[iconoNotificacion(n.tipo)]} tamano="grande" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-bold text-[#1A2218]">{n.mensaje}</span>
+                    <span className="mt-1 block text-xs font-medium text-gray-400">
+                      {fechaHora(n.creadoEn)}
+                    </span>
+                  </span>
+                  {!n.leida && (
+                    <span className="shrink-0 rounded-full bg-[#94B839]/20 px-2.5 py-1 text-xs font-bold text-[#1A2218]">
+                      Nueva
+                    </span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
+    </div>
   );
 }

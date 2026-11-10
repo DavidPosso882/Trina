@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
+  AdjustmentsHorizontalIcon,
   ArrowPathIcon,
   ArrowRightIcon,
   CakeIcon,
@@ -86,18 +87,123 @@ export default function Inicio() {
     navigate(limpio ? `/explorar?q=${encodeURIComponent(limpio)}` : '/explorar');
   };
 
+  const heroFoto = destacados.data?.contenido.find((n) => n.imagenPrincipal)?.imagenPrincipal ?? null;
+
   return (
     <div className="fondo-limpio">
     <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
+      {/* Sección superior solo móvil: buscador cápsula + hero bosque + carrusel menta. */}
+      <div className="md:hidden">
+        <form role="search" onSubmit={buscar} className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <MagnifyingGlassIcon
+              aria-hidden="true"
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-texto-suave"
+            />
+            <label htmlFor="q-movil" className="sr-only">
+              ¿Qué buscas?
+            </label>
+            <input
+              id="q-movil"
+              name="q"
+              className="w-full rounded-full border border-gray-200 bg-gray-100/80 py-3 pl-11 pr-4 shadow-sm placeholder:text-texto-suave"
+              placeholder="¿Qué buscas?"
+              autoComplete="off"
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            aria-label="Filtrar y explorar"
+            onClick={() => navigate('/explorar')}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1A2218] text-white"
+          >
+            <AdjustmentsHorizontalIcon className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </form>
+
+        <section aria-label="Descubre el pueblo" className="mt-4 rounded-3xl bg-[#1A2218] p-6 text-white shadow-lg">
+          <div className="flex items-center gap-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-2xl font-extrabold leading-tight">
+                Descubre lo <span className="text-[#94B839]">mejor</span> del{' '}
+                <span className="text-[#94B839]">pueblo</span>
+              </h1>
+              <Link
+                to="/explorar"
+                className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-[#94B839] px-6 font-extrabold text-[#1A2218]"
+              >
+                Explorar ahora
+              </Link>
+              <div aria-hidden="true" className="mt-4 flex items-center gap-1.5">
+                <span className="h-1.5 w-6 rounded-full bg-[#94B839]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-white/30" />
+                <span className="h-1.5 w-1.5 rounded-full bg-white/30" />
+              </div>
+            </div>
+            {heroFoto ? (
+              <img
+                src={heroFoto}
+                alt=""
+                loading="lazy"
+                className="h-32 w-24 shrink-0 rounded-2xl object-cover"
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="flex h-32 w-24 shrink-0 items-center justify-center rounded-2xl bg-[#F0FDF4] text-[#1A2218]/40"
+              >
+                <TagIcon className="h-8 w-8" aria-hidden="true" />
+              </div>
+            )}
+          </div>
+        </section>
+
+        <nav aria-label="Categorías destacadas" className="mt-5">
+          {categorias.isLoading && <p className="text-sm text-texto-suave">Cargando categorías…</p>}
+          {categorias.isError && (
+            <p role="alert" className="flex items-center gap-2 text-sm text-error">
+              <Icono icono={ExclamationTriangleIcon} tamano="chico" />
+              No pudimos cargar las categorías.
+              <button
+                type="button"
+                className="min-h-boton font-semibold underline"
+                onClick={() => categorias.refetch()}
+              >
+                Intentar de nuevo
+              </button>
+            </p>
+          )}
+          {categorias.data && (
+            <div className="flex gap-4 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categorias.data.map((c) => (
+                <Link
+                  key={c.id}
+                  to={`/explorar?categoria=${c.id}`}
+                  className="flex w-16 shrink-0 flex-col items-center gap-2"
+                >
+                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#94B839]/30 bg-[#F0FDF4] text-[#1A2218]">
+                    <Icono icono={iconoCategoria(c.nombre)} tamano="grande" />
+                  </span>
+                  <span className="text-center text-xs font-semibold leading-tight text-[#1A2218]">
+                    {c.nombre}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </nav>
+      </div>
       <section
         aria-labelledby="portada"
-        className="rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:px-6"
+        className="mt-4 rounded-tarjeta border border-oliva/10 bg-white px-4 pb-6 pt-6 shadow-sm md:mt-0 md:px-6"
       >
-        <h1 id="portada" className="font-display text-titulo">
+        <h1 id="portada" className="hidden font-display text-titulo md:block">
           Descubre lo mejor del pueblo
         </h1>
 
-        <form role="search" className="mt-4 max-w-2xl" onSubmit={buscar}>
+        <form role="search" className="mt-4 hidden max-w-2xl md:block" onSubmit={buscar}>
           <div className="relative">
             <MagnifyingGlassIcon
               aria-hidden="true"
@@ -156,7 +262,7 @@ export default function Inicio() {
           )}
         </div>
 
-        <nav aria-label="Categorías" className="mt-5 overflow-x-auto pb-1">
+        <nav aria-label="Categorías" className="mt-5 hidden overflow-x-auto pb-1 md:block">
           <ul className="flex w-max items-center gap-2">
             {categorias.isLoading && <li className="text-sm text-texto-suave">Cargando categorías…</li>}
             {categorias.isError && (
@@ -283,47 +389,53 @@ function FilaDestacada({
     }
     onAlternarFav();
   };
+  const detallePrecio =
+    [nivelPrecioTexto(n.nivelPrecio), n.distanciaKm != null ? distanciaTexto(n.distanciaKm) : null, n.destacado && n.insignia ? n.insignia : null]
+      .filter(Boolean)
+      .join(' • ');
   return (
-    <li
-      className={`rounded-tarjeta bg-white p-3 shadow-sm ${
-        n.destacado ? 'tarjeta-negocio-destacada' : 'border border-oliva/10'
-      }`}
-    >
-      <div className="flex gap-3">
-        <FotoDestacada imagenPrincipal={n.imagenPrincipal} nombre={n.nombre} />
+    <li className="rounded-3xl border border-gray-200/80 bg-white p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-[#94B839] hover:shadow-xl">
+      <div className="flex gap-4">
+        <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm">
+          <FotoDestacada imagenPrincipal={n.imagenPrincipal} nombre={n.nombre} />
+          <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-bold text-[#1A2218] backdrop-blur-md">
+            {n.categoria ?? 'Negocio local'}
+          </span>
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <span className="rounded-full bg-crema px-2 py-0.5 text-xs font-semibold text-oliva/80">
-              {n.categoria ?? 'Negocio local'}
-            </span>
-            <span className={`flex shrink-0 items-center gap-1 text-xs font-semibold ${n.abiertoAhora ? 'text-exito' : 'text-error'}`}>
-              <span aria-hidden="true" className={`h-2 w-2 rounded-full ${n.abiertoAhora ? 'bg-exito' : 'bg-error'}`} />
-              {n.abiertoAhora ? 'Abierto' : 'Cerrado'}
-            </span>
+            <h3 className="line-clamp-2 min-w-0 flex-1 font-display text-lg font-bold text-[#1A2218]">
+              <Link to={`/negocios/${n.id}`} className="hover:text-[#94B839]">{n.nombre}</Link>
+            </h3>
+            {n.abiertoAhora ? (
+              <span className="shrink-0 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                Abierto
+              </span>
+            ) : (
+              <span className="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+                Cerrado
+              </span>
+            )}
           </div>
-          <h3 className="mt-0.5 truncate font-display text-lg font-bold">
-            <Link to={`/negocios/${n.id}`} className="hover:text-primario">{n.nombre}</Link>
-          </h3>
-          <p className="mt-0.5 text-xs text-texto-suave">
-            {nivelPrecioTexto(n.nivelPrecio)}
-            {n.distanciaKm != null ? ` · ${distanciaTexto(n.distanciaKm)}` : ''}
-            {n.destacado && n.insignia ? ` · ${n.insignia}` : ''}
+          <p className="mt-2 inline-flex max-w-full items-center truncate rounded-lg bg-[#94B839]/15 px-2.5 py-1 text-xs font-medium text-[#1A2218]">
+            <span aria-hidden="true" className="mr-1 text-[#94B839]">★</span>
+            <span className="truncate">{detallePrecio}</span>
           </p>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <button
               type="button"
               onClick={alAlternar}
               aria-pressed={esFavorito}
               aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
-                esFavorito ? 'border-error/30 text-error' : 'border-oliva/15 text-oliva/60'
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                esFavorito ? 'border-error/30 text-error' : 'border-gray-200 text-gray-400 hover:border-[#94B839] hover:text-[#1A2218]'
               }`}
             >
               <HeartIcon className="h-5 w-5" fill={esFavorito ? 'currentColor' : 'none'} aria-hidden="true" />
             </button>
             <Link
               to={`/negocios/${n.id}`}
-              className={`inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-bold ${n.destacado ? 'bg-lima text-oliva' : 'bg-oliva text-white'}`}
+              className="inline-flex min-h-[44px] items-center rounded-full bg-[#1A2218] px-4 text-sm font-bold text-white transition hover:bg-[#94B839] hover:text-[#1A2218]"
             >
               Ver comercio
             </Link>
@@ -348,17 +460,18 @@ function FotoDestacada({
         src={imagenPrincipal}
         alt=""
         loading="lazy"
-        className="h-24 w-24 shrink-0 rounded-xl bg-crema object-cover"
+        className="h-36 w-36 rounded-2xl object-cover"
       />
     );
   }
 
+  void nombre;
   return (
     <div
       aria-hidden="true"
-      className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-crema"
+      className="flex h-36 w-36 items-center justify-center rounded-2xl bg-[#94B839]/5 text-[#1A2218]/40"
     >
-      <span className="font-display text-3xl font-extrabold text-oliva/60">{nombre.trim().charAt(0).toUpperCase()}</span>
+      <TagIcon className="h-8 w-8" aria-hidden="true" />
     </div>
   );
 }
