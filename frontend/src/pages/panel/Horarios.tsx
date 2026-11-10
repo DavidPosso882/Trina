@@ -32,7 +32,7 @@ function CargarHorarios({ negocio }: { negocio: Negocio }) {
 
   if (isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <p role="status">Cargando tus horarios…</p>
       </main>
     );
@@ -40,7 +40,7 @@ function CargarHorarios({ negocio }: { negocio: Negocio }) {
 
   if (isError) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Aviso tipo="error">No pudimos cargar tus horarios. Revisa tu conexión.</Aviso>
         <button type="button" className="btn-secundario mt-3 px-4 py-2" onClick={() => refetch()}>
           Intentar de nuevo
@@ -51,7 +51,7 @@ function CargarHorarios({ negocio }: { negocio: Negocio }) {
 
   if (!data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <p role="status">Cargando tus horarios…</p>
       </main>
     );
@@ -89,7 +89,7 @@ function FormularioHorarios({ negocio, inicial }: { negocio: Negocio; inicial: F
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <EncabezadoNegocio negocio={negocio} titulo="Horarios" />
       <p className="mt-4 text-texto-suave">
         Carga tus días y horas de atención. Un día sin franjas queda como cerrado.

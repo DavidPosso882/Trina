@@ -63,7 +63,7 @@ export default function ResenasAdmin() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-20 pt-6">
       <TituloAtras titulo="Reseñas" />
       <p className="mt-1 text-texto-suave">
         Oculta una reseña que no corresponde: deja de mostrarse y no cuenta en el promedio.

@@ -95,7 +95,7 @@ export default function PerfilNegocio() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-40 pt-0 md:pt-6">
+    <main className="mx-auto max-w-4xl xl:max-w-6xl px-4 pb-40 pt-0 md:pt-6">
       <div className="mb-3 hidden md:block">
         <BotonAtras />
       </div>

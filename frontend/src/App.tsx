@@ -4,11 +4,13 @@ import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   BuildingStorefrontIcon,
+  ChartPieIcon,
   HomeIcon,
   MagnifyingGlassIcon,
   HeartIcon,
   ShoppingCartIcon,
   UserIcon,
+  UsersIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { BellIcon } from '@heroicons/react/24/solid';
@@ -54,20 +56,29 @@ function Marco() {
       </div>
     );
   }
-  const enlacesNav = [
-    { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
-    { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
-    { a: '/favoritos', texto: 'Favoritos', icono: HeartIcon, fin: false },
-    { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false },
-    ...(sesion?.rol === 'COMERCIANTE'
-      ? [{ a: '/panel', texto: 'Mi negocio', icono: BuildingStorefrontIcon, fin: false }]
-      : [])
-  ];
+  // El admin gestiona, no opera como usuario: su nav es de administración (sin
+  // Favoritos, Explorar ni Mi negocio). La campana y el avatar se mantienen.
+  const enlacesNav =
+    sesion?.rol === 'ADMINISTRADOR'
+      ? [
+          { a: '/admin', texto: 'Resumen', icono: ChartPieIcon, fin: true },
+          { a: '/admin/usuarios', texto: 'Usuarios', icono: UsersIcon, fin: false },
+          { a: '/admin/negocios', texto: 'Negocios', icono: BuildingStorefrontIcon, fin: false }
+        ]
+      : [
+          { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
+          { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
+          { a: '/favoritos', texto: 'Favoritos', icono: HeartIcon, fin: false },
+          { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false },
+          ...(sesion?.rol === 'COMERCIANTE'
+            ? [{ a: '/panel', texto: 'Mi negocio', icono: BuildingStorefrontIcon, fin: false }]
+            : [])
+        ];
   const inicial = (sesion?.nombre ?? 'M').trim().charAt(0).toUpperCase() || 'M';
   return (
     <div className="flex min-h-screen flex-col bg-crema text-texto">
       <header className="hidden bg-oliva text-white md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-7xl xl:max-w-[1440px] items-center justify-between gap-3 px-4 py-3">
           <Logo />
           <nav aria-label="Navegación principal" className="hidden items-center gap-6 text-sm md:flex">
             {enlacesNav.map((e) => (
@@ -211,7 +222,7 @@ function Marco() {
       </div>
 
       <footer className="mt-auto hidden bg-oliva py-4 text-xs text-white/60 md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
+        <div className="mx-auto flex max-w-7xl xl:max-w-[1440px] items-center justify-between px-4">
           <p>© 2026 TRINA · Explorando lo local</p>
           <div className="flex gap-4">
             <Link to="/privacidad" className="hover:text-white">Privacidad</Link>

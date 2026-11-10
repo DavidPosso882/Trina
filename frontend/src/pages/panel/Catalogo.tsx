@@ -182,7 +182,7 @@ function GestionCatalogo({ negocio }: { negocio: Negocio }) {
     : 0;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Catálogo" />
       <p className="mt-1 text-texto-suave">
         Carga tus productos o servicios para que tus clientes puedan verlos y pedirlos.
@@ -697,7 +697,7 @@ function FormularioItem({
           </p>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
         <div>
           <label htmlFor="item-precio" className="font-semibold">
             Precio (COP)

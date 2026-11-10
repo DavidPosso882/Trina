@@ -35,7 +35,7 @@ export default function MisReservas() {
   });
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-4xl xl:max-w-6xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Mis reservas" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">

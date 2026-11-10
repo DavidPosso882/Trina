@@ -26,7 +26,7 @@ export default function Estadisticas() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Estadísticas" />
       <p className="mt-1 text-texto-suave">Mira cómo te está yendo en TRINA.</p>
 
@@ -51,7 +51,7 @@ export default function Estadisticas() {
         )}
         {resumen.data && (
           <>
-            <dl className="grid grid-cols-2 gap-3">
+            <dl className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               <Dato icono={EyeIcon} etiqueta="Visitas al perfil" valor={String(resumen.data.visitas)} />
               <Dato icono={ShoppingBagIcon} etiqueta="Pedidos" valor={String(resumen.data.pedidos)} />
               <Dato icono={CalendarDaysIcon} etiqueta="Reservas" valor={String(resumen.data.reservas)} />

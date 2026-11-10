@@ -11,7 +11,7 @@ import AuditoriaAdmin from './admin/AuditoriaAdmin';
 /** Marco del admin: menú lateral en escritorio y lista con scroll en móvil (§2.3). */
 function MarcoAdmin() {
   return (
-    <div className="mx-auto max-w-6xl lg:flex lg:items-start lg:gap-6">
+    <div className="mx-auto max-w-6xl xl:max-w-[1400px] lg:flex lg:items-start lg:gap-6">
       <NavAdmin />
       <div className="min-w-0 flex-1">
         <Outlet />

@@ -43,7 +43,7 @@ export default function AuditoriaAdmin() {
   const totalPaginas = Math.max(1, Math.ceil(total / tamano));
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-4xl xl:max-w-6xl px-4 pb-20 pt-6">
       <TituloAtras titulo="Auditoría" />
       <p className="mt-1 text-texto-suave">Historial de acciones administrativas de la plataforma.</p>
 

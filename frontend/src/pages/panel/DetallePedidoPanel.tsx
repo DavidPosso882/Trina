@@ -72,14 +72,14 @@ export default function DetallePedidoPanel() {
 
   if (pedido.isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando el pedido…" />
       </main>
     );
   }
   if (pedido.isError || !pedido.data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(pedido.error)} onReintentar={() => pedido.refetch()} />
         <Link to="/panel/pedidos" className="mt-3 inline-block font-semibold text-primario">
           Volver a Pedidos
@@ -93,7 +93,7 @@ export default function DetallePedidoPanel() {
   const esPagoSandbox = p.metodoPago === 'SANDBOX';
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo={<>Pedido #{p.id}</>} />
         <EtiquetaPedidoComercio estado={p.estado} />

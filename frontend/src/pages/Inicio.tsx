@@ -91,7 +91,7 @@ export default function Inicio() {
 
   return (
     <div className="fondo-limpio">
-    <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto max-w-7xl xl:max-w-[1440px] px-4 pb-28 pt-6 md:pb-16">
       {/* Sección superior solo móvil: buscador cápsula + hero bosque + carrusel menta. */}
       <div className="md:hidden">
         <form role="search" onSubmit={buscar} className="flex items-center gap-2">
@@ -357,7 +357,7 @@ export default function Inicio() {
 function ListaDestacados({ negocios }: { negocios: FichaNegocio[] }) {
   const { ids: favoritos, alternar: alternarFav } = useFavoritos();
   return (
-    <ul className="mt-3 grid gap-3 md:grid-cols-2">
+    <ul className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
       {negocios.map((n) => (
         <FilaDestacada
           key={n.id}

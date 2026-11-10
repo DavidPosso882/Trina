@@ -42,7 +42,7 @@ export default function ReservasPanel() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Reservas" />
       <p className="mt-1 text-texto-suave">Confirma o rechaza las reservas de tus clientes.</p>
 

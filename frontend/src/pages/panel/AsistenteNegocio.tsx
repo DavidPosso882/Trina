@@ -260,7 +260,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'cargando') {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <p role="status">Cargando…</p>
       </main>
     );
@@ -268,7 +268,7 @@ export default function AsistenteNegocio() {
 
   if (chequeo === 'error') {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Aviso tipo="error">{errorChequeo}</Aviso>
         <button
           type="button"
@@ -283,7 +283,7 @@ export default function AsistenteNegocio() {
 
   if (enviado) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <div className="flex items-center gap-2">
           <BotonAtras />
           <h1 className="flex items-center gap-2 font-display text-titulo">
@@ -525,7 +525,7 @@ export default function AsistenteNegocio() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <p className="text-sm font-semibold text-primario">Crear mi negocio</p>
       <div className="mt-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1" aria-hidden="true">

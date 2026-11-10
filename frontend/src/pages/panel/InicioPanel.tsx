@@ -34,7 +34,7 @@ export default function InicioPanel() {
 
   if (negocio.isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -45,7 +45,7 @@ export default function InicioPanel() {
       return <SinNegocioPanel />;
     }
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(negocio.error)} onReintentar={() => negocio.refetch()} />
       </main>
     );
@@ -53,7 +53,7 @@ export default function InicioPanel() {
 
   if (!negocio.data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -65,7 +65,7 @@ export default function InicioPanel() {
 function PanelCargado({ negocio }: { negocio: Negocio }) {
   const { sesion } = useSesion();
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <TituloAtras titulo={<>Hola, {sesion?.nombre ?? ''}</>} />
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="text-texto-suave">{negocio.nombre}:</span>
@@ -209,7 +209,7 @@ function ResumenPeriodo() {
         <ErrorRecargar mensaje={mensajeDeApi(resumen.error)} onReintentar={() => resumen.refetch()} />
       )}
       {resumen.data && (
-        <dl className="mt-3 grid grid-cols-2 gap-3">
+        <dl className="mt-3 grid grid-cols-2 gap-3 xl:grid-cols-4">
           <Dato icono={EyeIcon} etiqueta="Visitas" valor={String(resumen.data.visitas)} />
           <Dato icono={ShoppingBagIcon} etiqueta="Pedidos" valor={String(resumen.data.pedidos)} />
           <Dato icono={CalendarDaysIcon} etiqueta="Reservas" valor={String(resumen.data.reservas)} />

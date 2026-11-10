@@ -35,7 +35,7 @@ export default function ParametrosAdmin() {
   const planes = useQuery({ queryKey: ['planes'], queryFn: getPlanes, staleTime: 5 * 60_000 });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-20 pt-6">
       <TituloAtras titulo="Parámetros y planes" />
       <p className="mt-1 text-texto-suave">
         Ajusta los valores del sistema. La comisión se valida entre 0 y 30.

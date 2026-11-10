@@ -58,7 +58,7 @@ export default function MiCuenta() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto max-w-4xl xl:max-w-6xl px-4 pb-28 pt-6 md:pb-16">
       <TituloAtras titulo="Mi cuenta" />
       <p className="mt-1 text-texto-suave">Desde aquí manejas tus datos personales.</p>
 

@@ -73,7 +73,7 @@ export default function Membresia() {
 
   if (suscripcion.isLoading || planes.isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <Cargando texto="Cargando tu membresía…" />
       </main>
     );
@@ -81,7 +81,7 @@ export default function Membresia() {
 
   if (suscripcion.isError || planes.isError || !suscripcion.data || !planes.data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
         <ErrorRecargar
           mensaje={mensajeDeApi(suscripcion.error ?? planes.error)}
           onReintentar={() => {
@@ -102,7 +102,7 @@ export default function Membresia() {
   const esDestacada = s.planEfectivo === 'DESTACADA';
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <TituloAtras titulo="Mi membresía" />
       <p className="mt-1 text-texto-suave">Elige cómo quieres mostrarte en TRINA.</p>
 

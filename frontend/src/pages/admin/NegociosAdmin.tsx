@@ -53,7 +53,7 @@ export default function NegociosAdmin() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-20 pt-6">
       <TituloAtras titulo="Negocios" />
       <p className="mt-1 text-texto-suave">Revisa las solicitudes y decide si se publican.</p>
 

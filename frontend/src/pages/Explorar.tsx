@@ -431,7 +431,7 @@ export default function Explorar() {
     </div>
 
     <div className="fondo-limpio hidden md:block">
-    <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto w-full max-w-7xl xl:max-w-[1440px] min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16">
       <TituloAtras
         titulo="Descubre comercios locales"
         subtitulo="Encuentra restaurantes, cafés, tiendas y más cerca de ti"
@@ -531,7 +531,7 @@ export default function Explorar() {
           <ChevronDownIcon aria-hidden="true" className="h-4 w-4 shrink-0 text-texto-suave" />
           Más filtros: precio y cercanía
         </summary>
-        <div className="grid gap-3 py-3 sm:grid-cols-2">
+        <div className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-2">
           <div>
             <label htmlFor="filtro-precio" className="font-semibold">
               Nivel de precio
@@ -617,7 +617,7 @@ export default function Explorar() {
         </p>
       )}
 
-      <div className="mt-4 grid min-w-0 gap-6 lg:grid-cols-[44fr_56fr]">
+      <div className="mt-4 grid min-w-0 gap-6 lg:grid-cols-[40fr_60fr]">
         <section aria-label="Mapa de comercios" className="min-w-0">
           {modoPunto && (
             <p role="status" className="mb-2 rounded-tarjeta bg-info/10 p-3 text-info">
@@ -642,7 +642,7 @@ export default function Explorar() {
                     setUbicacion({ lat, lng });
                     setModoPunto(false);
                   }}
-                  altoClase="h-72 md:h-[36rem]"
+                  altoClase="h-72 lg:h-[clamp(28rem,72vh,44rem)]"
                 />
                 <div className="pointer-events-none absolute left-3 top-3 z-[500] flex max-w-[calc(100%-1.5rem)]">
                   <p className="max-w-full truncate rounded-full bg-oliva/90 px-3 py-1.5 text-sm font-semibold text-white" role="status">

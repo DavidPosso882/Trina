@@ -48,7 +48,7 @@ function ListaResenas({ negocio }: { negocio: Negocio }) {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4 pb-28 pt-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo="Reseñas" />
         {publicado && (

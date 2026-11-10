@@ -31,11 +31,16 @@ export default function UsuariosAdmin() {
   const { sesion } = useSesion();
   const [parametros] = useSearchParams();
   const rolInicial = parametros.get('rol') ?? '';
+  const activoInicial = parametros.get('activo') ?? '';
 
   const [q, setQ] = useState('');
   const [rol, setRol] = useState(rolInicial);
-  const [activo, setActivo] = useState('');
-  const [filtros, setFiltros] = useState<FiltrosUsuarios>(rolInicial ? { rol: rolInicial } : {});
+  const [activo, setActivo] = useState(activoInicial);
+  const [filtros, setFiltros] = useState<FiltrosUsuarios>({
+    ...(rolInicial ? { rol: rolInicial } : {}),
+    ...(activoInicial === 'true' ? { activo: true } : {}),
+    ...(activoInicial === 'false' ? { activo: false } : {})
+  });
   const [aviso, setAviso] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cambioEstado, setCambioEstado] = useState<AdminUsuario | null>(null);
@@ -117,7 +122,7 @@ export default function UsuariosAdmin() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
+    <main className="mx-auto max-w-4xl xl:max-w-6xl px-4 pb-20 pt-6">
       <TituloAtras titulo="Usuarios" />
       <p className="mt-1 text-texto-suave">Busca, cambia de rol y activa o desactiva cuentas.</p>
 
