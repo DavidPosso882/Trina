@@ -31,6 +31,36 @@ public class AuthController {
         .body(new AuthDto.CuentaResponse(u.getId(), u.getEmail(), u.getNombre(), u.getRol()));
   }
 
+  /** Registro COMERCIANTE con RUT + cédula (multipart, PDF o imagen, máx 5MB c/u). */
+  @PostMapping(value = "/registro-vendedor", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<AuthDto.CuentaResponse> registroVendedor(
+      @RequestParam String email,
+      @RequestParam String password,
+      @RequestParam String nombre,
+      @RequestParam(defaultValue = "false") boolean consentimiento,
+      @RequestParam(required = false) Boolean esResidente,
+      @RequestParam(value = "rut", required = false) org.springframework.web.multipart.MultipartFile rut,
+      @RequestParam(value = "cedula", required = false) org.springframework.web.multipart.MultipartFile cedula)
+      throws java.io.IOException {
+    if (email == null || !email.trim().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+      throw new DocumentoVendedorException("Ese correo no parece válido");
+    }
+    if (password == null || !password.matches("(?=.*[A-Za-z])(?=.*\\d).{8,}")) {
+      throw new DocumentoVendedorException(
+          "La contraseña necesita mínimo 8 caracteres, con letras y números");
+    }
+    if (nombre == null || nombre.trim().length() < 2) {
+      throw new DocumentoVendedorException("Escribe tu nombre (mínimo 2 letras).");
+    }
+    byte[] rutBytes = rut == null ? null : rut.getBytes();
+    byte[] cedulaBytes = cedula == null ? null : cedula.getBytes();
+    var u =
+        servicio.registrarVendedor(
+            email, password, nombre, consentimiento, esResidente, rutBytes, cedulaBytes);
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new AuthDto.CuentaResponse(u.getId(), u.getEmail(), u.getNombre(), u.getRol()));
+  }
+
   @PostMapping("/login")
   public AuthDto.AuthResponse login(
       @Valid @RequestBody AuthDto.LoginRequest req, HttpServletRequest http) {

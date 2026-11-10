@@ -22,6 +22,7 @@ public class AuthService {
   private final IntentoLoginService intentos;
   private final CorreoService correos;
   private final NotificacionService notificaciones;
+  private final DocumentoVendedorService documentos;
 
   public AuthService(
       UsuarioRepository usuarios,
@@ -29,17 +30,23 @@ public class AuthService {
       JwtService jwt,
       IntentoLoginService intentos,
       CorreoService correos,
-      NotificacionService notificaciones) {
+      NotificacionService notificaciones,
+      DocumentoVendedorService documentos) {
     this.usuarios = usuarios;
     this.claves = claves;
     this.jwt = jwt;
     this.intentos = intentos;
     this.correos = correos;
     this.notificaciones = notificaciones;
+    this.documentos = documentos;
   }
 
   @Transactional
   public Usuario registrar(AuthDto.RegistroRequest req) {
+    if ("COMERCIANTE".equalsIgnoreCase(req.rol())) {
+      throw new DocumentoVendedorException(
+          "Para vender adjunta el RUT y la cédula en PDF o imagen al crear tu cuenta.");
+    }
     if (usuarios.existsByEmailIgnoreCase(req.email().trim())) {
       throw new IllegalStateException("Ese correo ya está en uso");
     }
@@ -71,6 +78,48 @@ public class AuthService {
               + guardado.getNombre()
               + ",\n\nTu cuenta en TRINA quedó creada. Ya puedes ingresar y descubrir negocios.\n\nEquipo TRINA");
     }
+    return guardado;
+  }
+
+  /** Registro COMERCIANTE con RUT + cédula obligatorios (PDF o imagen, máx 5MB c/u). */
+  @Transactional
+  public Usuario registrarVendedor(
+      String email,
+      String password,
+      String nombre,
+      boolean consentimiento,
+      Boolean esResidente,
+      byte[] rut,
+      byte[] cedula) {
+    if (!consentimiento) {
+      throw new DocumentoVendedorException(
+          "Necesitas aceptar la política de datos para continuar");
+    }
+    String correo = email == null ? "" : email.trim().toLowerCase();
+    if (usuarios.existsByEmailIgnoreCase(correo)) {
+      throw new IllegalStateException("Ese correo ya está en uso");
+    }
+    var u = new Usuario(correo, claves.encode(password), nombre.trim(), "COMERCIANTE");
+    u.setEsResidente(esResidente);
+    u.setVersionConsentimiento("v2");
+    u.setConsentimientoEn(Instant.now());
+    u.setActivo(false);
+    var guardado = usuarios.save(u);
+    var docs = documentos.guardar(guardado.getId(), rut, cedula);
+    guardado.setRutDocClave(docs.rutClave());
+    guardado.setRutDocTipo(docs.rutTipo());
+    guardado.setCedulaDocClave(docs.cedulaClave());
+    guardado.setCedulaDocTipo(docs.cedulaTipo());
+    usuarios.save(guardado);
+    correos.enviar(
+        guardado.getEmail(),
+        "Cuenta creada en TRINA: pendiente de aprobación para vender",
+        "Hola "
+            + guardado.getNombre()
+            + ",\n\nTu cuenta en TRINA quedó creada y pendiente de aprobación.\n"
+            + "Recibimos tu RUT y tu cédula; un administrador debe aprobar tu cuenta antes de que puedas publicar tu negocio.\n"
+            + "Te avisaremos por este mismo correo cuando quede aprobada. Mientras tanto no podrás ingresar a vender.\n\nEquipo TRINA");
+    avisarAdminsVendedorPendiente(guardado);
     return guardado;
   }
 

@@ -34,6 +34,15 @@ public class StubAlmacenamientoConfig {
     }
 
     @Override
+    public byte[] leer(String clave) {
+      byte[] datos = objetos.get(clave);
+      if (datos == null) {
+        throw new IllegalStateException("No existe el objeto: " + clave);
+      }
+      return datos.clone();
+    }
+
+    @Override
     public void eliminar(String clave) {
       objetos.remove(clave);
       eliminados.add(clave);

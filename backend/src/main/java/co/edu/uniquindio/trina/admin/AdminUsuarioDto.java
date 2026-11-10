@@ -32,7 +32,8 @@ public final class AdminUsuarioDto {
       boolean activo,
       boolean cambioClaveObligatorio,
       String bloqueoPorNombre,
-      boolean bloqueadoPorMi) {
+      boolean bloqueadoPorMi,
+      boolean tieneDocumentos) {
     static UsuarioRespuesta de(Usuario u) {
       return de(u, null, null);
     }
@@ -52,7 +53,8 @@ public final class AdminUsuarioDto {
           u.isActivo(),
           u.isCambioClaveObligatorio(),
           nombreBloqueo,
-          mio);
+          mio,
+          u.tieneDocumentosVendedor());
     }
   }
 

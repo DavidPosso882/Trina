@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import co.edu.uniquindio.trina.almacenamiento.StubAlmacenamientoConfig;
 import co.edu.uniquindio.trina.auth.JwtService;
 import co.edu.uniquindio.trina.negocio.CategoriaNegocio;
 import co.edu.uniquindio.trina.negocio.CategoriaNegocioRepository;
@@ -49,6 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@org.springframework.context.annotation.Import(StubAlmacenamientoConfig.class)
 class AdminControllerTest {
 
   private static final String CLAVE = "clave1234";
@@ -619,16 +621,21 @@ class AdminControllerTest {
   void registroComercianteAvisaAlAdmin() throws Exception {
     String email = "vende-" + sufijo() + "@trina.co";
     mvc.perform(
-            post("/api/v1/auth/registro")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    json.writeValueAsString(
-                        Map.of(
-                            "email", email,
-                            "password", "clave1234",
-                            "nombre", "Vende",
-                            "rol", "COMERCIANTE",
-                            "consentimiento", true))))
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart(
+                    "/api/v1/auth/registro-vendedor")
+                .file(
+                    new org.springframework.mock.web.MockMultipartFile(
+                        "rut", "rut.pdf", "application/pdf", "%PDF-1.4 rut".getBytes()))
+                .file(
+                    new org.springframework.mock.web.MockMultipartFile(
+                        "cedula",
+                        "cedula.pdf",
+                        "application/pdf",
+                        "%PDF-1.4 cedula".getBytes()))
+                .param("email", email)
+                .param("password", "clave1234")
+                .param("nombre", "Vende")
+                .param("consentimiento", "true"))
         .andExpect(status().isCreated());
 
     var vendedor =

@@ -34,6 +34,15 @@ public class LocalStorageAdapter implements StoragePort {
   }
 
   @Override
+  public byte[] leer(String clave) {
+    try {
+      return Files.readAllBytes(raiz.resolve(clave));
+    } catch (IOException e) {
+      throw new UncheckedIOException("No se pudo leer el archivo. Intenta de nuevo.", e);
+    }
+  }
+
+  @Override
   public void eliminar(String clave) {
     try {
       Files.deleteIfExists(raiz.resolve(clave));
