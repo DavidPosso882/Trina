@@ -5,6 +5,7 @@ import {
   aprobarComerciante,
   cambiarEstadoUsuario,
   cambiarRolUsuario,
+  descargarDocumentoVendedor,
   liberarRevisionComerciante,
   listarAdminUsuarios,
   mensajeDeApi,
@@ -352,6 +353,47 @@ export default function UsuariosAdmin() {
               <strong>{revision.nombre}</strong> ({revision.email}) quiere vender en TRINA.
               Al aprobar, su cuenta queda activa y le avisamos por correo.
             </p>
+            <div className="mt-3 rounded-campo bg-superficie p-3">
+              <p className="text-sm font-semibold">
+                Documentos {revision.tieneDocumentos ? '(RUT y cédula recibidos)' : '(sin documentos)'}
+              </p>
+              {revision.tieneDocumentos ? (
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                  <button
+                    type="button"
+                    className="btn-secundario px-4 py-2 text-sm"
+                    onClick={async () => {
+                      try {
+                        const url = await descargarDocumentoVendedor(revision.id, 'rut');
+                        window.open(url, '_blank', 'noopener');
+                      } catch (e) {
+                        setError(mensajeDeApi(e));
+                      }
+                    }}
+                  >
+                    Ver RUT
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secundario px-4 py-2 text-sm"
+                    onClick={async () => {
+                      try {
+                        const url = await descargarDocumentoVendedor(revision.id, 'cedula');
+                        window.open(url, '_blank', 'noopener');
+                      } catch (e) {
+                        setError(mensajeDeApi(e));
+                      }
+                    }}
+                  >
+                    Ver cédula
+                  </button>
+                </div>
+              ) : (
+                <p className="mt-1 text-sm text-texto-suave">
+                  Este vendedor se registró antes de pedir documentos. Pídele el RUT y la cédula por correo antes de aprobar.
+                </p>
+              )}
+            </div>
             {!revision.bloqueadoPorMi && (
               <p className="mt-2 font-semibold text-error">
                 La está revisando {revision.bloqueoPorNombre ?? 'otro administrador'}.

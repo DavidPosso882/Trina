@@ -72,12 +72,29 @@ function limpiarBorrador() {
 }
 
 /** PU-05 Registro (RF-01): tarjeta única sobre bosque; crea la cuenta y redirige según el rol. */
+const MAX_DOC_MB = 5;
+const TIPOS_DOC = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+
+function validarDocumento(file: File | null, cual: 'RUT' | 'cédula'): string | null {
+  const articulo = cual === 'RUT' ? 'el' : 'la';
+  if (!file) return `Adjunta ${articulo} ${cual} en PDF o imagen.`;
+  if (file.size > MAX_DOC_MB * 1024 * 1024) return `El documento no puede pesar más de 5MB`;
+  const extensionOk = /\.(pdf|jpe?g|png|webp)$/i.test(file.name);
+  if (!TIPOS_DOC.includes(file.type) && !extensionOk) {
+    return 'Solo se permiten archivos PDF o imagen';
+  }
+  return null;
+}
+
 export default function Registro() {
   const { entrar } = useSesion();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [avisoEntrar, setAvisoEntrar] = useState<string | null>(null);
   const [verClave, setVerClave] = useState(false);
+  const [rut, setRut] = useState<File | null>(null);
+  const [cedula, setCedula] = useState<File | null>(null);
+  const [errorDocs, setErrorDocs] = useState<string | null>(null);
   const { register, handleSubmit, watch, formState } = useForm<Valores>({
     resolver: zodResolver(esquema),
     defaultValues: { rol: 'CLIENTE', consentimiento: false, esResidente: '', ...leerBorrador() }
@@ -91,7 +108,36 @@ export default function Registro() {
   const enviar = async (v: Valores) => {
     setError(null);
     setAvisoEntrar(null);
+    setErrorDocs(null);
     const email = v.email.trim();
+    if (v.rol === 'COMERCIANTE') {
+      const errorRut = validarDocumento(rut, 'RUT');
+      const errorCedula = errorRut ?? validarDocumento(cedula, 'cédula');
+      if (errorRut ?? errorCedula) {
+        setErrorDocs((errorRut ?? errorCedula) as string);
+        return;
+      }
+      try {
+        await api.registroVendedor({
+          email,
+          password: v.password,
+          nombre: v.nombre.trim(),
+          ...(v.esResidente ? { esResidente: v.esResidente === 'si' } : {}),
+          rut: rut as File,
+          cedula: cedula as File
+        });
+      } catch (e) {
+        setError(mensajeAmable(e));
+        return;
+      }
+      limpiarBorrador();
+      setRut(null);
+      setCedula(null);
+      setAvisoEntrar(
+        'Tu cuenta quedó creada y pendiente de aprobación por un administrador de TRINA. Recibimos tu RUT y tu cédula. Te avisaremos por correo cuando puedas ingresar a vender.'
+      );
+      return;
+    }
     try {
       await api.registro({
         email,
@@ -105,19 +151,11 @@ export default function Registro() {
       setError(mensajeAmable(e));
       return;
     }
-    // El registro no devuelve token. Para COMERCIANTE la cuenta queda pendiente de aprobación
-    // y no se intenta el ingreso automático. Para CLIENTE se entra directo.
-    if (v.rol === 'COMERCIANTE') {
-      limpiarBorrador();
-      setAvisoEntrar(
-        'Tu cuenta quedó creada y pendiente de aprobación por un administrador de TRINA. Te avisaremos por correo cuando puedas ingresar a vender.'
-      );
-      return;
-    }
+    // El registro CLIENTE no devuelve token: se entra directo. COMERCIANTE ya retornó arriba.
     try {
-      const rol = await entrar(email, v.password);
+      await entrar(email, v.password);
       limpiarBorrador();
-      navigate(rol === 'COMERCIANTE' ? '/panel' : '/', { replace: true });
+      navigate('/', { replace: true });
     } catch {
       setAvisoEntrar(
         'Tu cuenta quedó creada. El ingreso automático no salió; ingresa con tu correo y contraseña.'
@@ -275,6 +313,68 @@ export default function Registro() {
                 </p>
               )}
             </fieldset>
+
+            {rolElegido === 'COMERCIANTE' && (
+              <div className="rounded-2xl bg-emerald-50/60 p-4">
+                <p className="text-sm font-semibold text-[#1A2218]">
+                  Documentos para vender <span aria-hidden="true">*</span>
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Necesitamos tu RUT y tu cédula para verificar tu identidad. PDF o imagen (JPG,
+                  PNG o WebP). Máx 5MB cada uno.
+                </p>
+                <div className="mt-3 grid gap-3">
+                  <div>
+                    <label htmlFor="rut" className="text-sm font-semibold text-[#1A2218]">
+                      RUT *
+                    </label>
+                    <input
+                      id="rut"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      className="mt-1 w-full text-sm text-gray-600 file:mr-3 file:rounded-full file:border-0 file:bg-[#1A2218] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:brightness-110"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        setRut(f);
+                        setErrorDocs(f ? validarDocumento(f, 'RUT') : null);
+                      }}
+                    />
+                    {rut && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        {rut.name} · {(rut.size / 1024).toFixed(0)} KB
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="cedula" className="text-sm font-semibold text-[#1A2218]">
+                      Cédula *
+                    </label>
+                    <input
+                      id="cedula"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      className="mt-1 w-full text-sm text-gray-600 file:mr-3 file:rounded-full file:border-0 file:bg-[#1A2218] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:brightness-110"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        setCedula(f);
+                        setErrorDocs(f ? validarDocumento(f, 'cédula') : null);
+                      }}
+                    />
+                    {cedula && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        {cedula.name} · {(cedula.size / 1024).toFixed(0)} KB
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {errorDocs && (
+                  <p role="alert" className="mt-2 flex items-start gap-1 text-sm text-red-600">
+                    <Icono icono={ExclamationTriangleIcon} tamano="chico" className="mt-0.5" />
+                    <span>{errorDocs}</span>
+                  </p>
+                )}
+              </div>
+            )}
 
             <div>
               <label htmlFor="esResidente" className="text-sm font-semibold text-[#1A2218]">
