@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ArrowRightIcon, ExclamationTriangleIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { ApiError, mensajeAmable } from '../lib/api';
 import { useSesion } from '../lib/auth';
 import { Aviso } from '../components/negocio/Aviso';
@@ -24,6 +24,7 @@ export default function Ingresar() {
   const ubicacion = useLocation();
   const estado = ubicacion.state as { desde?: string; mensaje?: string } | null;
   const [error, setError] = useState<string | null>(null);
+  const [mostrarClave, setMostrarClave] = useState(false);
   const { register, handleSubmit, formState } = useForm<Valores>({ resolver: zodResolver(esquema) });
 
   const enviar = async (v: Valores) => {
@@ -85,14 +86,25 @@ export default function Ingresar() {
           <label htmlFor="clave" className="font-semibold">
             Contraseña
           </label>
-          <input
-            id="clave"
-            type="password"
-            className="campo mt-1"
-            autoComplete="current-password"
-            aria-describedby="clave-error"
-            {...register('password')}
-          />
+          <div className="relative mt-1">
+            <input
+              id="clave"
+              type={mostrarClave ? 'text' : 'password'}
+              className="campo pr-12"
+              autoComplete="current-password"
+              aria-describedby="clave-error"
+              {...register('password')}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-2 inline-flex items-center p-2 font-semibold text-primario"
+              aria-label={mostrarClave ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={mostrarClave}
+              onClick={() => setMostrarClave((v) => !v)}
+            >
+              <Icono icono={mostrarClave ? EyeSlashIcon : EyeIcon} tamano="chico" />
+            </button>
+          </div>
           {formState.errors.password && (
             <p id="clave-error" role="alert" className="mt-1 flex items-start gap-1 text-error">
               <Icono icono={ExclamationTriangleIcon} tamano="chico" className="mt-0.5" />

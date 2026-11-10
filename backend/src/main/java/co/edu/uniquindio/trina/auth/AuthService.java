@@ -1,6 +1,7 @@
 package co.edu.uniquindio.trina.auth;
 
 import co.edu.uniquindio.trina.admin.CambioClaveObligatorioException;
+import co.edu.uniquindio.trina.compartido.CorreoService;
 import co.edu.uniquindio.trina.usuario.Usuario;
 import co.edu.uniquindio.trina.usuario.UsuarioRepository;
 import java.time.Instant;
@@ -18,16 +19,19 @@ public class AuthService {
   private final PasswordEncoder claves;
   private final JwtService jwt;
   private final IntentoLoginService intentos;
+  private final CorreoService correos;
 
   public AuthService(
       UsuarioRepository usuarios,
       PasswordEncoder claves,
       JwtService jwt,
-      IntentoLoginService intentos) {
+      IntentoLoginService intentos,
+      CorreoService correos) {
     this.usuarios = usuarios;
     this.claves = claves;
     this.jwt = jwt;
     this.intentos = intentos;
+    this.correos = correos;
   }
 
   @Transactional
@@ -41,7 +45,28 @@ public class AuthService {
     u.setEsResidente(req.esResidente().orElse(null));
     u.setVersionConsentimiento("v1");
     u.setConsentimientoEn(Instant.now());
-    return usuarios.save(u);
+    if ("COMERCIANTE".equalsIgnoreCase(req.rol())) {
+      u.setActivo(false);
+    }
+    var guardado = usuarios.save(u);
+    if ("COMERCIANTE".equalsIgnoreCase(guardado.getRol())) {
+      correos.enviar(
+          guardado.getEmail(),
+          "Cuenta creada en TRINA: pendiente de aprobación para vender",
+          "Hola "
+              + guardado.getNombre()
+              + ",\n\nTu cuenta en TRINA quedó creada y pendiente de aprobación.\n"
+              + "Como quieres vender, un administrador debe aprobar tu cuenta antes de que puedas publicar tu negocio.\n"
+              + "Te avisaremos por este mismo correo cuando quede aprobada. Mientras tanto no podrás ingresar a vender.\n\nEquipo TRINA");
+    } else {
+      correos.enviar(
+          guardado.getEmail(),
+          "Cuenta creada en TRINA",
+          "Hola "
+              + guardado.getNombre()
+              + ",\n\nTu cuenta en TRINA quedó creada. Ya puedes ingresar y descubrir negocios.\n\nEquipo TRINA");
+    }
+    return guardado;
   }
 
   @Transactional
@@ -57,6 +82,10 @@ public class AuthService {
       throw new BadCredentialsException("El correo o la contraseña no coinciden. Revisa e inténtalo de nuevo.");
     }
     if (!u.isActivo()) {
+      if ("COMERCIANTE".equalsIgnoreCase(u.getRol())) {
+        throw new DisabledException(
+            "Tu cuenta está pendiente de aprobación por un administrador de TRINA. Te avisaremos por correo cuando quede aprobada.");
+      }
       throw new DisabledException("Tu cuenta está desactivada. Contacta al administrador.");
     }
     if (u.isCambioClaveObligatorio()) {

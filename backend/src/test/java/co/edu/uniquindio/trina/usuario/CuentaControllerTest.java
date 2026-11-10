@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import co.edu.uniquindio.trina.auth.JwtService;
+import co.edu.uniquindio.trina.compartido.CorreoService;
 import co.edu.uniquindio.trina.catalogo.CatalogoCategoriaRepository;
 import co.edu.uniquindio.trina.catalogo.CatalogoItem;
 import co.edu.uniquindio.trina.catalogo.CatalogoItemRepository;
@@ -37,12 +38,12 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.system.CapturedOutput;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,14 +56,12 @@ import org.springframework.test.web.servlet.MockMvc;
  * (RF-03). Códigos §5.9: 422 regla ({@link IllegalArgumentException}), 409 conflicto
  * ({@link IllegalStateException}), 403 ajeno, 401 sin sesión, 404 inexistente.
  *
- * <p>El token de recuperación solo se conoce por el enlace que el servicio deja en el log
- * (MailPort futuro), así que se extrae de {@link CapturedOutput}. El hash guardado se verifica
- * contra el SHA-256 calculado acá: el test no importa el helper de producción.
+ * <p>El token de recuperación solo se conoce por el enlace enviado por correo; en los tests se
+ * captura con un mock de CorreoService. En el log nunca queda el token.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@ExtendWith(OutputCaptureExtension.class)
 class CuentaControllerTest {
 
   private static final String CLAVE = "clave1234";
@@ -87,6 +86,7 @@ class CuentaControllerTest {
   @Autowired VistaItemDiariaRepository vistasItem;
   @Autowired PasswordEncoder claves;
   @Autowired JwtService jwt;
+  @MockBean CorreoService correos;
 
   private CategoriaNegocio rubro;
   private Usuario cliente;
@@ -99,6 +99,7 @@ class CuentaControllerTest {
   @BeforeEach
   void sembrar() {
     limpiar();
+    Mockito.clearInvocations(correos);
     rubro = rubros.save(new CategoriaNegocio("Restaurantes"));
     cliente =
         usuarios.save(new Usuario("cliente@trina.co", claves.encode(CLAVE), "Cliente", "CLIENTE"));
@@ -339,14 +340,14 @@ class CuentaControllerTest {
   }
 
   @Test
-  void recuperarClaveGuardaHashSha256YVenceEn30Minutos(CapturedOutput salida) throws Exception {
+  void recuperarClaveGuardaHashSha256YVenceEn30Minutos() throws Exception {
     mvc.perform(
             post("/api/v1/auth/recuperar-clave")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("email", "cliente@trina.co"))))
         .andExpect(status().isAccepted());
 
-    String token = tokenDelLog(salida.getOut());
+    String token = tokenDelCorreo();
     var fila = jdbc.queryForMap("select token_hash, expira_en, usado_en from recuperacion_clave");
     assertNotEquals(token, fila.get("token_hash"));
     assertEquals(sha256Hex(token), fila.get("token_hash"));
@@ -359,14 +360,13 @@ class CuentaControllerTest {
   }
 
   @Test
-  void restablecerConTokenValidoCambiaClaveEInvalidaSesiones(CapturedOutput salida)
-      throws Exception {
+  void restablecerConTokenValidoCambiaClaveEInvalidaSesiones() throws Exception {
     mvc.perform(
             post("/api/v1/auth/recuperar-clave")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("email", "cliente@trina.co"))))
         .andExpect(status().isAccepted());
-    String token = tokenDelLog(salida.getOut());
+    String token = tokenDelCorreo();
 
     mvc.perform(
             post("/api/v1/auth/restablecer-clave")
@@ -398,13 +398,13 @@ class CuentaControllerTest {
   }
 
   @Test
-  void reusarElTokenDa422(CapturedOutput salida) throws Exception {
+  void reusarElTokenDa422() throws Exception {
     mvc.perform(
             post("/api/v1/auth/recuperar-clave")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("email", "cliente@trina.co"))))
         .andExpect(status().isAccepted());
-    String token = tokenDelLog(salida.getOut());
+    String token = tokenDelCorreo();
     mvc.perform(
             post("/api/v1/auth/restablecer-clave")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -423,13 +423,13 @@ class CuentaControllerTest {
   }
 
   @Test
-  void tokenVencidoDa422(CapturedOutput salida) throws Exception {
+  void tokenVencidoDa422() throws Exception {
     mvc.perform(
             post("/api/v1/auth/recuperar-clave")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("email", "cliente@trina.co"))))
         .andExpect(status().isAccepted());
-    String token = tokenDelLog(salida.getOut());
+    String token = tokenDelCorreo();
     jdbc.update(
         "update recuperacion_clave set expira_en = ?",
         Timestamp.from(Instant.now().minusSeconds(60)));
@@ -494,14 +494,14 @@ class CuentaControllerTest {
     }
   }
 
-  private static String tokenDelLog(String salida) {
-    var matcher = Pattern.compile("restablecer-clave\\?token=([A-Za-z0-9_-]+)").matcher(salida);
-    String token = null;
-    while (matcher.find()) {
-      token = matcher.group(1);
-    }
-    assertNotNull(token, "el servicio debe dejar el enlace de recuperación en el log");
-    return token;
+  private String tokenDelCorreo() {
+    var captor = ArgumentCaptor.forClass(String.class);
+    Mockito.verify(correos, Mockito.atLeastOnce()).enviar(Mockito.anyString(), Mockito.anyString(), captor.capture());
+    String cuerpo = captor.getAllValues().stream().filter(s -> s.contains("restablecer-clave?token=")).findFirst()
+        .orElseThrow(() -> new AssertionError("el servicio debe enviar el enlace de recuperación por correo"));
+    var matcher = Pattern.compile("restablecer-clave\\?token=([A-Za-z0-9_-]+)").matcher(cuerpo);
+    assertTrue(matcher.find(), "el correo debe traer el enlace de recuperación");
+    return matcher.group(1);
   }
 
   private static String sha256Hex(String texto) throws Exception {

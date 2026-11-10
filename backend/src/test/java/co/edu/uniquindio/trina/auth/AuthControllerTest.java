@@ -123,6 +123,31 @@ class AuthControllerTest {
   }
 
   @Test
+  void registroComercianteQuedaPendienteDeAprobacion() throws Exception {
+    mvc.perform(
+            post("/api/v1/auth/registro")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    json.writeValueAsString(
+                        Map.of(
+                            "email", "vende@trina.co",
+                            "password", "clave1234",
+                            "nombre", "Vende",
+                            "rol", "COMERCIANTE",
+                            "consentimiento", true))))
+        .andExpect(status().isCreated());
+
+    mvc.perform(
+            post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    json.writeValueAsString(
+                        Map.of("email", "vende@trina.co", "password", "clave1234"))))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.mensaje", containsString("pendiente de aprobaci")));
+  }
+
+  @Test
   void loginClaveMalaDa401SinFiltrar() throws Exception {
     mvc.perform(
             post("/api/v1/auth/login")

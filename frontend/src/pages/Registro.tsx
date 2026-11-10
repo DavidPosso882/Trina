@@ -8,6 +8,8 @@ import {
   ArrowRightIcon,
   BuildingStorefrontIcon,
   ExclamationTriangleIcon,
+  EyeIcon,
+  EyeSlashIcon,
   ShoppingBagIcon
 } from '@heroicons/react/24/outline';
 import { api, mensajeAmable } from '../lib/api';
@@ -40,6 +42,7 @@ export default function Registro() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [avisoEntrar, setAvisoEntrar] = useState<string | null>(null);
+  const [mostrarClave, setMostrarClave] = useState(false);
   const { register, handleSubmit, formState } = useForm<Valores>({
     resolver: zodResolver(esquema),
     defaultValues: { rol: 'CLIENTE', consentimiento: false, esResidente: '' }
@@ -62,7 +65,14 @@ export default function Registro() {
       setError(mensajeAmable(e));
       return;
     }
-    // El registro no devuelve token: ingresamos con las mismas credenciales para entrar directo.
+    // El registro no devuelve token. Para COMERCIANTE la cuenta queda pendiente de aprobación
+    // y no se intenta el ingreso automático. Para CLIENTE se entra directo.
+    if (v.rol === 'COMERCIANTE') {
+      setAvisoEntrar(
+        'Tu cuenta quedó creada y pendiente de aprobación por un administrador de TRINA. Te avisaremos por correo cuando puedas ingresar a vender.'
+      );
+      return;
+    }
     try {
       const rol = await entrar(email, v.password);
       navigate(rol === 'COMERCIANTE' ? '/panel' : '/', { replace: true });
@@ -133,14 +143,25 @@ export default function Registro() {
           <label htmlFor="password" className="font-semibold">
             Contraseña
           </label>
-          <input
-            id="password"
-            type="password"
-            className="campo mt-1"
-            autoComplete="new-password"
-            aria-describedby="password-ayuda password-error"
-            {...register('password')}
-          />
+          <div className="relative mt-1">
+            <input
+              id="password"
+              type={mostrarClave ? 'text' : 'password'}
+              className="campo pr-12"
+              autoComplete="new-password"
+              aria-describedby="password-ayuda password-error"
+              {...register('password')}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-2 inline-flex items-center p-2 font-semibold text-primario"
+              aria-label={mostrarClave ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={mostrarClave}
+              onClick={() => setMostrarClave((v) => !v)}
+            >
+              <Icono icono={mostrarClave ? EyeSlashIcon : EyeIcon} tamano="chico" />
+            </button>
+          </div>
           <p id="password-ayuda" className="mt-1 text-sm text-texto-suave">
             Mínimo 8 caracteres, con letras y números.
           </p>
