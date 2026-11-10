@@ -777,6 +777,8 @@ export type AdminUsuario = {
   rol: Rol;
   activo: boolean;
   cambioClaveObligatorio: boolean;
+  bloqueoPorNombre: string | null;
+  bloqueadoPorMi: boolean;
 };
 
 export type FiltrosUsuarios = { rol?: string; activo?: boolean; q?: string };
@@ -801,6 +803,15 @@ export const cambiarRolUsuario = (id: number, rol: Rol) =>
     method: 'PATCH',
     body: JSON.stringify({ rol })
   });
+
+export const tomarRevisionComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/bloqueo`, { method: 'POST' });
+
+export const liberarRevisionComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/bloqueo`, { method: 'DELETE' });
+
+export const aprobarComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/aprobacion`, { method: 'POST' });
 
 /** La clave temporal se muestra una sola vez (RF-47 E1). */
 export type ComercianteCreado = {

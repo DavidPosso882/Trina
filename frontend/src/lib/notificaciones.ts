@@ -12,6 +12,7 @@ export function rutaDeNotificacion(notificacion: Notificacion, rol: Rol): string
     if (rol === 'COMERCIANTE') return `/panel/reservas/${notificacion.entidadId}`;
   }
   if (notificacion.entidadTipo === 'NEGOCIO' && rol === 'COMERCIANTE') return '/panel/negocio';
+  if (notificacion.entidadTipo === 'USUARIO' && rol === 'ADMINISTRADOR') return '/admin/usuarios';
   return null;
 }
 
@@ -25,5 +26,6 @@ export function iconoNotificacion(tipo: string): ClaveIconoNotificacion {
   if (tipo.startsWith('PEDIDO')) return 'pedido';
   if (tipo.startsWith('RESERVA')) return 'reserva';
   if (tipo.startsWith('NEGOCIO')) return 'negocio';
+  if (tipo.startsWith('COMERCIANTE')) return 'negocio';
   return 'aviso';
 }

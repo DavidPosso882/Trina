@@ -2,10 +2,13 @@ import { useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  aprobarComerciante,
   cambiarEstadoUsuario,
   cambiarRolUsuario,
+  liberarRevisionComerciante,
   listarAdminUsuarios,
   mensajeDeApi,
+  tomarRevisionComerciante,
   type AdminUsuario,
   type FiltrosUsuarios,
   type Rol
@@ -37,6 +40,7 @@ export default function UsuariosAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [cambioEstado, setCambioEstado] = useState<AdminUsuario | null>(null);
   const [cambioRol, setCambioRol] = useState<{ usuario: AdminUsuario; rol: Rol } | null>(null);
+  const [revision, setRevision] = useState<AdminUsuario | null>(null);
 
   const cliente = useQueryClient();
   const usuarios = useQuery({
@@ -57,6 +61,34 @@ export default function UsuariosAdmin() {
       setAviso(null);
       setError(mensajeDeApi(e));
       setCambioEstado(null);
+    }
+  });
+
+  const tomar = useMutation({
+    mutationFn: (id: number) => tomarRevisionComerciante(id),
+    onSuccess: (u) => {
+      setError(null);
+      setRevision(u);
+    },
+    onError: async (e) => {
+      setAviso(null);
+      setError(mensajeDeApi(e));
+      setRevision(null);
+      await cliente.invalidateQueries({ queryKey: ['admin-usuarios'] });
+    }
+  });
+
+  const aprobar = useMutation({
+    mutationFn: (id: number) => aprobarComerciante(id),
+    onSuccess: async (u) => {
+      setError(null);
+      setAviso(`La cuenta de ${u.nombre} quedó aprobada. Ya puede ingresar a vender.`);
+      setRevision(null);
+      await cliente.invalidateQueries({ queryKey: ['admin-usuarios'] });
+    },
+    onError: (e) => {
+      setAviso(null);
+      setError(mensajeDeApi(e));
     }
   });
 
@@ -174,6 +206,7 @@ export default function UsuariosAdmin() {
             <tbody>
               {usuarios.data.map((u) => {
                 const soyYo = u.id === sesion?.id;
+                const pendiente = u.rol === 'COMERCIANTE' && !u.activo;
                 return (
                   <tr key={u.id} className="border-b border-tinta-cafe/10 last:border-0">
                     <td className="px-4 py-3">
@@ -206,7 +239,12 @@ export default function UsuariosAdmin() {
                       </select>
                     </td>
                     <td className="px-4 py-3">
-                      {u.activo ? (
+                      {pendiente ? (
+                        <span className="inline-flex items-center gap-2 rounded-campo bg-advertencia/10 px-2 py-1 text-sm font-semibold text-advertencia">
+                          <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-advertencia" />
+                          Pendiente de aprobación
+                        </span>
+                      ) : u.activo ? (
                         <span className="inline-flex items-center gap-2 rounded-campo bg-primario-claro px-2 py-1 text-sm font-semibold text-exito">
                           <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-primario" />
                           Activa
@@ -217,8 +255,25 @@ export default function UsuariosAdmin() {
                           Desactivada
                         </span>
                       )}
+                      {u.bloqueoPorNombre && (
+                        <p className="mt-1 text-xs text-texto-suave">En revisión por {u.bloqueoPorNombre}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
+                      {pendiente ? (
+                        <button
+                          type="button"
+                          className="btn-principal whitespace-nowrap px-3 py-2 text-sm"
+                          disabled={tomar.isPending}
+                          onClick={() => {
+                            setError(null);
+                            setAviso(null);
+                            tomar.mutate(u.id);
+                          }}
+                        >
+                          {tomar.isPending ? 'Abriendo…' : 'Revisar solicitud'}
+                        </button>
+                      ) : (
                       <button
                         type="button"
                         className={u.activo ? 'btn-peligro whitespace-nowrap px-3 py-2 text-sm' : 'btn-secundario whitespace-nowrap px-3 py-2 text-sm'}
@@ -232,6 +287,7 @@ export default function UsuariosAdmin() {
                       >
                         {u.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
                       </button>
+                      )}
                       {soyYo && (
                         <p className="mt-1 text-xs text-texto-suave">No puedes desactivar tu propia cuenta.</p>
                       )}
@@ -270,6 +326,49 @@ export default function UsuariosAdmin() {
                     : 'Activar cuenta'}
               </button>
               <button type="button" className="btn-secundario px-4 py-3" onClick={() => setCambioEstado(null)}>
+                Volver
+              </button>
+            </div>
+          </>
+        )}
+      </Dialogo>
+
+      <Dialogo
+        abierto={revision !== null}
+        titulo="Revisar solicitud de vendedor"
+        onCerrar={() => {
+          if (revision?.bloqueadoPorMi) liberarRevisionComerciante(revision.id).catch(() => {});
+          setRevision(null);
+        }}
+      >
+        {revision && (
+          <>
+            <p>
+              <strong>{revision.nombre}</strong> ({revision.email}) quiere vender en TRINA.
+              Al aprobar, su cuenta queda activa y le avisamos por correo.
+            </p>
+            {!revision.bloqueadoPorMi && (
+              <p className="mt-2 font-semibold text-error">
+                La está revisando {revision.bloqueoPorNombre ?? 'otro administrador'}.
+              </p>
+            )}
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                className="btn-principal px-4 py-3"
+                disabled={aprobar.isPending || !revision.bloqueadoPorMi}
+                onClick={() => aprobar.mutate(revision.id)}
+              >
+                {aprobar.isPending ? 'Aprobando…' : 'Aprobar cuenta'}
+              </button>
+              <button
+                type="button"
+                className="btn-secundario px-4 py-3"
+                onClick={() => {
+                  if (revision.bloqueadoPorMi) liberarRevisionComerciante(revision.id).catch(() => {});
+                  setRevision(null);
+                }}
+              >
                 Volver
               </button>
             </div>

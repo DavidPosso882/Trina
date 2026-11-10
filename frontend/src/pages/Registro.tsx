@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -33,6 +33,44 @@ const esquema = z.object({
 
 type Valores = z.infer<typeof esquema>;
 
+/** Borrador del registro sin la clave: sobrevive a ir a políticas y volver (misma pestaña). */
+const BORRADOR_CLAVE = 'trina-registro-borrador';
+
+function leerBorrador(): Partial<Valores> {
+  try {
+    const crudo = sessionStorage.getItem(BORRADOR_CLAVE);
+    if (!crudo) return {};
+    const datos = JSON.parse(crudo) as Partial<Valores>;
+    return {
+      ...(datos.nombre ? { nombre: datos.nombre } : {}),
+      ...(datos.email ? { email: datos.email } : {}),
+      ...(datos.rol === 'CLIENTE' || datos.rol === 'COMERCIANTE' ? { rol: datos.rol } : {}),
+      ...(typeof datos.consentimiento === 'boolean' ? { consentimiento: datos.consentimiento } : {}),
+      ...(datos.esResidente === 'si' || datos.esResidente === 'no' ? { esResidente: datos.esResidente } : {})
+    };
+  } catch {
+    return {};
+  }
+}
+
+function guardarBorrador(v: Partial<Valores>) {
+  try {
+    const { password: _clave, ...resto } = v;
+    void _clave;
+    sessionStorage.setItem(BORRADOR_CLAVE, JSON.stringify(resto));
+  } catch {
+    /* sin almacenamiento, igual se puede registrar */
+  }
+}
+
+function limpiarBorrador() {
+  try {
+    sessionStorage.removeItem(BORRADOR_CLAVE);
+  } catch {
+    /* nada que limpiar */
+  }
+}
+
 /** PU-05 Registro (RF-01): tarjeta única sobre bosque; crea la cuenta y redirige según el rol. */
 export default function Registro() {
   const { entrar } = useSesion();
@@ -42,8 +80,12 @@ export default function Registro() {
   const [verClave, setVerClave] = useState(false);
   const { register, handleSubmit, watch, formState } = useForm<Valores>({
     resolver: zodResolver(esquema),
-    defaultValues: { rol: 'CLIENTE', consentimiento: false, esResidente: '' }
+    defaultValues: { rol: 'CLIENTE', consentimiento: false, esResidente: '', ...leerBorrador() }
   });
+  useEffect(() => {
+    const suscripcion = watch((v) => guardarBorrador(v as Partial<Valores>));
+    return () => suscripcion.unsubscribe();
+  }, [watch]);
   const rolElegido = watch('rol');
 
   const enviar = async (v: Valores) => {
@@ -66,6 +108,7 @@ export default function Registro() {
     // El registro no devuelve token. Para COMERCIANTE la cuenta queda pendiente de aprobación
     // y no se intenta el ingreso automático. Para CLIENTE se entra directo.
     if (v.rol === 'COMERCIANTE') {
+      limpiarBorrador();
       setAvisoEntrar(
         'Tu cuenta quedó creada y pendiente de aprobación por un administrador de TRINA. Te avisaremos por correo cuando puedas ingresar a vender.'
       );
@@ -73,6 +116,7 @@ export default function Registro() {
     }
     try {
       const rol = await entrar(email, v.password);
+      limpiarBorrador();
       navigate(rol === 'COMERCIANTE' ? '/panel' : '/', { replace: true });
     } catch {
       setAvisoEntrar(
