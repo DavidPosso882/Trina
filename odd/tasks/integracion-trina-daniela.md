@@ -23,3 +23,5 @@ S3: "dale, inicia con el plan"
 L1: plan para integrar lo de companera con lo nuestro sin romper, manteniendo mostrar-clave y permitiendo visuales de ella
 L2: iniciar con el plan
 L3: Cruce previo: backend ZIP igual a HEAD e83bfe6, sin cambios de ella. Nuestros cambios locales de correo y auth no estan en zip.
+
+L4: Integrado y verificado. Commit auth 7cd40d5 preservado. Commit integracion 82cb445 (13 archivos, visual de ella + verClave y espera COMERCIANTE nuestros). Checks: build frontend OK 2.14s, backend 23/23 verde.
