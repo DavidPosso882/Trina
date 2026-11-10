@@ -4,6 +4,7 @@ import co.edu.uniquindio.trina.usuario.Usuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.Map;
 
 /** DTOs de administración de usuarios (RF-43 y RF-47). */
 public final class AdminUsuarioDto {
@@ -29,8 +30,19 @@ public final class AdminUsuarioDto {
       String telefono,
       String rol,
       boolean activo,
-      boolean cambioClaveObligatorio) {
+      boolean cambioClaveObligatorio,
+      String bloqueoPorNombre,
+      boolean bloqueadoPorMi) {
     static UsuarioRespuesta de(Usuario u) {
+      return de(u, null, null);
+    }
+
+    static UsuarioRespuesta de(Usuario u, Long actorId, Map<Long, String> nombres) {
+      String nombreBloqueo = null;
+      if (u.getRevisionBloqueoPor() != null && nombres != null) {
+        nombreBloqueo = nombres.getOrDefault(u.getRevisionBloqueoPor(), "Otro administrador");
+      }
+      boolean mio = actorId != null && actorId.equals(u.getRevisionBloqueoPor());
       return new UsuarioRespuesta(
           u.getId(),
           u.getEmail(),
@@ -38,7 +50,9 @@ public final class AdminUsuarioDto {
           u.getTelefono(),
           u.getRol(),
           u.isActivo(),
-          u.isCambioClaveObligatorio());
+          u.isCambioClaveObligatorio(),
+          nombreBloqueo,
+          mio);
     }
   }
 

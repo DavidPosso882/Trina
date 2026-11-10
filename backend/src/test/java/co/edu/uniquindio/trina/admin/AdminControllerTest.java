@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -498,6 +499,156 @@ class AdminControllerTest {
         "5",
         jdbc.queryForObject(
             "select valor from parametro_sistema where clave = 'comision_pct'", String.class));
+  }
+
+  // ---- RF-47 E3: aprobación de comerciantes con bloqueo ----
+
+  @Test
+  void aprobarComercianteActivaYNotifica() throws Exception {
+    var pendiente = crearPendiente();
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/aprobacion")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.activo").value(true));
+
+    assertEquals(
+        1,
+        jdbc.queryForObject(
+            "select count(*) from notificacion where usuario_id = ? and tipo = ?",
+            Integer.class,
+            pendiente.getId(),
+            "COMERCIANTE_APROBADO"));
+  }
+
+  @Test
+  void segundaAprobacionDa409() throws Exception {
+    var pendiente = crearPendiente();
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/aprobacion")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk());
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/aprobacion")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void bloqueoImpideDobleRevision() throws Exception {
+    var pendiente = crearPendiente();
+    var otroAdmin = crearUsuario("ADMINISTRADOR");
+    String tokenOtro = bearer(otroAdmin);
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.bloqueadoPorMi").value(true));
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenOtro))
+        .andExpect(status().isConflict());
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/aprobacion")
+                .header("Authorization", tokenOtro))
+        .andExpect(status().isConflict());
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/aprobacion")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void bloqueoExpiradoSePuedeRetomar() throws Exception {
+    var pendiente = crearPendiente();
+    var otroAdmin = crearUsuario("ADMINISTRADOR");
+    String tokenOtro = bearer(otroAdmin);
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk());
+
+    jdbc.update(
+        "update usuario set revision_bloqueo_en = ? where id = ?",
+        java.sql.Timestamp.from(java.time.Instant.now().minusSeconds(16 * 60)),
+        pendiente.getId());
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenOtro))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.bloqueadoPorMi").value(true));
+  }
+
+  @Test
+  void liberarBloqueoSoloElTitular() throws Exception {
+    var pendiente = crearPendiente();
+    var otroAdmin = crearUsuario("ADMINISTRADOR");
+    String tokenOtro = bearer(otroAdmin);
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk());
+
+    mvc.perform(
+            delete("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenOtro))
+        .andExpect(status().isConflict());
+
+    mvc.perform(
+            delete("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenAdmin))
+        .andExpect(status().isOk());
+
+    mvc.perform(
+            post("/api/v1/admin/usuarios/" + pendiente.getId() + "/bloqueo")
+                .header("Authorization", tokenOtro))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void registroComercianteAvisaAlAdmin() throws Exception {
+    String email = "vende-" + sufijo() + "@trina.co";
+    mvc.perform(
+            post("/api/v1/auth/registro")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    json.writeValueAsString(
+                        Map.of(
+                            "email", email,
+                            "password", "clave1234",
+                            "nombre", "Vende",
+                            "rol", "COMERCIANTE",
+                            "consentimiento", true))))
+        .andExpect(status().isCreated());
+
+    var vendedor =
+        usuarios.findByEmailIgnoreCase(email).orElseThrow().getId();
+    usuariosCreados.add(vendedor);
+    assertEquals(
+        1,
+        jdbc.queryForObject(
+            "select count(*) from notificacion where usuario_id = ? and tipo = ? and entidad_id = ?",
+            Integer.class,
+            admin.getId(),
+            "COMERCIANTE_PENDIENTE",
+            vendedor));
+  }
+
+  /** COMERCIANTE inactivo = pendiente de aprobación. */
+  private Usuario crearPendiente() {
+    var u = crearUsuario("COMERCIANTE");
+    u.desactivar();
+    return usuarios.save(u);
   }
 
   // ---- Apoyo ----

@@ -2,6 +2,7 @@ package co.edu.uniquindio.trina.auth;
 
 import co.edu.uniquindio.trina.admin.CambioClaveObligatorioException;
 import co.edu.uniquindio.trina.compartido.CorreoService;
+import co.edu.uniquindio.trina.notificacion.NotificacionService;
 import co.edu.uniquindio.trina.usuario.Usuario;
 import co.edu.uniquindio.trina.usuario.UsuarioRepository;
 import java.time.Instant;
@@ -20,18 +21,21 @@ public class AuthService {
   private final JwtService jwt;
   private final IntentoLoginService intentos;
   private final CorreoService correos;
+  private final NotificacionService notificaciones;
 
   public AuthService(
       UsuarioRepository usuarios,
       PasswordEncoder claves,
       JwtService jwt,
       IntentoLoginService intentos,
-      CorreoService correos) {
+      CorreoService correos,
+      NotificacionService notificaciones) {
     this.usuarios = usuarios;
     this.claves = claves;
     this.jwt = jwt;
     this.intentos = intentos;
     this.correos = correos;
+    this.notificaciones = notificaciones;
   }
 
   @Transactional
@@ -43,7 +47,7 @@ public class AuthService {
         new Usuario(
             req.email().trim().toLowerCase(), claves.encode(req.password()), req.nombre().trim(), req.rol());
     u.setEsResidente(req.esResidente().orElse(null));
-    u.setVersionConsentimiento("v1");
+    u.setVersionConsentimiento("v2");
     u.setConsentimientoEn(Instant.now());
     if ("COMERCIANTE".equalsIgnoreCase(req.rol())) {
       u.setActivo(false);
@@ -58,6 +62,7 @@ public class AuthService {
               + ",\n\nTu cuenta en TRINA quedó creada y pendiente de aprobación.\n"
               + "Como quieres vender, un administrador debe aprobar tu cuenta antes de que puedas publicar tu negocio.\n"
               + "Te avisaremos por este mismo correo cuando quede aprobada. Mientras tanto no podrás ingresar a vender.\n\nEquipo TRINA");
+      avisarAdminsVendedorPendiente(guardado);
     } else {
       correos.enviar(
           guardado.getEmail(),
@@ -67,6 +72,36 @@ public class AuthService {
               + ",\n\nTu cuenta en TRINA quedó creada. Ya puedes ingresar y descubrir negocios.\n\nEquipo TRINA");
     }
     return guardado;
+  }
+
+  /** RF-47 E3: avisa a cada admin activo por correo y en plataforma. */
+  private void avisarAdminsVendedorPendiente(Usuario vendedor) {
+    for (var admin : usuarios.findAll()) {
+      if (!"ADMINISTRADOR".equalsIgnoreCase(admin.getRol()) || !admin.isActivo()) {
+        continue;
+      }
+      notificaciones.notificar(
+          admin.getId(),
+          "COMERCIANTE_PENDIENTE",
+          "Nuevo vendedor pendiente: "
+              + vendedor.getNombre()
+              + " ("
+              + vendedor.getEmail()
+              + "). Revisa la gestión de usuarios para aprobarlo.",
+          "USUARIO",
+          vendedor.getId());
+      correos.enviar(
+          admin.getEmail(),
+          "Vendedor pendiente de aprobación en TRINA",
+          "Hola "
+              + admin.getNombre()
+              + ",\n\nEl vendedor "
+              + vendedor.getNombre()
+              + " ("
+              + vendedor.getEmail()
+              + ") creó su cuenta y espera tu aprobación.\n"
+              + "Ingresa a la gestión de usuarios para revisarla y aprobarla.\n\nEquipo TRINA");
+    }
   }
 
   @Transactional
