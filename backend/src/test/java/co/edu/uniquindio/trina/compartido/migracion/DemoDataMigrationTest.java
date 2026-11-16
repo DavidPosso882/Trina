@@ -19,9 +19,10 @@ import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
- * Verifica contra un PostgreSQL real que V1..V15 migran sin errores de sintaxis, que con
+ * Verifica contra un PostgreSQL real que V1..V19 migran sin errores de sintaxis, que con
  * app.seed-demo=true (placeholder seedDemo) queda cargado el dataset del hito §8.2 y que V15 es
- * idempotente al reejecutarse. Con el flag apagado la migración corre, pero no inserta demo.
+ * idempotente al reejecutarse (out-of-order, pues ya no es la última). Con el flag apagado la
+ * migración corre, pero no inserta demo.
  *
  * <p>Si no hay Docker disponible, los tests se saltean (mismo espíritu que
  * {@code @Testcontainers(disabledWithoutDocker = true)}). El manejo es manual para fijar
@@ -56,6 +57,7 @@ class DemoDataMigrationTest {
     assertDatasetDemo();
 
     // Reejecuta V15 (misma versión y checksum) para probar los ON CONFLICT DO NOTHING.
+    // Con V16..V19 aplicadas hay que permitir out-of-order: V15 ya no es la última.
     ejecutar("delete from flyway_schema_history where version = '15'");
     flyway.migrate();
     assertDatasetDemo();
@@ -83,6 +85,7 @@ class DemoDataMigrationTest {
         .dataSource(url, postgres.getUsername(), postgres.getPassword())
         .locations("classpath:db/migration")
         .placeholders(Map.of(DemoSeedConfig.PLACEHOLDER, Boolean.toString(seedDemo)))
+        .outOfOrder(true)
         .load();
   }
 

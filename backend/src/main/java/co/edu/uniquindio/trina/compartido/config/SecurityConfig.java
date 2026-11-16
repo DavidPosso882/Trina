@@ -34,6 +34,7 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/swagger-ui/**",
                 "/api/v1/auth/registro",
+                "/api/v1/auth/registro-vendedor",
                 "/api/v1/auth/login",
                 "/api/v1/auth/recuperar-clave",
                 "/api/v1/auth/restablecer-clave",

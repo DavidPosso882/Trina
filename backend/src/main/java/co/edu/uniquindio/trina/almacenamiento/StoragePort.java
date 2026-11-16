@@ -4,6 +4,8 @@ package co.edu.uniquindio.trina.almacenamiento;
 public interface StoragePort {
   void guardar(String clave, byte[] datos, String tipoContenido);
 
+  byte[] leer(String clave);
+
   void eliminar(String clave);
 
   default String urlPublica(String clave, String baseMedia) {

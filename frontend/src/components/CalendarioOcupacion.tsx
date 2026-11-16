@@ -39,7 +39,7 @@ export function CalendarioOcupacion({
           onClick={() => onMes(anterior.anio, anterior.mes)}
           disabled={!puedeAtras}
           aria-label="Mes anterior"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-oliva hover:bg-oliva/10 disabled:opacity-30"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-oliva hover:bg-oliva/10 disabled:opacity-30"
         >
           ‹
         </button>
@@ -50,7 +50,7 @@ export function CalendarioOcupacion({
           type="button"
           onClick={() => onMes(siguiente.anio, siguiente.mes)}
           aria-label="Mes siguiente"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-oliva hover:bg-oliva/10"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-oliva hover:bg-oliva/10"
         >
           ›
         </button>

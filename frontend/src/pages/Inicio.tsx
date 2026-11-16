@@ -91,7 +91,7 @@ export default function Inicio() {
 
   return (
     <div className="fondo-limpio">
-    <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto w-full max-w-7xl px-4 pb-28 pt-6 md:pb-16 xl:max-w-[1440px] xl:px-8">
       {/* Sección superior solo móvil: buscador cápsula + hero bosque + carrusel menta. */}
       <div className="md:hidden">
         <form role="search" onSubmit={buscar} className="flex items-center gap-2">
@@ -357,7 +357,7 @@ export default function Inicio() {
 function ListaDestacados({ negocios }: { negocios: FichaNegocio[] }) {
   const { ids: favoritos, alternar: alternarFav } = useFavoritos();
   return (
-    <ul className="mt-3 grid gap-3 md:grid-cols-2">
+    <ul className="mt-3 grid gap-3 md:grid-cols-2 lg:gap-4 xl:grid-cols-3 xl:gap-5">
       {negocios.map((n) => (
         <FilaDestacada
           key={n.id}
@@ -396,7 +396,7 @@ function FilaDestacada({
   return (
     <li className="rounded-3xl border border-gray-200/80 bg-white p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-[#94B839] hover:shadow-xl">
       <div className="flex gap-4">
-        <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm sm:h-36 sm:w-36">
           <FotoDestacada imagenPrincipal={n.imagenPrincipal} nombre={n.nombre} />
           <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-bold text-[#1A2218] backdrop-blur-md">
             {n.categoria ?? 'Negocio local'}
@@ -421,13 +421,13 @@ function FilaDestacada({
             <span aria-hidden="true" className="mr-1 text-[#94B839]">★</span>
             <span className="truncate">{detallePrecio}</span>
           </p>
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={alAlternar}
               aria-pressed={esFavorito}
               aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition ${
                 esFavorito ? 'border-error/30 text-error' : 'border-gray-200 text-gray-400 hover:border-[#94B839] hover:text-[#1A2218]'
               }`}
             >

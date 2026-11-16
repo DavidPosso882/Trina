@@ -29,6 +29,11 @@ public class MinioStorageAdapter implements StoragePort {
   }
 
   @Override
+  public byte[] leer(String clave) {
+    return s3.getObjectAsBytes(b -> b.bucket(bucket).key(clave)).asByteArray();
+  }
+
+  @Override
   public void eliminar(String clave) {
     s3.deleteObject(b -> b.bucket(bucket).key(clave));
   }

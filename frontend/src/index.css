@@ -169,6 +169,60 @@ h3 {
   display: none;
 }
 
+/* Oculta el ojo nativo del navegador en campos de clave: usamos el nuestro
+   (Heroicons, a juego con el icono del correo). Sin esto se ven dos ojos. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Pestaña admin con cutout cóncavo exacto: la pill activa se fusiona al borde
+   derecho con curvas hacia adentro (bordes transparentes). El fundido es por opacidad. */
+.admin-tab::before,
+.admin-tab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+.admin-tab::before {
+  top: -18px;
+  background: radial-gradient(circle at 100% 100%, #F8F9FA 18px, transparent 19px);
+}
+.admin-tab::after {
+  bottom: -18px;
+  background: radial-gradient(circle at 100% 0%, #F8F9FA 18px, transparent 19px);
+}
+.admin-tab-activa::before,
+.admin-tab-activa::after {
+  opacity: 1;
+}
+
+/* Entrada sutil del contenido: solo fundido corto, sin desplazamiento. */
+@keyframes admin-fundido {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+.animar-admin {
+  animation: admin-fundido 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animar-admin {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-tab::before,
+  .admin-tab::after {
+    transition: none;
+  }
+}
+
 /* Transición suave al cambiar de pantalla/pestaña (rutas). */
 @keyframes cambio-ruta {
   from { opacity: 0; transform: translateY(10px); }

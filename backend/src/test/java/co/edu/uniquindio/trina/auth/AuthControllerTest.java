@@ -123,6 +123,25 @@ class AuthControllerTest {
   }
 
   @Test
+  void registroComercianteJsonExigeRutYCedula() throws Exception {
+    // S1-S2: COMERCIANTE por JSON ya no crea cuenta; debe usar /registro-vendedor multipart.
+    mvc.perform(
+            post("/api/v1/auth/registro")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    json.writeValueAsString(
+                        Map.of(
+                            "email", "vende@trina.co",
+                            "password", "clave1234",
+                            "nombre", "Vende",
+                            "rol", "COMERCIANTE",
+                            "consentimiento", true))))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.codigo").value("VALIDACION"))
+        .andExpect(jsonPath("$.mensaje", containsString("RUT")));
+  }
+
+  @Test
   void loginClaveMalaDa401SinFiltrar() throws Exception {
     mvc.perform(
             post("/api/v1/auth/login")

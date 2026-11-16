@@ -21,7 +21,6 @@ import { CampoTexto } from '../../components/negocio/Campos';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
-import { TituloAtras } from '../../components/TituloAtras';
 
 const esquema = z.object({
   nombre: z.string().trim().min(2, 'Escribe el nombre (mínimo 2 letras).'),
@@ -96,9 +95,11 @@ export default function CategoriasAdmin() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <TituloAtras titulo="Categorías" />
-      <p className="mt-1 text-texto-suave">Ordena cómo se agrupan los negocios en el directorio.</p>
+    <main className="animar-admin pb-20 pt-2">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2218]">Categorías</h1>
+        <p className="mt-1 text-sm text-gray-500">Ordena cómo se agrupan los negocios en el directorio.</p>
+      </div>
 
       {aviso && (
         <div className="mt-3">
@@ -113,11 +114,11 @@ export default function CategoriasAdmin() {
 
       <form
         id="form-categoria"
-        className="mt-4 space-y-3 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4"
+        className="mt-4 space-y-3 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md"
         onSubmit={guardar}
         noValidate
       >
-        <h2 className="text-seccion">
+        <h2 className="text-lg font-bold text-[#1A2218]">
           {editando ? `Editar ${editando.nombre}` : 'Nueva categoría'}
         </h2>
         <CampoTexto
@@ -142,7 +143,7 @@ export default function CategoriasAdmin() {
         <div className="flex flex-col gap-2 sm:flex-row">
           <button
             type="submit"
-            className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2218] px-6 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
             disabled={formState.isSubmitting}
           >
             <Icono icono={editando ? CheckIcon : PlusIcon} tamano="chico" />
@@ -155,7 +156,7 @@ export default function CategoriasAdmin() {
           {editando && (
             <button
               type="button"
-              className="btn-secundario px-6 py-3"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200/70 bg-white px-6 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]"
               onClick={() => {
                 setEditando(null);
                 reset(VACIOS);
@@ -175,7 +176,7 @@ export default function CategoriasAdmin() {
         <Vacio>Todavía no hay categorías. Crea la primera con el formulario de arriba.</Vacio>
       )}
       {categorias.data && categorias.data.length > 0 && (
-        <div className="mt-4 overflow-x-auto border-y border-tinta-cafe/10">
+        <div className="mt-4 overflow-x-auto rounded-3xl border border-gray-200/70 bg-white p-2 shadow-md">
           <table className="w-full min-w-[560px] text-left">
             <caption className="sr-only">Categorías de negocio</caption>
             <thead>
@@ -206,12 +207,12 @@ export default function CategoriasAdmin() {
                   </td>
                   <td className="px-4 py-3">
                     {c.activa ? (
-                      <span className="inline-flex items-center gap-2 rounded-campo bg-primario-claro px-2 py-1 text-sm font-semibold text-exito">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-[#F0FDF4] px-2 py-1 text-sm font-semibold text-[#1A2218]">
                         <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-primario" />
                         Activa
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-2 rounded-campo bg-texto-suave/10 px-2 py-1 text-sm font-semibold text-texto-suave">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-gray-500/10 px-2 py-1 text-sm font-semibold text-gray-500">
                         <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-texto-suave" />
                         Inactiva
                       </span>
@@ -219,12 +220,12 @@ export default function CategoriasAdmin() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
-                      <button type="button" className="btn-secundario px-3 py-2 text-sm" onClick={() => editar(c)}>
+                      <button type="button" className="rounded-full border border-gray-200/70 bg-white px-3 py-2 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]" onClick={() => editar(c)}>
                         Editar
                       </button>
                       <button
                         type="button"
-                        className={c.activa ? 'btn-peligro px-3 py-2 text-sm' : 'btn-principal px-3 py-2 text-sm'}
+                        className={c.activa ? 'rounded-full bg-[#C8322B] px-3 py-2 text-sm font-bold text-white transition hover:brightness-110' : 'rounded-full bg-[#1A2218] px-3 py-2 text-sm font-bold text-white transition hover:brightness-125'}
                         onClick={() => {
                           setError(null);
                           setAviso(null);
@@ -257,13 +258,13 @@ export default function CategoriasAdmin() {
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <button
                 type="button"
-                className={porCambiar.activa ? 'btn-peligro px-4 py-3' : 'btn-principal px-4 py-3'}
+                className={porCambiar.activa ? 'rounded-full bg-[#C8322B] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60' : 'rounded-full bg-[#1A2218] px-4 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60'}
                 disabled={estado.isPending}
                 onClick={() => estado.mutate(porCambiar)}
               >
                 {estado.isPending ? 'Guardando…' : porCambiar.activa ? 'Desactivar categoría' : 'Activar categoría'}
               </button>
-              <button type="button" className="btn-secundario px-4 py-3" onClick={() => setPorCambiar(null)}>
+              <button type="button" className="rounded-full border border-gray-200/70 bg-white px-4 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]" onClick={() => setPorCambiar(null)}>
                 Volver
               </button>
             </div>

@@ -5,7 +5,6 @@ import { listarAuditoria, mensajeDeApi, type FiltrosAuditoria } from '../../lib/
 import { fechaHora } from '../../lib/formato';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
-import { TituloAtras } from '../../components/TituloAtras';
 
 /** PA-07 Auditoría: bitácora con filtros y paginación (RF-46). Las fechas se envían en UTC. */
 export default function AuditoriaAdmin() {
@@ -43,11 +42,13 @@ export default function AuditoriaAdmin() {
   const totalPaginas = Math.max(1, Math.ceil(total / tamano));
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-20 pt-6">
-      <TituloAtras titulo="Auditoría" />
-      <p className="mt-1 text-texto-suave">Historial de acciones administrativas de la plataforma.</p>
+    <main className="animar-admin pb-20 pt-2">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2218]">Auditoría</h1>
+        <p className="mt-1 text-sm text-gray-500">Historial de acciones administrativas de la plataforma.</p>
+      </div>
 
-      <form className="mt-4 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4" onSubmit={aplicar}>
+      <form className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" onSubmit={aplicar}>
         <div className="grid gap-3 sm:grid-cols-4">
           <div>
             <label htmlFor="entidad" className="font-semibold">
@@ -99,7 +100,7 @@ export default function AuditoriaAdmin() {
             />
           </div>
         </div>
-        <button type="submit" className="btn-secundario mt-3 inline-flex items-center gap-2 px-6 py-3">
+        <button type="submit" className="mt-3 inline-flex items-center gap-2 rounded-full border border-gray-200/70 bg-white px-6 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]">
           <Icono icono={MagnifyingGlassIcon} tamano="chico" /> Filtrar
         </button>
       </form>
@@ -113,11 +114,11 @@ export default function AuditoriaAdmin() {
       )}
       {auditoria.data && auditoria.data.contenido.length > 0 && (
         <>
-          <div className="mt-4 overflow-x-auto border-y border-tinta-cafe/10">
+          <div className="mt-4 overflow-x-auto rounded-3xl border border-gray-200/70 bg-white p-2 shadow-md">
             <table className="w-full min-w-[760px] text-left">
               <caption className="sr-only">Registros de auditoría</caption>
               <thead>
-                <tr className="border-b border-tinta-cafe/10 text-sm text-texto-suave">
+                <tr className="text-sm text-gray-500">
                   <th scope="col" className="px-4 py-3">
                     Fecha
                   </th>
@@ -140,16 +141,16 @@ export default function AuditoriaAdmin() {
               </thead>
               <tbody>
                 {auditoria.data.contenido.map((r) => (
-                  <tr key={r.id} className="border-b border-tinta-cafe/10 last:border-0">
+                  <tr key={r.id} className="border-t border-gray-100 first:border-0 hover:bg-[#F8F9FA]">
                     <td className="px-4 py-3 whitespace-nowrap">{fechaHora(r.creadoEn)}</td>
                     <td className="px-4 py-3">{r.usuarioId ?? 'Sin dato'}</td>
-                    <td className="px-4 py-3 font-semibold">{r.accion}</td>
+                    <td className="px-4 py-3 font-bold text-[#1A2218]">{r.accion}</td>
                     <td className="px-4 py-3">
                       {r.entidad}
                       {r.entidadId != null ? ` #${r.entidadId}` : ''}
                     </td>
-                    <td className="px-4 py-3 text-texto-suave">{r.detalle ?? 'Sin dato'}</td>
-                    <td className="px-4 py-3 text-texto-suave">{r.motivo ?? 'Sin dato'}</td>
+                    <td className="px-4 py-3 text-gray-500">{r.detalle ?? 'Sin dato'}</td>
+                    <td className="px-4 py-3 text-gray-500">{r.motivo ?? 'Sin dato'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -158,17 +159,17 @@ export default function AuditoriaAdmin() {
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm text-texto-suave">
+              <p className="text-sm text-gray-500">
                 Página {pagina + 1} de {totalPaginas}
               </p>
-              <p className="text-sm text-texto-suave">
+              <p className="text-sm text-gray-500">
                 {total} registro{total === 1 ? '' : 's'}
               </p>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
-                className="btn-secundario px-4 py-2 text-sm"
+                className="rounded-full border border-gray-200/70 bg-white px-4 py-2 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4] disabled:opacity-60"
                 disabled={pagina <= 0}
                 onClick={() => setFiltros((f) => ({ ...f, pagina: pagina - 1 }))}
               >
@@ -176,7 +177,7 @@ export default function AuditoriaAdmin() {
               </button>
               <button
                 type="button"
-                className="btn-secundario px-4 py-2 text-sm"
+                className="rounded-full bg-[#1A2218] px-4 py-2 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
                 disabled={pagina + 1 >= totalPaginas}
                 onClick={() => setFiltros((f) => ({ ...f, pagina: pagina + 1 }))}
               >

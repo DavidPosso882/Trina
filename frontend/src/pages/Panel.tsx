@@ -17,7 +17,7 @@ import ResenasPanel from './panel/ResenasPanel';
 /** Marco con la navegación del panel: horizontal en móvil y lateral en escritorio (§2.3). */
 function MarcoPanel() {
   return (
-    <div className="mx-auto max-w-6xl lg:flex lg:items-start lg:gap-6">
+    <div className="mx-auto w-full max-w-6xl px-4 lg:flex lg:items-start lg:gap-6 xl:max-w-[1400px] xl:px-8">
       <NavPanel />
       <div className="min-w-0 flex-1">
         <Outlet />

@@ -34,7 +34,7 @@ export default function InicioPanel() {
 
   if (negocio.isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -45,7 +45,7 @@ export default function InicioPanel() {
       return <SinNegocioPanel />;
     }
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(negocio.error)} onReintentar={() => negocio.refetch()} />
       </main>
     );
@@ -53,7 +53,7 @@ export default function InicioPanel() {
 
   if (!negocio.data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
         <Cargando texto="Cargando tu panel…" />
       </main>
     );
@@ -65,7 +65,7 @@ export default function InicioPanel() {
 function PanelCargado({ negocio }: { negocio: Negocio }) {
   const { sesion } = useSesion();
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
       <TituloAtras titulo={<>Hola, {sesion?.nombre ?? ''}</>} />
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="text-texto-suave">{negocio.nombre}:</span>
@@ -193,7 +193,7 @@ function ResumenPeriodo() {
               key={d}
               type="button"
               aria-pressed={dias === d}
-              className={`rounded-campo px-3 py-2 text-sm ${
+              className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-2 text-sm ${
                 dias === d ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'
               }`}
               onClick={() => setDias(d)}
@@ -209,7 +209,7 @@ function ResumenPeriodo() {
         <ErrorRecargar mensaje={mensajeDeApi(resumen.error)} onReintentar={() => resumen.refetch()} />
       )}
       {resumen.data && (
-        <dl className="mt-3 grid grid-cols-2 gap-3">
+        <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           <Dato icono={EyeIcon} etiqueta="Visitas" valor={String(resumen.data.visitas)} />
           <Dato icono={ShoppingBagIcon} etiqueta="Pedidos" valor={String(resumen.data.pedidos)} />
           <Dato icono={CalendarDaysIcon} etiqueta="Reservas" valor={String(resumen.data.reservas)} />
@@ -225,12 +225,12 @@ function ResumenPeriodo() {
 
 function Dato({ icono, etiqueta, valor }: { icono: IconoSvg; etiqueta: string; valor: string }) {
   return (
-    <div className="border-t border-tinta-cafe/10 pt-2">
+    <div className="min-w-0 border-t border-tinta-cafe/10 pt-2">
       <dt className="flex items-center gap-2 text-sm text-texto-suave">
         <Icono icono={icono} tamano="chico" />
         {etiqueta}
       </dt>
-      <dd className="font-display text-cifra-menor leading-none">{valor}</dd>
+      <dd className="break-words font-display text-cifra-menor leading-none">{valor}</dd>
     </div>
   );
 }

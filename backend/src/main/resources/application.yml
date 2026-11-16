@@ -23,6 +23,14 @@ spring:
   mail:
     host: ${MAIL_HOST:maildev}
     port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
 
 server:
   port: 8080
@@ -57,3 +65,7 @@ app:
     bucket: ${MINIO_BUCKET:trina-media}
     base-media: ${MEDIA_BASE_URL:/media}
   zona-horaria: America/Bogota
+  correo:
+    remitente: ${APP_CORREO_REMITENTE:monedero.virtual20251@gmail.com}
+  frontend:
+    url: ${APP_FRONTEND_URL:http://localhost:5173}

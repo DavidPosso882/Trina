@@ -26,7 +26,7 @@ export default function Estadisticas() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
       <TituloAtras titulo="Estadísticas" />
       <p className="mt-1 text-texto-suave">Mira cómo te está yendo en TRINA.</p>
 
@@ -36,7 +36,7 @@ export default function Estadisticas() {
             key={d}
             type="button"
             aria-pressed={dias === d}
-            className={`rounded-campo px-3 py-2 ${dias === d ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+            className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-2 ${dias === d ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
             onClick={() => setDias(d)}
           >
             Últimos {d} días
@@ -51,7 +51,7 @@ export default function Estadisticas() {
         )}
         {resumen.data && (
           <>
-            <dl className="grid grid-cols-2 gap-3">
+            <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
               <Dato icono={EyeIcon} etiqueta="Visitas al perfil" valor={String(resumen.data.visitas)} />
               <Dato icono={ShoppingBagIcon} etiqueta="Pedidos" valor={String(resumen.data.pedidos)} />
               <Dato icono={CalendarDaysIcon} etiqueta="Reservas" valor={String(resumen.data.reservas)} />
@@ -117,11 +117,11 @@ export default function Estadisticas() {
 
 function Dato({ icono, etiqueta, valor }: { icono: IconoSvg; etiqueta: string; valor: string }) {
   return (
-    <div className="border-t border-tinta-cafe/10 pt-2">
+    <div className="min-w-0 border-t border-tinta-cafe/10 pt-2">
       <dt className="flex items-center gap-2 text-sm text-texto-suave">
         <Icono icono={icono} tamano="chico" /> {etiqueta}
       </dt>
-      <dd className="font-display text-cifra-menor leading-none">{valor}</dd>
+      <dd className="break-words font-display text-cifra-menor leading-none">{valor}</dd>
     </div>
   );
 }

@@ -138,11 +138,11 @@ export default function DetallePedido() {
         <h2 className="text-seccion">Productos</h2>
         <ul className="mt-2 divide-y divide-tinta-cafe/10">
           {p.items.map((item) => (
-            <li key={item.id} className="flex justify-between py-2">
-              <span>
+            <li key={item.id} className="flex justify-between gap-2 py-2">
+              <span className="min-w-0 flex-1 break-words">
                 {item.cantidad} × {item.nombre}
               </span>
-              <span className="font-semibold">{precio(item.precioUnitarioCop * item.cantidad)}</span>
+              <span className="shrink-0 font-semibold">{precio(item.precioUnitarioCop * item.cantidad)}</span>
             </li>
           ))}
         </ul>

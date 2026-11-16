@@ -95,7 +95,7 @@ export default function PerfilNegocio() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-40 pt-0 md:pt-6">
+    <main className="mx-auto w-full max-w-4xl px-4 pb-40 pt-0 md:pt-6 xl:max-w-6xl xl:px-8">
       <div className="mb-3 hidden md:block">
         <BotonAtras />
       </div>
@@ -366,7 +366,7 @@ function TarjetaPortada({
             {telefono && (
               <a
                 href={`tel:${telefono}`}
-                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={PhoneIcon} tamano="chico" /> Llamar
               </a>
@@ -376,7 +376,7 @@ function TarjetaPortada({
                 href={enlaceWa}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border border-gray-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#1A2218] shadow-sm transition hover:border-[#94B839] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={ChatBubbleLeftRightIcon} tamano="chico" /> WhatsApp
               </a>
@@ -384,7 +384,7 @@ function TarjetaPortada({
             {aprobado && esCliente && !esHospedaje && (
               <Link
                 to={`/reservar/${id}`}
-                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </Link>
@@ -393,7 +393,7 @@ function TarjetaPortada({
               <button
                 type="button"
                 onClick={onIrACatalogo}
-                className="flex items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
+                className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-[#1A2218] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#94B839] hover:text-[#1A2218] sm:flex-1 sm:py-2.5 sm:text-sm"
               >
                 <Icono icono={CalendarDaysIcon} tamano="chico" /> Reservar
               </button>
@@ -402,7 +402,7 @@ function TarjetaPortada({
               <Link
                 to="/carrito"
               aria-label={`Ver tu pedido${nombre ? ` en ${nombre}` : ''}${hayItems ? ` (${cantidadTotal} productos)` : ''}`}
-              className={`relative flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs shadow-sm transition sm:flex-1 sm:py-2.5 sm:text-sm ${hayItems ? 'animar-carrito bg-lima font-bold text-oliva hover:brightness-105' : 'border border-gray-200/80 bg-white/80 font-semibold text-[#1A2218] hover:border-[#94B839]'}`}
+              className={`relative flex min-h-[44px] items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs shadow-sm transition sm:flex-1 sm:py-2.5 sm:text-sm ${hayItems ? 'animar-carrito bg-lima font-bold text-oliva hover:brightness-105' : 'border border-gray-200/80 bg-white/80 font-semibold text-[#1A2218] hover:border-[#94B839]'}`}
             >
               <Icono icono={ShoppingCartIcon} tamano="chico" /> Pedido
               {hayItems && (
@@ -481,7 +481,7 @@ function Informacion({
     : null;
 
   return (
-    <section className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px]">
+    <section className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] xl:gap-8">
       <div className="min-w-0">
       {descripcion && (
         <div className="border-b border-tinta-cafe/10 py-5">

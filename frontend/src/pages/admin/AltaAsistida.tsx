@@ -138,11 +138,11 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
 
   return (
     <section
-      className="mt-4 rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4"
+      className="mt-4 rounded-2xl border border-gray-100 bg-[#F8F9FA] p-4"
       aria-label="Alta asistida de negocio"
     >
-      <h2 className="text-seccion">Alta asistida</h2>
-      <p className="mt-1 text-sm text-texto-suave">
+      <h2 className="text-lg font-bold text-[#1A2218]">Alta asistida</h2>
+      <p className="mt-1 text-sm text-gray-500">
         Crea la cuenta del comerciante y su negocio de una vez. La clave temporal se muestra una sola vez.
       </p>
 
@@ -153,7 +153,7 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
       )}
 
       {comerciante && (
-        <div className="mt-3 rounded-campo bg-advertencia/10 p-3" role="status">
+        <div className="mt-3 rounded-2xl bg-[#E9A13B]/10 p-3" role="status">
           <p className="flex items-center gap-2 font-bold">
             <Icono icono={KeyIcon} tamano="chico" /> Clave temporal de {comerciante.nombre} ({comerciante.email})
           </p>
@@ -193,7 +193,7 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
           {errorComerciante && <Aviso tipo="error">{errorComerciante}</Aviso>}
           <button
             type="submit"
-            className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2218] px-6 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
             disabled={formComerciante.formState.isSubmitting}
           >
             <Icono icono={PlusIcon} tamano="chico" />
@@ -281,13 +281,13 @@ export function AltaAsistida({ onCreado }: { onCreado: (mensaje: string) => void
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               type="submit"
-              className="btn-principal inline-flex items-center justify-center gap-2 px-6 py-3"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2218] px-6 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
               disabled={formNegocio.formState.isSubmitting}
             >
               <Icono icono={BuildingStorefrontIcon} tamano="chico" />
               {formNegocio.formState.isSubmitting ? 'Creando…' : 'Crear negocio'}
             </button>
-            <button type="button" className="btn-secundario px-6 py-3" onClick={terminar}>
+            <button type="button" className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200/70 bg-white px-6 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]" onClick={terminar}>
               Terminar
             </button>
           </div>

@@ -82,7 +82,7 @@ export default function Carrito() {
                   <p className="min-w-0 flex-1 truncate font-bold text-[#1A2218]">{item.nombre}</p>
                   <button
                     type="button"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-300 hover:text-red-500"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-gray-300 hover:text-red-500"
                     aria-label={`Eliminar ${item.nombre} del pedido`}
                     onClick={() => quitar(item.itemId)}
                   >
@@ -94,7 +94,7 @@ export default function Carrito() {
                   <div className="flex items-center gap-1 rounded-full border border-oliva/10 bg-fondo p-1">
                     <button
                       type="button"
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-oliva/10 text-oliva"
+                      className="flex h-11 w-11 items-center justify-center rounded-full bg-oliva/10 text-oliva"
                       aria-label={`Quitar una unidad de ${item.nombre}`}
                       onClick={() => cambiarCantidad(item.itemId, item.cantidad - 1)}
                     >
@@ -108,7 +108,7 @@ export default function Carrito() {
                     </span>
                     <button
                       type="button"
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1A2218] text-white shadow"
+                      className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1A2218] text-white shadow"
                       aria-label={`Agregar una unidad de ${item.nombre}`}
                       onClick={() => cambiarCantidad(item.itemId, item.cantidad + 1)}
                     >

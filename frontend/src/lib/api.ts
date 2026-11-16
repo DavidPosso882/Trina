@@ -50,6 +50,27 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(datos)
     }),
+  registroVendedor: (datos: {
+    email: string;
+    password: string;
+    nombre: string;
+    esResidente?: boolean;
+    rut: File;
+    cedula: File;
+  }) => {
+    const forma = new FormData();
+    forma.append('email', datos.email);
+    forma.append('password', datos.password);
+    forma.append('nombre', datos.nombre);
+    forma.append('consentimiento', 'true');
+    if (datos.esResidente !== undefined) forma.append('esResidente', String(datos.esResidente));
+    forma.append('rut', datos.rut, datos.rut.name);
+    forma.append('cedula', datos.cedula, datos.cedula.name);
+    return pedir<{ id: number; email: string; nombre: string; rol: Rol }>(
+      '/auth/registro-vendedor',
+      { method: 'POST', body: forma }
+    );
+  },
   me: () => pedir<{ id: number; email: string; nombre: string; rol: Rol }>('/auth/me'),
   logout: () => pedir<void>('/auth/logout', { method: 'POST' })
 };
@@ -777,6 +798,22 @@ export type AdminUsuario = {
   rol: Rol;
   activo: boolean;
   cambioClaveObligatorio: boolean;
+  bloqueoPorNombre: string | null;
+  bloqueadoPorMi: boolean;
+  tieneDocumentos?: boolean;
+};
+
+export const descargarDocumentoVendedor = async (
+  id: number,
+  tipo: 'rut' | 'cedula'
+): Promise<string> => {
+  const token = tokenGuardado();
+  const res = await fetch(`${BASE}/vendedores/${id}/documentos/${tipo}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  });
+  if (!res.ok) throw new ApiError(res.status, 'INTERNO', 'No se pudo abrir el documento.');
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
 };
 
 export type FiltrosUsuarios = { rol?: string; activo?: boolean; q?: string };
@@ -801,6 +838,15 @@ export const cambiarRolUsuario = (id: number, rol: Rol) =>
     method: 'PATCH',
     body: JSON.stringify({ rol })
   });
+
+export const tomarRevisionComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/bloqueo`, { method: 'POST' });
+
+export const liberarRevisionComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/bloqueo`, { method: 'DELETE' });
+
+export const aprobarComerciante = (id: number) =>
+  pedir<AdminUsuario>(`/admin/usuarios/${id}/aprobacion`, { method: 'POST' });
 
 /** La clave temporal se muestra una sola vez (RF-47 E1). */
 export type ComercianteCreado = {

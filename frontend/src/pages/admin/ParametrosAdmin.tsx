@@ -12,7 +12,6 @@ import { precio } from '../../lib/formato';
 import { Aviso } from '../../components/negocio/Aviso';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
-import { TituloAtras } from '../../components/TituloAtras';
 
 /** Reglas de RF-45: solo comision_pct tiene rango validado (0-30). */
 function validarParametro(clave: string, valor: string): string | null {
@@ -35,11 +34,13 @@ export default function ParametrosAdmin() {
   const planes = useQuery({ queryKey: ['planes'], queryFn: getPlanes, staleTime: 5 * 60_000 });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <TituloAtras titulo="Parámetros y planes" />
-      <p className="mt-1 text-texto-suave">
+    <main className="animar-admin pb-20 pt-2">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2218]">Parámetros y planes</h1>
+        <p className="mt-1 text-sm text-gray-500">
         Ajusta los valores del sistema. La comisión se valida entre 0 y 30.
       </p>
+      </div>
 
       {aviso && (
         <div className="mt-3">
@@ -58,7 +59,8 @@ export default function ParametrosAdmin() {
       )}
       {parametros.data && parametros.data.length === 0 && <Vacio>No hay parámetros cargados.</Vacio>}
       {parametros.data && parametros.data.length > 0 && (
-        <ul className="mt-4 space-y-2">
+        <section className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" aria-label="Listado de parámetros">
+        <ul className="flex flex-col gap-3">
           {parametros.data.map((p) => (
             <FilaParametro
               key={p.clave}
@@ -74,11 +76,12 @@ export default function ParametrosAdmin() {
             />
           ))}
         </ul>
+        </section>
       )}
 
-      <section className="mt-6 border-t border-tinta-cafe/10 pt-4" aria-label="Planes de membresía">
-        <h2 className="text-seccion">Planes de membresía</h2>
-        <p className="mt-1 text-sm text-texto-suave">
+      <section className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" aria-label="Planes de membresía">
+        <h2 className="text-lg font-bold text-[#1A2218]">Planes de membresía</h2>
+        <p className="mt-1 text-sm text-gray-500">
           Los planes se definen en la configuración inicial de la plataforma; aquí los ves como referencia.
         </p>
         {planes.isLoading && <Cargando texto="Cargando los planes…" />}
@@ -91,7 +94,7 @@ export default function ParametrosAdmin() {
             <table className="w-full min-w-[560px] text-left">
             <caption className="sr-only">Planes de membresía vigentes</caption>
             <thead>
-              <tr className="border-b border-tinta-cafe/10 text-sm text-texto-suave">
+              <tr className="text-sm text-gray-500">
                 <th scope="col" className="py-2">
                   Plan
                 </th>
@@ -105,9 +108,9 @@ export default function ParametrosAdmin() {
             </thead>
             <tbody>
               {planes.data.map((p) => (
-                <tr key={p.id} className="border-b border-tinta-cafe/10 last:border-0">
-                  <td className="py-2 font-semibold">
-                    {p.nombre} {!p.activo && <span className="text-sm text-texto-suave">(inactivo)</span>}
+                <tr key={p.id} className="border-t border-gray-100 first:border-0 hover:bg-[#F8F9FA]">
+                  <td className="py-2 font-bold text-[#1A2218]">
+                    {p.nombre} {!p.activo && <span className="text-sm text-gray-500">(inactivo)</span>}
                   </td>
                   <td className="py-2">{p.precioMensualCop === 0 ? 'Gratis' : `${precio(p.precioMensualCop)}/mes`}</td>
                   <td className="py-2 text-right">{p.maxDestacados}</td>
@@ -157,9 +160,9 @@ function FilaParametro({
   };
 
   return (
-    <li className="rounded-tarjeta border border-tinta-cafe/10 bg-superficie p-4">
-      <p className="font-mono font-bold">{parametro.clave}</p>
-      {parametro.descripcion && <p className="mt-1 text-sm text-texto-suave">{parametro.descripcion}</p>}
+    <li className="rounded-2xl border border-gray-100 bg-[#F8F9FA] p-4">
+      <p className="font-mono font-bold text-[#1A2218]">{parametro.clave}</p>
+      {parametro.descripcion && <p className="mt-1 text-sm text-gray-500">{parametro.descripcion}</p>}
       <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label htmlFor={`valor-${parametro.clave}`} className="font-semibold">
@@ -181,7 +184,7 @@ function FilaParametro({
         </div>
         <button
           type="button"
-          className="btn-secundario inline-flex items-center justify-center gap-2 px-6 py-3"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200/70 bg-white px-6 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4] disabled:opacity-60"
           disabled={guardar.isPending}
           onClick={enviar}
         >

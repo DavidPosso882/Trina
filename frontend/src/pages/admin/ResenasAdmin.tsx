@@ -13,7 +13,6 @@ import { Aviso } from '../../components/negocio/Aviso';
 import { Dialogo } from '../../components/Dialogo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
-import { TituloAtras } from '../../components/TituloAtras';
 
 /** S5 — calificación con Star sólida en oro cosecha; las vacías van en outline. */
 function Estrellas({ valor, etiqueta }: { valor: number; etiqueta: string }) {
@@ -63,11 +62,13 @@ export default function ResenasAdmin() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <TituloAtras titulo="Reseñas" />
-      <p className="mt-1 text-texto-suave">
+    <main className="animar-admin pb-20 pt-2">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2218]">Reseñas</h1>
+        <p className="mt-1 text-sm text-gray-500">
         Oculta una reseña que no corresponde: deja de mostrarse y no cuenta en el promedio.
       </p>
+      </div>
 
       {aviso && (
         <div className="mt-3">
@@ -80,11 +81,12 @@ export default function ResenasAdmin() {
         </div>
       )}
 
-      <div className="mt-3 flex gap-2" aria-label="Filtrar reseñas">
+      <div className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-4 shadow-md" aria-label="Filtrar reseñas">
+        <div className="flex gap-2">
         <button
           type="button"
           aria-pressed={reportadas}
-          className={`inline-flex items-center gap-2 rounded-campo px-3 py-2 ${reportadas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${reportadas ? 'bg-[#1A2218] text-white shadow-sm' : 'border border-gray-200/70 bg-white text-gray-500 hover:bg-[#F0FDF4]'}`}
           onClick={() => setReportadas(true)}
         >
           <Icono icono={FlagIcon} tamano="chico" /> Reportadas
@@ -92,13 +94,13 @@ export default function ResenasAdmin() {
         <button
           type="button"
           aria-pressed={!reportadas}
-          className={`rounded-campo px-3 py-2 ${!reportadas ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-semibold transition ${!reportadas ? 'bg-[#1A2218] text-white shadow-sm' : 'border border-gray-200/70 bg-white text-gray-500 hover:bg-[#F0FDF4]'}`}
           onClick={() => setReportadas(false)}
         >
           Todas
         </button>
+        </div>
       </div>
-
       {resenas.isLoading && <Cargando texto="Cargando las reseñas…" />}
       {resenas.isError && (
         <ErrorRecargar mensaje={mensajeDeApi(resenas.error)} onReintentar={() => resenas.refetch()} />
@@ -107,30 +109,31 @@ export default function ResenasAdmin() {
         <Vacio>{reportadas ? 'No hay reseñas reportadas.' : 'Todavía no hay reseñas.'}</Vacio>
       )}
       {resenas.data && resenas.data.length > 0 && (
-        <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
+        <section className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" aria-label="Listado de reseñas">
+        <ul className="flex flex-col gap-3">
           {resenas.data.map((r) => (
-            <li key={r.id} className="py-4">
+            <li key={r.id} className="rounded-2xl border border-gray-100 bg-[#F8F9FA] p-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold">{r.clienteNombre}</span>
+                <span className="text-sm font-bold text-[#1A2218]">{r.clienteNombre}</span>
                 <Estrellas valor={r.calificacion} etiqueta={`${r.calificacion} de 5 estrellas`} />
-                <span className="text-sm text-texto-suave">Negocio #{r.negocioId}</span>
+                <span className="text-sm text-gray-500">Negocio #{r.negocioId}</span>
                 {r.reportada && (
-                  <span className="inline-flex items-center gap-1 rounded-campo bg-advertencia/10 px-2 py-0.5 text-sm font-semibold text-advertencia">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#E9A13B]/10 px-2 py-0.5 text-sm font-semibold text-[#92400E]">
                     <Icono icono={FlagIcon} tamano="chico" /> Reportada
                   </span>
                 )}
                 {!r.visible && (
-                  <span className="inline-flex items-center gap-1 rounded-campo bg-texto-suave/10 px-2 py-0.5 text-sm text-texto-suave">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-500/10 px-2 py-0.5 text-sm text-gray-500">
                     <Icono icono={EyeSlashIcon} tamano="chico" /> Oculta
                   </span>
                 )}
               </div>
-              <p className="mt-1">{r.comentario}</p>
-              {r.motivoReporte && <p className="mt-1 text-sm text-advertencia">Motivo del reporte: {r.motivoReporte}</p>}
-              <p className="mt-1 text-sm text-texto-suave">{fecha(r.creadoEn)}</p>
+              <p className="mt-1 text-sm text-[#1A2218]">{r.comentario}</p>
+              {r.motivoReporte && <p className="mt-1 text-sm text-[#92400E]">Motivo del reporte: {r.motivoReporte}</p>}
+              <p className="mt-1 text-sm text-gray-500">{fecha(r.creadoEn)}</p>
               <button
                 type="button"
-                className={`mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm ${r.visible ? 'btn-peligro' : 'btn-principal'}`}
+                className={`mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white transition hover:brightness-110 ${r.visible ? 'bg-[#C8322B]' : 'bg-[#1A2218]'}`}
                 onClick={() => {
                   setError(null);
                   setAviso(null);
@@ -143,6 +146,7 @@ export default function ResenasAdmin() {
             </li>
           ))}
         </ul>
+        </section>
       )}
 
       <Dialogo
@@ -160,13 +164,13 @@ export default function ResenasAdmin() {
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <button
                 type="button"
-                className={porCambiar.visible ? 'btn-peligro px-4 py-3' : 'btn-principal px-4 py-3'}
+              className={porCambiar.visible ? 'rounded-full bg-[#C8322B] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60' : 'rounded-full bg-[#1A2218] px-4 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60'}
                 disabled={visibilidad.isPending}
                 onClick={() => visibilidad.mutate({ resena: porCambiar, visible: !porCambiar.visible })}
               >
                 {visibilidad.isPending ? 'Guardando…' : porCambiar.visible ? 'Ocultar reseña' : 'Mostrar reseña'}
               </button>
-              <button type="button" className="btn-secundario px-4 py-3" onClick={() => setPorCambiar(null)}>
+              <button type="button" className="rounded-full border border-gray-200/70 bg-white px-4 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]" onClick={() => setPorCambiar(null)}>
                 Volver
               </button>
             </div>

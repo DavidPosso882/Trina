@@ -27,7 +27,7 @@ export default function Favoritos() {
 
   if (!sesion) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-16">
+      <main className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 md:pb-16 xl:max-w-5xl xl:px-8">
         <TituloAtras titulo="Favoritos" />
         <p className="mt-1 text-texto-suave">
           Tus comercios guardados.
@@ -52,7 +52,7 @@ export default function Favoritos() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto w-full max-w-3xl px-4 pb-28 pt-6 md:pb-16 xl:max-w-5xl xl:px-8">
       <TituloAtras titulo="Favoritos" />
       <p className="mt-1 text-texto-suave">
         Tus comercios guardados.
@@ -86,7 +86,7 @@ export default function Favoritos() {
       )}
 
       {detalle.data && detalle.data.length > 0 && (
-        <ul className="mt-3 flex snap-x gap-4 overflow-x-auto pb-2 md:snap-none md:flex-col md:overflow-visible md:pb-0">
+        <ul className="mt-3 flex snap-x gap-4 overflow-x-auto pb-2 md:snap-none md:flex-col md:overflow-visible md:pb-0 xl:grid xl:grid-cols-2 xl:gap-4">
           {detalle.data.map((n) => (
             <TarjetaNegocio
               key={n.id}

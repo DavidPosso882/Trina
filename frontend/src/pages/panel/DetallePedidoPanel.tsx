@@ -72,14 +72,14 @@ export default function DetallePedidoPanel() {
 
   if (pedido.isLoading) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
         <Cargando texto="Cargando el pedido…" />
       </main>
     );
   }
   if (pedido.isError || !pedido.data) {
     return (
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+      <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
         <ErrorRecargar mensaje={mensajeDeApi(pedido.error)} onReintentar={() => pedido.refetch()} />
         <Link to="/panel/pedidos" className="mt-3 inline-block font-semibold text-primario">
           Volver a Pedidos
@@ -93,7 +93,7 @@ export default function DetallePedidoPanel() {
   const esPagoSandbox = p.metodoPago === 'SANDBOX';
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <TituloAtras titulo={<>Pedido #{p.id}</>} />
         <EtiquetaPedidoComercio estado={p.estado} />
@@ -124,10 +124,10 @@ export default function DetallePedidoPanel() {
         <ul className="mt-2 divide-y divide-tinta-cafe/10">
           {p.items.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 py-2">
-              <span>
+              <span className="min-w-0 flex-1 break-words">
                 {item.cantidad} × {item.nombre}
               </span>
-              <span className="font-semibold">{precio(item.precioUnitarioCop * item.cantidad)}</span>
+              <span className="shrink-0 font-semibold">{precio(item.precioUnitarioCop * item.cantidad)}</span>
             </li>
           ))}
         </ul>

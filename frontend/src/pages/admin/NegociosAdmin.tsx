@@ -22,7 +22,6 @@ import { DialogoMotivo } from '../../components/DialogoMotivo';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
 import { AltaAsistida } from './AltaAsistida';
-import { TituloAtras } from '../../components/TituloAtras';
 
 const TABS = [
   { valor: '', texto: 'Todos' },
@@ -53,9 +52,11 @@ export default function NegociosAdmin() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-20 pt-6">
-      <TituloAtras titulo="Negocios" />
-      <p className="mt-1 text-texto-suave">Revisa las solicitudes y decide si se publican.</p>
+    <main className="animar-admin pb-20 pt-2">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2218]">Negocios</h1>
+        <p className="mt-1 text-sm text-gray-500">Revisa las solicitudes y decide si se publican.</p>
+      </div>
 
       {aviso && (
         <div className="mt-3">
@@ -63,20 +64,22 @@ export default function NegociosAdmin() {
         </div>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
+      <div className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-4 shadow-md" aria-label="Filtrar por estado">
+        <div className="flex flex-wrap gap-2">
         {TABS.map((t) => (
           <button
             key={t.valor}
             type="button"
             aria-pressed={estado === t.valor}
-            className={`rounded-campo px-3 py-2 ${
-              estado === t.valor ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'
+            className={`inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-semibold transition ${
+              estado === t.valor ? 'bg-[#1A2218] text-white shadow-sm' : 'border border-gray-200/70 bg-white text-gray-500 hover:bg-[#F0FDF4]'
             }`}
             onClick={() => cambiarTab(t.valor)}
           >
             {t.texto}
           </button>
         ))}
+        </div>
       </div>
 
       {negocios.isLoading && <Cargando texto="Cargando los negocios…" />}
@@ -91,38 +94,50 @@ export default function NegociosAdmin() {
         </Vacio>
       )}
       {negocios.data && negocios.data.length > 0 && (
-        <ul className="mt-4 divide-y divide-tinta-cafe/10 border-b border-tinta-cafe/10">
+        <section className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" aria-label="Listado de negocios">
+        <ul className="flex flex-col gap-3">
           {negocios.data.map((n) => (
-            <li key={n.id} className="py-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-bold">{n.nombre}</p>
+            <li key={n.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-[#F8F9FA] p-3">
+              <span className="flex min-w-0 items-center gap-3">
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-bold text-[#1A2218]">{n.nombre}</span>
+                  <span className="mt-0.5 block text-xs text-gray-500">{n.categoria ?? 'Sin dato'}</span>
+                </span>
+              </span>
+              <span className="flex shrink-0 items-center gap-2">
                 <EstadoNegocio estado={n.estado} />
-              </div>
-              <p className="mt-1 text-sm text-texto-suave">{n.categoria ?? 'Sin dato'}</p>
-              <button
-                type="button"
-                className="btn-secundario mt-2 px-4 py-2 text-sm"
-                onClick={() => setSeleccionado(n)}
-              >
-                Revisar ficha
-              </button>
+                <button
+                  type="button"
+                  className="shrink-0 rounded-full bg-[#1A2218] px-4 py-1.5 text-xs font-bold text-white transition hover:brightness-125"
+                  onClick={() => setSeleccionado(n)}
+                >
+                  Revisar →
+                </button>
+              </span>
             </li>
           ))}
         </ul>
+        </section>
       )}
 
-      <div className="mt-6">
+      <section className="mt-4 rounded-3xl border border-gray-200/70 bg-white p-6 shadow-md" aria-label="Alta asistida">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-[#1A2218]">Alta asistida de negocio</h2>
+            <p className="mt-1 text-sm text-gray-500">Crea la cuenta y el negocio de una vez.</p>
+          </div>
         <button
           type="button"
-          className="btn-principal inline-flex items-center gap-2 px-6 py-3"
+          className="inline-flex items-center gap-1 rounded-full bg-[#94B839] px-5 py-2.5 text-sm font-extrabold text-[#1A2218] shadow-sm transition-all hover:bg-[#1A2218] hover:text-white"
           aria-expanded={altaAbierta}
           onClick={() => setAltaAbierta((v) => !v)}
         >
           <Icono icono={PlusIcon} tamano="chico" />
           {altaAbierta ? 'Ocultar alta asistida' : 'Alta asistida de negocio'}
         </button>
+        </div>
         {altaAbierta && <AltaAsistida onCreado={setAviso} />}
-      </div>
+      </section>
 
       <Dialogo
         abierto={seleccionado !== null}
@@ -245,7 +260,7 @@ function FichaNegocio({
           <>
             <button
               type="button"
-              className="btn-principal inline-flex items-center justify-center gap-2 px-4 py-3"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2218] px-4 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
               disabled={cambio.isPending}
               onClick={() => cambio.mutate({ accion: 'APROBAR' })}
             >
@@ -253,7 +268,7 @@ function FichaNegocio({
             </button>
             <button
               type="button"
-              className="btn-secundario inline-flex items-center justify-center gap-2 px-4 py-3"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200/70 bg-white px-4 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4] disabled:opacity-60"
               disabled={cambio.isPending}
               onClick={() => abrirMotivo('SOLICITAR_CORRECCION', '¿Pedir ajustes?', 'Pedir ajustes')}
             >
@@ -261,7 +276,7 @@ function FichaNegocio({
             </button>
             <button
               type="button"
-              className="btn-peligro inline-flex items-center justify-center gap-2 px-4 py-3"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8322B] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60"
               disabled={cambio.isPending}
               onClick={() => abrirMotivo('RECHAZAR', '¿Rechazar el negocio?', 'Rechazar negocio')}
             >
@@ -272,7 +287,7 @@ function FichaNegocio({
         {negocio.estado === 'APROBADO' && (
           <button
             type="button"
-            className="btn-peligro inline-flex items-center justify-center gap-2 px-4 py-3"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8322B] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60"
             disabled={cambio.isPending}
             onClick={() => abrirMotivo('SUSPENDER', '¿Suspender el negocio?', 'Suspender negocio')}
           >
@@ -282,14 +297,14 @@ function FichaNegocio({
         {negocio.estado === 'SUSPENDIDO' && (
           <button
             type="button"
-            className="btn-principal inline-flex items-center justify-center gap-2 px-4 py-3"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1A2218] px-4 py-3 text-sm font-bold text-white transition hover:brightness-125 disabled:opacity-60"
             disabled={cambio.isPending}
             onClick={() => cambio.mutate({ accion: 'REACTIVAR' })}
           >
             <Icono icono={CheckCircleIcon} tamano="chico" /> Reactivar negocio
           </button>
         )}
-        <button type="button" className="btn-secundario px-4 py-3" onClick={onCerrar}>
+        <button type="button" className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200/70 bg-white px-4 py-3 text-sm font-bold text-[#1A2218] transition hover:bg-[#F0FDF4]" onClick={onCerrar}>
           Cerrar
         </button>
       </div>

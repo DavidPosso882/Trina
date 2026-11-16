@@ -4,11 +4,13 @@ import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   BuildingStorefrontIcon,
+  ChartPieIcon,
   HomeIcon,
   MagnifyingGlassIcon,
   HeartIcon,
   ShoppingCartIcon,
   UserIcon,
+  UsersIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { BellIcon } from '@heroicons/react/24/solid';
@@ -40,6 +42,7 @@ function Marco() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const esAdmin = pathname.startsWith('/admin');
   const sinMarco =
     pathname === '/ingresar' ||
     pathname.startsWith('/registro') ||
@@ -48,26 +51,35 @@ function Marco() {
   if (sinMarco) {
     return (
       <div className="flex min-h-screen flex-col">
-        <div key={pathname} className="animar-cambio-ruta flex w-full flex-1 flex-col">
+        <div className="flex w-full flex-1 flex-col">
           <Outlet />
         </div>
       </div>
     );
   }
-  const enlacesNav = [
-    { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
-    { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
-    { a: '/favoritos', texto: 'Favoritos', icono: HeartIcon, fin: false },
-    { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false },
-    ...(sesion?.rol === 'COMERCIANTE'
-      ? [{ a: '/panel', texto: 'Mi negocio', icono: BuildingStorefrontIcon, fin: false }]
-      : [])
-  ];
+  // El admin gestiona, no opera como usuario: su nav es de administración (sin
+  // Favoritos, Explorar ni Mi negocio). La campana y el avatar se mantienen.
+  const enlacesNav =
+    sesion?.rol === 'ADMINISTRADOR'
+      ? [
+          { a: '/admin', texto: 'Resumen', icono: ChartPieIcon, fin: true },
+          { a: '/admin/usuarios', texto: 'Usuarios', icono: UsersIcon, fin: false },
+          { a: '/admin/negocios', texto: 'Negocios', icono: BuildingStorefrontIcon, fin: false }
+        ]
+      : [
+          { a: '/', texto: 'Inicio', icono: HomeIcon, fin: true },
+          { a: '/explorar', texto: 'Explorar', icono: MagnifyingGlassIcon, fin: false },
+          { a: '/favoritos', texto: 'Favoritos', icono: HeartIcon, fin: false },
+          { a: sesion ? '/cuenta' : '/ingresar', texto: 'Mi cuenta', icono: UserIcon, fin: false },
+          ...(sesion?.rol === 'COMERCIANTE'
+            ? [{ a: '/panel', texto: 'Mi negocio', icono: BuildingStorefrontIcon, fin: false }]
+            : [])
+        ];
   const inicial = (sesion?.nombre ?? 'M').trim().charAt(0).toUpperCase() || 'M';
   return (
     <div className="flex min-h-screen flex-col bg-crema text-texto">
-      <header className="hidden bg-oliva text-white md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+      <header className={esAdmin ? 'hidden' : 'hidden bg-oliva text-white md:block'}>
+        <div className="mx-auto flex max-w-7xl xl:max-w-[1440px] items-center justify-between gap-3 px-4 py-3">
           <Logo />
           <nav aria-label="Navegación principal" className="hidden items-center gap-6 text-sm md:flex">
             {enlacesNav.map((e) => (
@@ -136,7 +148,7 @@ function Marco() {
             aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={menuAbierto}
             onClick={() => setMenuAbierto((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
           >
             {menuAbierto ? (
               <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -149,14 +161,14 @@ function Marco() {
             <Link
               to={sesion ? '/cuenta' : '/ingresar'}
               aria-label="Mi cuenta"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
             >
               <UserIcon className="h-6 w-6" aria-hidden="true" />
             </Link>
             <Link
               to="/carrito"
               aria-label={cantidadTotal > 0 ? `Carrito, ${cantidadTotal} productos` : 'Carrito'}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
+              className="relative flex h-11 w-11 items-center justify-center rounded-full text-[#1A2218] hover:bg-gray-100"
             >
               <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
               {cantidadTotal > 0 && (
@@ -206,12 +218,12 @@ function Marco() {
         )}
       </div>
 
-      <div key={pathname} className="animar-cambio-ruta flex w-full flex-1 flex-col">
+      <div className="flex w-full flex-1 flex-col">
         <Outlet />
       </div>
 
       <footer className="mt-auto hidden bg-oliva py-4 text-xs text-white/60 md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
+        <div className="mx-auto flex max-w-7xl xl:max-w-[1440px] items-center justify-between px-4">
           <p>© 2026 TRINA · Explorando lo local</p>
           <div className="flex gap-4">
             <Link to="/privacidad" className="hover:text-white">Privacidad</Link>
@@ -226,14 +238,14 @@ function Marco() {
         aria-label="Navegación principal"
         className="fixed inset-x-3 bottom-3 z-50 md:hidden"
       >
-        <div className="flex items-stretch justify-around rounded-full bg-oliva px-2 py-2 text-white shadow-lg">
+        <div className="flex items-stretch justify-around overflow-x-auto rounded-full bg-oliva px-2 py-2 text-white shadow-lg">
           {enlacesNav.map((enlace) => (
             <NavLink
               key={enlace.texto}
               to={enlace.a}
               end={enlace.fin}
               className={({ isActive }) =>
-                `flex min-h-boton flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-2 py-1 text-xs font-semibold ${
+                `flex min-h-boton flex-1 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full px-2 py-1 text-xs font-semibold ${
                   isActive ? 'text-lima' : 'text-white/70'
                 }`
               }

@@ -58,7 +58,7 @@ export default function MiCuenta() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto w-full max-w-4xl px-4 pb-28 pt-6 md:pb-16 xl:max-w-6xl xl:px-8">
       <TituloAtras titulo="Mi cuenta" />
       <p className="mt-1 text-texto-suave">Desde aquí manejas tus datos personales.</p>
 
@@ -164,7 +164,7 @@ function FormularioDatos({ datos }: { datos: MisDatos }) {
     >
       <div>
         <h2 className="text-seccion">Tus datos</h2>
-        <p className="mt-1 text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
+        <p className="mt-1 break-all text-sm text-texto-suave">Correo: {datos.email} (no se puede cambiar desde aquí).</p>
       </div>
       <div className="grid gap-4">
         <div className="min-w-0">

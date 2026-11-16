@@ -1,5 +1,6 @@
 package co.edu.uniquindio.trina.usuario;
 
+import co.edu.uniquindio.trina.compartido.CorreoService;
 import co.edu.uniquindio.trina.negocio.Negocio;
 import co.edu.uniquindio.trina.pedido.PedidoRepository;
 import co.edu.uniquindio.trina.reserva.ReservaRepository;
@@ -20,6 +21,7 @@ public class CuentaService {
   private final PedidoRepository pedidos;
   private final ReservaRepository reservas;
   private final PasswordEncoder claves;
+  private final CorreoService correos;
   private final EntityManager em;
 
   public CuentaService(
@@ -27,11 +29,13 @@ public class CuentaService {
       PedidoRepository pedidos,
       ReservaRepository reservas,
       PasswordEncoder claves,
+      CorreoService correos,
       EntityManager em) {
     this.usuarios = usuarios;
     this.pedidos = pedidos;
     this.reservas = reservas;
     this.claves = claves;
+    this.correos = correos;
     this.em = em;
   }
 
@@ -66,6 +70,13 @@ public class CuentaService {
       throw new IllegalArgumentException("La contraseña actual no coincide.");
     }
     u.cambiarClave(claves.encode(nueva));
+    correos.enviar(
+        u.getEmail(),
+        "Tu contraseña de TRINA cambió",
+        "Hola "
+            + u.getNombre()
+            + ",\n\nCambiaste tu contraseña desde tu cuenta y las sesiones anteriores quedaron cerradas.\n"
+            + "Si no fuiste tú, pide un nuevo enlace de recuperación de inmediato.\n\nEquipo TRINA");
   }
 
   /** RF-48 E1: datos personales y actividad (pedidos, reservas y negocio propio resumido). */

@@ -431,7 +431,7 @@ export default function Explorar() {
     </div>
 
     <div className="fondo-limpio hidden md:block">
-    <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16">
+    <main className="mx-auto w-full max-w-7xl min-w-0 overflow-x-clip px-4 pb-28 pt-6 md:pb-16 xl:max-w-[1440px] xl:px-8">
       <TituloAtras
         titulo="Descubre comercios locales"
         subtitulo="Encuentra restaurantes, cafés, tiendas y más cerca de ti"
@@ -617,7 +617,7 @@ export default function Explorar() {
         </p>
       )}
 
-      <div className="mt-4 grid min-w-0 gap-6 lg:grid-cols-[44fr_56fr]">
+      <div className="mt-4 grid min-w-0 gap-6 lg:grid-cols-[44fr_56fr] xl:grid-cols-[40fr_60fr] xl:gap-8">
         <section aria-label="Mapa de comercios" className="min-w-0">
           {modoPunto && (
             <p role="status" className="mb-2 rounded-tarjeta bg-info/10 p-3 text-info">
@@ -690,7 +690,7 @@ export default function Explorar() {
             </Vacio>
           )}
           {negocios.data && negocios.data.total > 0 && (
-            <ul className="mt-3 flex snap-x gap-4 overflow-x-auto pb-2 md:snap-none md:flex-col md:overflow-visible md:pb-0">
+            <ul className="mt-3 flex snap-x gap-4 overflow-x-auto pb-2 md:snap-none md:flex-col md:overflow-visible md:pb-0 xl:grid xl:grid-cols-2 xl:gap-4">
               {negocios.data.contenido.map((n) => (
                 <TarjetaNegocio
                   key={n.id}

@@ -70,16 +70,16 @@ export function TarjetaNegocio({
       className="w-72 shrink-0 snap-start rounded-3xl border border-gray-200/80 bg-white p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-[#94B839] hover:shadow-xl md:w-auto"
     >
       <div className="flex flex-row gap-4">
-        <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#94B839]/5 shadow-sm sm:h-36 sm:w-36">
           {n.imagenPrincipal ? (
             <img
               src={n.imagenPrincipal}
               alt=""
               loading="lazy"
-              className="h-36 w-36 rounded-2xl object-cover"
+              className="h-24 w-24 rounded-2xl object-cover sm:h-36 sm:w-36"
             />
           ) : (
-            <div aria-hidden="true" className="flex h-36 w-36 items-center justify-center rounded-2xl bg-[#94B839]/5 text-[#1A2218]/40">
+            <div aria-hidden="true" className="flex h-24 w-24 items-center justify-center rounded-2xl bg-[#94B839]/5 text-[#1A2218]/40 sm:h-36 sm:w-36">
               <Icono icono={IconoCat} tamano="grande" />
             </div>
           )}
@@ -107,14 +107,14 @@ export function TarjetaNegocio({
             <span aria-hidden="true" className="mr-1 text-[#94B839]">★</span>
             <span className="truncate">{detallePrecio}</span>
           </p>
-          <div className="mt-3 flex items-center justify-between gap-2">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
             <div className="flex min-w-0 shrink-0 items-center gap-2">
               <button
                 type="button"
                 onClick={alAlternar}
                 aria-pressed={esFavorito}
                 aria-label={esFavorito ? `Quitar ${n.nombre} de favoritos` : `Guardar ${n.nombre} en favoritos`}
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition ${
                   esFavorito ? 'border-error/30 text-error' : 'border-gray-200 text-gray-400 hover:border-[#94B839] hover:text-[#1A2218]'
                 }`}
               >

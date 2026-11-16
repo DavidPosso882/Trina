@@ -49,6 +49,25 @@ public class Usuario {
   @Column(name = "eliminado_en")
   private Instant eliminadoEn;
 
+  @Column(name = "rut_doc_clave")
+  private String rutDocClave;
+
+  @Column(name = "rut_doc_tipo")
+  private String rutDocTipo;
+
+  @Column(name = "cedula_doc_clave")
+  private String cedulaDocClave;
+
+  @Column(name = "cedula_doc_tipo")
+  private String cedulaDocTipo;
+
+  /** RF-47 E3: admin que tomó la revisión del pendiente (bloqueo pesimista con expiración). */
+  @Column(name = "revision_bloqueo_por")
+  private Long revisionBloqueoPor;
+
+  @Column(name = "revision_bloqueo_en")
+  private Instant revisionBloqueoEn;
+
   protected Usuario() {}
 
   public Usuario(String email, String passwordHash, String nombre, String rol) {
@@ -78,6 +97,43 @@ public class Usuario {
     this.nombre = nombre;
   }
 
+  public String getRutDocClave() {
+    return rutDocClave;
+  }
+
+  public void setRutDocClave(String rutDocClave) {
+    this.rutDocClave = rutDocClave;
+  }
+
+  public String getRutDocTipo() {
+    return rutDocTipo;
+  }
+
+  public void setRutDocTipo(String rutDocTipo) {
+    this.rutDocTipo = rutDocTipo;
+  }
+
+  public String getCedulaDocClave() {
+    return cedulaDocClave;
+  }
+
+  public void setCedulaDocClave(String cedulaDocClave) {
+    this.cedulaDocClave = cedulaDocClave;
+  }
+
+  public String getCedulaDocTipo() {
+    return cedulaDocTipo;
+  }
+
+  public void setCedulaDocTipo(String cedulaDocTipo) {
+    this.cedulaDocTipo = cedulaDocTipo;
+  }
+
+  public boolean tieneDocumentosVendedor() {
+    return rutDocClave != null && !rutDocClave.isBlank()
+        && cedulaDocClave != null && !cedulaDocClave.isBlank();
+  }
+
   public String getTelefono() {
     return telefono;
   }
@@ -100,6 +156,14 @@ public class Usuario {
 
   public Instant getEliminadoEn() {
     return eliminadoEn;
+  }
+
+  public Long getRevisionBloqueoPor() {
+    return revisionBloqueoPor;
+  }
+
+  public Instant getRevisionBloqueoEn() {
+    return revisionBloqueoEn;
   }
 
   public String getRol() {
@@ -165,6 +229,25 @@ public class Usuario {
   public void desactivar() {
     this.activo = false;
     rotarVersion();
+  }
+
+  /** RF-47 E3: el admin que abre el pendiente lo bloquea; expira en minutos. */
+  public void tomarBloqueo(Long adminId) {
+    this.revisionBloqueoPor = adminId;
+    this.revisionBloqueoEn = Instant.now();
+  }
+
+  /** Libera el bloqueo al resolver o abandonar la revisión. */
+  public void liberarBloqueo() {
+    this.revisionBloqueoPor = null;
+    this.revisionBloqueoEn = null;
+  }
+
+  /** true si otro admin lo tomó hace menos de expiraMinutos. */
+  public boolean bloqueoVigente(long expiraMinutos) {
+    return revisionBloqueoPor != null
+        && revisionBloqueoEn != null
+        && revisionBloqueoEn.plusSeconds(expiraMinutos * 60).isAfter(Instant.now());
   }
 
   /** RF-43/RF-04 E4: el Administrador cambia el rol; los JWT previos quedan invalidados. */

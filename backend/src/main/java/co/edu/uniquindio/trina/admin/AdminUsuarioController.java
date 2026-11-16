@@ -21,10 +21,11 @@ public class AdminUsuarioController {
 
   @GetMapping
   public List<AdminUsuarioDto.UsuarioRespuesta> listar(
+      @AuthenticationPrincipal Long actorId,
       @RequestParam(required = false) String rol,
       @RequestParam(required = false) Boolean activo,
       @RequestParam(required = false) String q) {
-    return servicio.listar(rol, activo, q);
+    return servicio.listar(actorId, rol, activo, q);
   }
 
   @PatchMapping("/{id}/estado")
@@ -41,6 +42,27 @@ public class AdminUsuarioController {
       @PathVariable Long id,
       @Valid @RequestBody AdminUsuarioDto.RolRequest req) {
     return servicio.cambiarRol(actorId, id, req.rol());
+  }
+
+  /** RF-47 E3: el admin que abre el pendiente lo bloquea para los demás. */
+  @PostMapping("/{id}/bloqueo")
+  public AdminUsuarioDto.UsuarioRespuesta tomarBloqueo(
+      @AuthenticationPrincipal Long actorId, @PathVariable Long id) {
+    return servicio.tomarBloqueo(actorId, id);
+  }
+
+  /** Libera el bloqueo sin resolver (abandonar la revisión). */
+  @DeleteMapping("/{id}/bloqueo")
+  public AdminUsuarioDto.UsuarioRespuesta liberarBloqueo(
+      @AuthenticationPrincipal Long actorId, @PathVariable Long id) {
+    return servicio.liberarBloqueo(actorId, id);
+  }
+
+  /** RF-47 E3: aprueba la cuenta del vendedor pendiente. */
+  @PostMapping("/{id}/aprobacion")
+  public AdminUsuarioDto.UsuarioRespuesta aprobarComerciante(
+      @AuthenticationPrincipal Long actorId, @PathVariable Long id) {
+    return servicio.aprobarComerciante(actorId, id);
   }
 
   /** RF-47 E1: alta asistida con clave temporal que se devuelve una única vez. */

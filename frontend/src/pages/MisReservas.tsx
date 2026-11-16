@@ -35,7 +35,7 @@ export default function MisReservas() {
   });
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-28 pt-6">
+    <main className="mx-auto w-full max-w-4xl px-4 pb-28 pt-6 xl:max-w-6xl xl:px-8">
       <TituloAtras titulo="Mis reservas" />
 
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Filtrar por estado">
@@ -76,7 +76,7 @@ export default function MisReservas() {
         </Vacio>
       )}
       {reservas.data && reservas.data.length > 0 && (
-        <ul className="mt-4 grid items-start gap-4">
+        <ul className="mt-4 grid items-start gap-4 md:grid-cols-2">
           {reservas.data.map((r) => (
             <li key={r.id} className="rounded-2xl border border-oliva/10 bg-white p-5 shadow-sm md:p-6">
               <div className="flex items-center gap-3">

@@ -42,7 +42,7 @@ export default function ReservasPanel() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-28 pt-6">
+    <main className="mx-auto w-full max-w-3xl px-4 lg:max-w-4xl xl:max-w-5xl pb-28 pt-6">
       <TituloAtras titulo="Reservas" />
       <p className="mt-1 text-texto-suave">Confirma o rechaza las reservas de tus clientes.</p>
 
@@ -50,7 +50,7 @@ export default function ReservasPanel() {
         <button
           type="button"
           aria-pressed={filtro === ''}
-          className={`rounded-campo px-3 py-2 ${filtro === '' ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+          className={`inline-flex min-h-[44px] items-center rounded-campo px-3 py-2 ${filtro === '' ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
           onClick={() => cambiarFiltro('')}
         >
           Todas
@@ -62,7 +62,7 @@ export default function ReservasPanel() {
               key={estado}
               type="button"
               aria-pressed={filtro === estado}
-              className={`inline-flex items-center gap-2 rounded-campo px-3 py-2 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
+              className={`inline-flex min-h-[44px] items-center gap-2 rounded-campo px-3 py-2 ${filtro === estado ? 'bg-primario-claro font-bold text-primario' : 'text-texto-suave'}`}
               onClick={() => cambiarFiltro(estado)}
             >
               <Icono icono={ICONOS[info.icono] ?? InformationCircleIcon} tamano="chico" />
