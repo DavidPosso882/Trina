@@ -6,6 +6,18 @@ import { fechaHora } from '../../lib/formato';
 import { Icono } from '../../components/Icono';
 import { Cargando, ErrorRecargar, Vacio } from '../../components/Estados';
 
+/** El detalle se guarda técnico (clave=valor); acá se muestra legible. */
+function detalleLegible(detalle: string | null): string {
+  if (!detalle) return 'Sin dato';
+  if (detalle === 'activo=true') return 'Cuenta activada';
+  if (detalle === 'activo=false') return 'Cuenta desactivada';
+  const rol = detalle.match(/^rol=(.+)->(.+)$/);
+  if (rol) return `Rol: ${rol[1]} → ${rol[2]}`;
+  const estado = detalle.match(/^estado=(.+)$/);
+  if (estado) return `Estado: ${estado[1]}`;
+  return detalle;
+}
+
 /** PA-07 Auditoría: bitácora con filtros y paginación (RF-46). Las fechas se envían en UTC. */
 export default function AuditoriaAdmin() {
   const [entidad, setEntidad] = useState('');
@@ -149,7 +161,7 @@ export default function AuditoriaAdmin() {
                       {r.entidad}
                       {r.entidadId != null ? ` #${r.entidadId}` : ''}
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{r.detalle ?? 'Sin dato'}</td>
+                    <td className="px-4 py-3 text-gray-500">{detalleLegible(r.detalle)}</td>
                     <td className="px-4 py-3 text-gray-500">{r.motivo ?? 'Sin dato'}</td>
                   </tr>
                 ))}

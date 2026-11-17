@@ -36,7 +36,8 @@ export function Campana() {
   const [abierta, setAbierta] = useState(false);
   const caja = useRef<HTMLDivElement>(null);
 
-  const puedeVer = Boolean(sesion && sesion.rol !== 'ADMINISTRADOR');
+  /** La campana se muestra para todos los roles con sesión (incluido ADMINISTRADOR). */
+  const puedeVer = Boolean(sesion);
   const contador = useQuery({
     queryKey: ['notificaciones', 'contador'],
     queryFn: getContadorNotificaciones,

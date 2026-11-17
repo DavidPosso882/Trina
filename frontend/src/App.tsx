@@ -45,6 +45,7 @@ function Marco() {
   const esAdmin = pathname.startsWith('/admin');
   const sinMarco =
     pathname === '/ingresar' ||
+    pathname === '/notificaciones' ||
     pathname.startsWith('/registro') ||
     pathname.startsWith('/recuperar-clave') ||
     pathname.startsWith('/restablecer-clave');

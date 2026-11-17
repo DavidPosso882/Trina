@@ -208,6 +208,16 @@ class NotificacionControllerTest {
         .andExpect(jsonPath("$[0].entidadTipo").value("NEGOCIO"));
   }
 
+  // ---- RF-32 campana admin: el administrador también ve su campana (header Resumen) ----
+
+  @Test
+  void adminPuedeVerSusNotificaciones() throws Exception {
+    listar(tokenAdmin).andExpect(status().isOk());
+    mvc.perform(get("/api/v1/notificaciones/contador").header("Authorization", tokenAdmin))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.noLeidas").value(0));
+  }
+
   // ---- RF-32 E2: cambio de estado ----
 
   @Test

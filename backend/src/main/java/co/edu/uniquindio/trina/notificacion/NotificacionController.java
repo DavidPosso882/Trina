@@ -7,12 +7,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Campana de notificaciones (RF-32): lista, contador y marcado de leídas para Cliente y
- * Comerciante. La propiedad se verifica en el servicio (403 ajena, 404 inexistente).
+ * Campana de notificaciones (RF-32): lista, contador y marcado de leídas para Cliente,
+ * Comerciante y Administrador. La propiedad se verifica en el servicio (403 ajena, 404 inexistente).
  */
 @RestController
 @RequestMapping("/api/v1/notificaciones")
-@PreAuthorize("hasAnyRole('CLIENTE','COMERCIANTE')")
+@PreAuthorize("hasAnyRole('CLIENTE','COMERCIANTE','ADMINISTRADOR')")
 public class NotificacionController {
 
   private final NotificacionService servicio;
